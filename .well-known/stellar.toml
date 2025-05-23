@@ -1,11 +1,11 @@
-NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
-VERSION="1.0.0"
+NETWORK_PASSPHRASE = "Public Global Stellar Network ; September 2015"
+VERSION = "1.0.0"
 
 [[CURRENCIES]]
-code="PIF"
-issuer="GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
-display_decimals=2
-name="Pay It Forward Token"
-desc="PIF is a utility token that rewards volunteers for acts of service and kindness."
-image="https://volunteercoinproject.org/pif-logo.png"
-conditions="Backed by time and community service. Redeemable through partner orgs."
+code = "PIF"
+issuer = "GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
+display_decimals = 2
+name = "Pay It Forward Token"
+desc = "PIF is a utility token that rewards volunteers for acts of service and kindness."
+image = "https://volunteercoinproject.org/pif-logo.png"
+conditions = "Backed by time and community service. Redeemable through partner orgs."
