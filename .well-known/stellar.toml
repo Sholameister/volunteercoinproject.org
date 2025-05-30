@@ -10,7 +10,7 @@ WEB_AUTH_ENDPOINT="https://volunteercoinproject.org/auth"
 
 [[CURRENCIES]]
 code="PIF"
-issuer="GAFWL7NRXEVJVDX7A6Z7OSVR2XUXC4EVCY7TXMBCIBY3B42XSEXX4GEV"
+issuer="GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
 display_decimals=2
 name="Pay It Forward Token"
 desc="The official token of the Volunteer Coin Project Foundation (VCPF). Rewarding volunteerism with redeemable crypto backed by gold, Bitcoin, and purpose."
@@ -31,7 +31,7 @@ website="https://volunteercoinproject.org"
 [[VALIDATORS]]
 alias="vcpf-main"
 display_name="Volunteer Validator Node"
-public_key="GAFWL7NRXEVJVDX7A6Z7OSVR2XUXC4EVCY7TXMBCIBY3B42XSEXX4GEV"
+public_key="GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
 host="volunteercoinproject.org"
 history="https://volunteercoinproject.org/history"
 
