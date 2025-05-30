@@ -1,21 +1,28 @@
-NETWORK_PASSPHRASE = "Public Global Stellar Network ; September 2015"
-VERSION = "2.0.0"
+# Volunteer Coin Project Foundation - PIF Token TOML
+# Published: 2025
+
+FEDERATION_SERVER="https://volunteercoinproject.org/federation"
+AUTH_SERVER="https://volunteercoinproject.org/auth"
+TRANSFER_SERVER="https://volunteercoinproject.org/sep6"
+TRANSFER_SERVER_SEP0024="https://volunteercoinproject.org/sep24"
+KYC_SERVER="https://volunteercoinproject.org/kyc"
+WEB_AUTH_ENDPOINT="https://volunteercoinproject.org/auth"
 
 [[CURRENCIES]]
-code = "PIF"
-issuer = "GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZMOV5CDMUXG03NKKGWLO62KF"
-display_decimals = 2
-name = "Pay It Forward Token"
-desc = "PIF is a utility token that rewards volunteers for acts of service and kindness."
-image = "https://volunteercoinproject.org/pif-logo.png"
-conditions = "Backed by time and community service. Redeemable through partner orgs."
+code="PIF"
+issuer="GAFWL7NRXEVJVDX7A6Z7OSVR2XUXC4EVCY7TXMBCIBY3B42XSEXX4GEV"
+display_decimals=2
+name="Pay It Forward Token"
+desc="The official token of the Volunteer Coin Project Foundation (VCPF). Rewarding volunteerism with redeemable crypto backed by gold, Bitcoin, and purpose."
+image="https://volunteercoinproject.org/assets/PIF_Token_Logo.png"
+conditions="Redeemable at select retailers for food, gas, and essentials. Backed by community, gold, and BTC."
+is_asset_anchored=true
+anchor_asset_type="crypto"
+fixed_number=1000000000
+status="live"
 
-[DOCUMENTATION]
-ORG_NAME = "Volunteer Coin Project Foundation"
-ORG_DBA = "Volunteer Coin Project"
-ORG_URL = "https://volunteercoinproject.org"
-ORG_LOGO = "https://volunteercoinproject.org/pif-logo.png"
-ORG_DESCRIPTION = "A nonprofit organization that rewards volunteering and giving through blockchain-based token incentives."
-ORG_PHYSICAL_ADDRESS = "2703 Turner St, Muskogee, OK 74403"
-ORG_PHONE_NUMBER = "+1-918-360-8345"
-ORG_EMAIL = "info@volunteercoinproject.org"
+[[PRINCIPALS]]
+name="Volunteer Coin Project Foundation"
+email="info@volunteercoinproject.org"
+twitter="https://twitter.com/VolunteerCoin"
+githu
