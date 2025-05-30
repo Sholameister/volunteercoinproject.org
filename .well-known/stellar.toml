@@ -1,19 +1,13 @@
-FEDERATION_SERVER="https://volunteercoinproject.org/federation"
-AUTH_SERVER="https://volunteercoinproject.org/auth"
-TRANSFER_SERVER="https://volunteercoinproject.org/sep6"
-TRANSFER_SERVER_SEP0024="https://volunteercoinproject.org/sep24"
-KYC_SERVER="https://volunteercoinproject.org/kyc"
-WEB_AUTH_ENDPOINT="https://volunteercoinproject.org/auth"
+# Volunteer Coin Project Foundation - PIF Token TOML
+# Published: 2025
 
 [[CURRENCIES]]
 code="PIF"
 issuer="GAFWL7NRXEVJVDX7A6Z7OSVR2XUXC4EVCY7TXMBCIBY3B42XSEXX4GEV"
-image="https://ipfs.volunteercoinproject.org/PIF_Token_Logo.png"
+image="https://ipfs.io/ipfs/QmWUM7oLZSnJ8ZxGCZmp9R5xNyM5U3AHQzciT8ZxCT8zNK"  # hosted via public IPFS fallback
 desc="Pay It Forward Token - Rewarding volunteer time with real-world utility. Backed by BTC, gold, and compassion."
 display_decimals=2
 name="Pay It Forward"
-conditions="Backed by BTC/gold until fully collateralized; see whitepaper"
-is_asset_anchored=false
-anchor_asset_type="crypto"
 status="live"
-
+anchor_asset_type="crypto"
+is_asset_anchored=false
