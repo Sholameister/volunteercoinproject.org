@@ -25,4 +25,22 @@ status="live"
 name="Volunteer Coin Project Foundation"
 email="info@volunteercoinproject.org"
 twitter="https://twitter.com/VolunteerCoin"
-githu
+github="https://github.com/Sholameister"
+website="https://volunteercoinproject.org"
+
+[[VALIDATORS]]
+alias="vcpf-main"
+display_name="Volunteer Validator Node"
+public_key="GAFWL7NRXEVJVDX7A6Z7OSVR2XUXC4EVCY7TXMBCIBY3B42XSEXX4GEV"
+host="volunteercoinproject.org"
+history="https://volunteercoinproject.org/history"
+
+[[DOCUMENTATION]]
+ORG_NAME="Volunteer Coin Project Foundation"
+ORG_URL="https://volunteercoinproject.org"
+ORG_DESCRIPTION="Nonprofit tokenizing kindness. PIF Tokens reward volunteers for their time and impact, redeemable for essentials and community goods. Transparency is our virtue."
+ORG_LOGO="https://volunteercoinproject.org/assets/PIF_Token_Logo.png"
+ORG_SUPPORT_EMAIL="info@volunteercoinproject.org"
+ORG_LICENSING_URL="https://volunteercoinproject.org/legal"
+ORG_TERMS_OF_SERVICE="https://volunteercoinproject.org/terms"
+ORG_PRIVACY_POLICY="https://volunteercoinproject.org/privacy"
