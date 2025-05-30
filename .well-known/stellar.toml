@@ -4,7 +4,7 @@
 [[CURRENCIES]]
 code="PIF"
 issuer="GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
-image="https://cloudflare-ipfs.com/ipfs/QmWUM7oLZSnJ8ZxGCZmp9R5xNyM5U3AHQzciT8ZxCT8zNK" # hosted via public IPFS fallback
+image="https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/heart-coin-icon.png" # hosted via public IPFS fallback
 desc="Pay It Forward Token - Rewarding volunteer time with real-world utility. Backed by BTC, gold, and compassion."
 display_decimals=2
 name="Pay It Forward"
