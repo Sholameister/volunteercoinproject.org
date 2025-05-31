@@ -12,7 +12,25 @@
       display: inline-block; margin: 10px 0; padding: 10px 20px; background: #ffa000;
       color: white; text-decoration: none; border-radius: 5px;
     }
-    .disclaimer { font-size: 0.9em; color: #777; margin-top: 20px; }
+    .disclaimer { 
+      font-size: 0.9em; 
+      color: #777; 
+      margin-top: 20px; 
+    }
+    
+    #btc-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 120px;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+
+    #btc-badge:hover {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
