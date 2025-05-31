@@ -1,4 +1,4 @@
-
+<!-- force rebuild -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,19 +12,41 @@
       display: inline-block; margin: 10px 0; padding: 10px 20px; background: #ffa000;
       color: white; text-decoration: none; border-radius: 5px;
     }
-    .disclaimer { font-size: 0.9em; color: #777; margin-top: 20px; }
+    .disclaimer { 
+      font-size: 0.9em; 
+      color: #777; 
+      margin-top: 20px; 
+    }
+    
+    #btc-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      width: 120px;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+
+    #btc-badge:hover {
+      opacity: 1;
+    }
   </style>
 </head>
-  <body>
-  <img src="heart-bg.jpeg" alt="Glowing Heart" style="width: 100%; max-width: 700px; display: block; margin: 40px auto; border-radius: 15px;">
+<body>
+  <div style="text-align:center;">
+    <img src="/heart-coin-icon.png" alt="Heart Logo" style="max-width: 550px; width: 80%; margin-bottom: 20px;">
+  </div>
+  
   <div class="container">
     <h1>Buy PIF Tokens</h1>
     <h2>Empowering Volunteers. Backed by Service, Gold, and Bitcoin.</h2>
     <p>The Pay It Forward (PIF) Token is a community-powered cryptocurrency backed by real-world impact, gold reserves, and Bitcoin. Join the movement by purchasing tokens and helping fund a system that rewards kindness and service with tangible value.</p>
-
-    <a class="button" href="https://www.paypal.com/ncp/payment/3XG6F6S9MUAGN" target="_blank">Buy Tokens with PayPal</a><br>
-    <a class="button" href="https://github.com/Sholameister/volunteercoinproject.org/raw/main/PIF_Token_Whitepaper_2025-05-23.docx" target="_blank" download>📄 Read Our Whitepaper</a>
-
+  <div style="text-align: center; margin: 20px 0;">
+    <a class="button" href="https://www.paypal.com/ncp/payment/3XG6F6S9MUAGN" target="_blank" style="margin: 5px;">Buy Tokens with PayPal</a>
+    <a class="button" href="https://github.com/Sholameister/volunteercoinproject.org/raw/main/PIF_Whitepaper_Updated_June2025.pdf" target="_blank" download>📄 Read Our Whitepaper</a>
+    <a class="button" href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" class="button" target="_blank">✅ Verify KYC to Unlock Purchase</a>
+  </div>
     <h2>Fairness & Anti-Rug Protection</h2>
     <p>To ensure a fair launch and prevent early accumulation or manipulation:</p>
     <ul>
@@ -48,9 +70,6 @@
             Privacy & KYC Disclaimer
         </a>
       <br>
-      <a href="https://verify.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: underline;">
-        Complete KYC to Buy Tokens
-      </a>
     </p>
 </footer>
 </body>
