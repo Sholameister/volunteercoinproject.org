@@ -128,6 +128,48 @@
   </a>
 </p>
   </div>
+  <div style="text-align:center; margin-top: 40px;">
+  <h2>💰 Bitcoin Backing Progress (Goal: 15%)</h2>
+  <p><strong>Current BTC Backing:</strong> <span id="btc-amount">Loading...</span></p>
+  <p><strong>USD Value:</strong> $<span id="btc-usd">Loading...</span></p>
+  <p><strong>BTC Backing Progress:</strong> <span id="btc-percent">Loading...</span></p>
+
+  <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
+    <div id="btc-bar" style="background: gold; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;"></div>
+  </div>
+</div>
+
+<div style="text-align:center; margin-top: 60px;">
+  <h2>🏆 Gold Backing Progress (Goal: 15%)</h2>
+  <p><strong>Current Gold Backing:</strong> Coming soon!</p>
+  <p><strong>Gold Backing Progress:</strong> <span id="gold-percent">0%</span></p>
+
+  <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
+    <div style="background: orange; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;">0%</div>
+  </div>
+</div>
+<script>
+  const btcHeld = 0.002835;
+  const backingGoalUSD = 1000 * 0.15; // 15% of $1000 = $150 BTC goal
+
+  async function updateBTCInfo() {
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+    const data = await response.json();
+    const btcPrice = data.bitcoin.usd;
+    const usdValue = (btcHeld * btcPrice).toFixed(2);
+    const backingPercent = ((btcHeld * btcPrice) / backingGoalUSD * 100).toFixed(1);
+
+    document.getElementById('btc-amount').innerText = btcHeld + ' BTC';
+    document.getElementById('btc-usd').innerText = usdValue;
+    document.getElementById('btc-percent').innerText = backingPercent + '%';
+    document.getElementById('btc-bar').style.width = backingPercent + '%';
+    document.getElementById('btc-bar').innerText = backingPercent + '%';
+  }
+
+  updateBTCInfo();
+  setInterval(updateBTCInfo, 3600000); // refresh every hour
+</script>
+
   <footer style="text-align: center; padding: 20px; background-color: #f1f1f1; font-size: 14px;">
     <p>
         &copy; 2025 Volunteer Coin Project Foundation |
