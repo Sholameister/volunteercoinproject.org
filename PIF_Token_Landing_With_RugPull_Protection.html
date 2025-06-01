@@ -75,6 +75,52 @@
       <a href="https://www.blockchain.com/btc/tx/ed06986da23c52b0b78a0ddfadb312d1251b45eb70512129f7de621a5eb3e926" target="_blank">View transaction 2</a>
     </small>
   </p>
+    <div style="text-align: center; margin-top: 40px;">
+  <h2>💰 Bitcoin-Backed Transparency</h2>
+  <p><strong>BTC in Reserve:</strong> <span id="btcAmount">Loading...</span></p>
+  <p><strong>USD Value:</strong> $<span id="btcUSD">0.00</span></p>
+  <p><strong>BTC Backing Progress:</strong> <span id="btcPercent">0%</span> toward full goal</p>
+
+  <div style="width: 80%; margin: 20px auto; background: #eee; border-radius: 10px; height: 30px; position: relative;">
+    <div id="progressFill" style="background: #4caf50; height: 100%; width: 0%; border-radius: 10px;"></div>
+    <!-- Milestone markers -->
+    <div style="position: absolute; left: 30%; top: 0; height: 100%; border-left: 2px dashed #999;"></div>
+    <div style="position: absolute; left: 50%; top: 0; height: 100%; border-left: 2px dashed #999;"></div>
+    <div style="position: absolute; left: 75%; top: 0; height: 100%; border-left: 2px dashed #999;"></div>
+    <div style="position: absolute; left: 100%; top: 0; height: 100%; border-left: 2px dashed #999;"></div>
+  </div>
+</div>
+
+<script>
+  const btcAmount = 0.002835; // Your BTC holdings
+  const totalGoalUSD = 10000; // 100% backing value in USD
+
+  async function updateBTCBacking() {
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const data = await res.json();
+      const btcPrice = data.bitcoin.usd;
+
+      const btcUSD = (btcAmount * btcPrice).toFixed(2);
+      const percentBacked = ((btcAmount * btcPrice / totalGoalUSD) * 100).toFixed(2);
+
+      // Update display
+      document.getElementById('btcAmount').innerText = `${btcAmount} BTC`;
+      document.getElementById('btcUSD').innerText = btcUSD;
+      document.getElementById('btcPercent').innerText = `${percentBacked}%`;
+
+      // Update progress bar
+      const fill = Math.min(percentBacked, 100);
+      document.getElementById('progressFill').style.width = `${fill}%`;
+    } catch (err) {
+      console.error("BTC fetch failed:", err);
+    }
+  }
+
+  updateBTCBacking();
+  setInterval(updateBTCBacking, 3600000); // Refresh every hour
+</script>
+
     <p style="text-align:center; font-size: 0.9em;">
   <strong>Founder Vesting:</strong> 5,000,000 PIF locked until June 1, 2035<br>
   <a href="https://stellar.expert/explorer/public/tx/7f653a091c3f09768ea59189e7de5cddd3ee54f15c0a01d4fc21ed725c6082" target="_blank">
