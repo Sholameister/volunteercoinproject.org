@@ -69,44 +69,33 @@
       *Backing in progress.  Not all tokens are fully backed by BTC and gold yet.
     </p>
  </script>
- <div class="section">
-  <h2>🪙 Bitcoin Backing Progress (Goal: 50% of total backing)</h2>
-  <p><strong>Current BTC Backing:</strong> 0.002835 BTC</p>
-  <p><strong>USD Value:</strong> $295.00</p>
-  <p><strong>BTC Backing Progress:</strong> 0.63% of BTC goal ($4,650,000)</p>
-  <div class="progress-bar-container" style="background-color: #eee; border-radius: 5px; overflow: hidden; width: 100%; height: 24px; margin-top: 8px;">
-    <div class="progress-bar" style="width: 0.63%; background-color: gold; height: 100%; text-align: center; color: black; font-weight: bold;">
-      0.63%
-    </div>
-  </div>
-  <p class="note">Stored securely in Trust Wallet<br>
-    <a href="https://example.com/tx1" target="_blank">View Transaction 1</a> |
-    <a href="https://example.com/tx2" target="_blank">View Transaction 2</a>
-  </p>
-   
-  </div>
-</div>
+  <div style="text-align:center; margin-top: 40px;">
+  <h2>💰 Bitcoin Backing Progress (Goal: 50%)</h2>
+  <p><strong>Current BTC Backing:</strong> <span id="btc-amount">Loading...</span></p>
+  <p><strong>USD Value:</strong> $<span id="btc-usd">Loading...</span></p>
+  <p><strong>BTC Backing Progress:</strong> <span id="btcPercent">0%</span> toward full goal</p>
+
   <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
     <div id="btc-bar" style="background: lightgreen; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;">0%</div>
   </div>
-    <div style="text-align:center; margin-top: 20px;">
-    <small>Stored securely in Trust Wallet
+</div>
+  <p style="text-align:center; font-size: 0.9em;">
+<small>Stored securely in Trust Wallet
       <a href="https://www.blockchain.com/btc/tx/6241c65455815795b7502478626cb002ff45054a632b0cc5b301dfcc238cfe64" target="_blank">View transaction 1</a> |
       <a href="https://www.blockchain.com/btc/tx/ed06986da23c52b0b78a0ddfadb312d1251b45eb70512129f7de621a5eb3e926" target="_blank">View transaction 2</a>
-   </small>
-</div>
-  <div style="text-align:center; margin-top: 60px;">
+    </small>
+<div style="text-align:center; margin-top: 60px;">
   <h2>🏆 Gold Backing Progress (Goal: 50%)</h2>
   <p><strong>Current Gold Backing:</strong> Coming soon!</p>
   <p><strong>USD Value:</strong> $<span id="gold-USD"</p>
   <p><strong>Gold Backing Progress:</strong> <span id="gold-percent">0%</span></p>
-  <p style="text-align:center; font-size: 0.9em;">
+
   <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
     <div style="background: orange; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;">0%</div>
   </div>
     
   <div
- <p style="text-align:center; font-size: 0.9em;">
+    <p style="text-align:center; font-size: 0.9em;">
   <strong>Founder Vesting:</strong> 5,000,000 PIF locked until June 1, 2035<br>
   <a href="https://stellar.expert/explorer/public/tx/7f653a091c3f09768ea59189e7de5cddd3ee54f15c0a01d4fc21ed725c6082" target="_blank">
     View vesting transaction on Stellar Expert
