@@ -68,38 +68,7 @@
     <p style="text-align: center; font-size: 0.85em; color: #555;">
       *Backing in progress.  Not all tokens are fully backed by BTC and gold yet.
     </p>
- 
-</div>
-
-<script>
-  const btcAmount = 0.002835; // Your BTC holdings
-  const totalGoalUSD = 10000; // 100% backing value in USD
-
-  async function updateBTCBacking() {
-    try {
-      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-      const data = await res.json();
-      const btcPrice = data.bitcoin.usd;
-
-      const btcUSD = (btcAmount * btcPrice).toFixed(2);
-      const percentBacked = ((btcAmount * btcPrice / totalGoalUSD) * 100).toFixed(2);
-
-      // Update display
-      document.getElementById('btcAmount').innerText = `${btcAmount} BTC`;
-      document.getElementById('btcUSD').innerText = btcUSD;
-      document.getElementById('btcPercent').innerText = `${percentBacked}%`;
-
-      // Update progress bar
-      const fill = Math.min(percentBacked, 100);
-      document.getElementById('progressFill').style.width = `${fill}%`;
-    } catch (err) {
-      console.error("BTC fetch failed:", err);
-    }
-  }
-
-  updateBTCBacking();
-  setInterval(updateBTCBacking, 3600000); // Refresh every hour
-</script>
+ </script>
   <div style="text-align:center; margin-top: 40px;">
   <h2>💰 Bitcoin Backing Progress (Goal: 50%)</h2>
   <p><strong>Current BTC Backing:</strong> <span id="btc-amount">Loading...</span></p>
@@ -110,6 +79,7 @@
     <div id="btc-bar" style="background: gold; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;"></div>
   </div>
 </div>
+  <p style="text-align:center; font-size: 0.9em;">
 <small>Stored securely in Trust Wallet
       <a href="https://www.blockchain.com/btc/tx/6241c65455815795b7502478626cb002ff45054a632b0cc5b301dfcc238cfe64" target="_blank">View transaction 1</a> |
       <a href="https://www.blockchain.com/btc/tx/ed06986da23c52b0b78a0ddfadb312d1251b45eb70512129f7de621a5eb3e926" target="_blank">View transaction 2</a>
@@ -143,12 +113,37 @@
   updateBTCInfo();
   setInterval(updateBTCInfo, 3600000); // refresh every hour
 </script>
+</div>
 
-      <small>Stored securely in Trust Wallet
-      <a href="https://www.blockchain.com/btc/tx/6241c65455815795b7502478626cb002ff45054a632b0cc5b301dfcc238cfe64" target="_blank">View transaction 1</a> |
-      <a href="https://www.blockchain.com/btc/tx/ed06986da23c52b0b78a0ddfadb312d1251b45eb70512129f7de621a5eb3e926" target="_blank">View transaction 2</a>
-    </small>
-  </p>
+<script>
+  const btcAmount = 0.002835; // Your BTC holdings
+  const totalGoalUSD = 10000; // 100% backing value in USD
+
+  async function updateBTCBacking() {
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const data = await res.json();
+      const btcPrice = data.bitcoin.usd;
+
+      const btcUSD = (btcAmount * btcPrice).toFixed(2);
+      const percentBacked = ((btcAmount * btcPrice / totalGoalUSD) * 100).toFixed(2);
+
+      // Update display
+      document.getElementById('btcAmount').innerText = `${btcAmount} BTC`;
+      document.getElementById('btcUSD').innerText = btcUSD;
+      document.getElementById('btcPercent').innerText = `${percentBacked}%`;
+
+      // Update progress bar
+      const fill = Math.min(percentBacked, 100);
+      document.getElementById('progressFill').style.width = `${fill}%`;
+    } catch (err) {
+      console.error("BTC fetch failed:", err);
+    }
+  }
+
+  updateBTCBacking();
+  setInterval(updateBTCBacking, 3600000); // Refresh every hour
+
     <p style="text-align:center; font-size: 0.9em;">
   <strong>Founder Vesting:</strong> 5,000,000 PIF locked until June 1, 2035<br>
   <a href="https://stellar.expert/explorer/public/tx/7f653a091c3f09768ea59189e7de5cddd3ee54f15c0a01d4fc21ed725c6082" target="_blank">
