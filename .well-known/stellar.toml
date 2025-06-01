@@ -11,3 +11,14 @@ name="Pay It Forward"
 status="live"
 anchor_asset_type="crypto"
 is_asset_anchored=false
+[DOCUMENTATION]
+orgName = "Volunteer Coin Project Foundation"
+orgURL = "https://volunteercoinproject.org"
+orgDescription = "PIF is a fixed-supply utility token backed by mission-locked reserves and public use cases."
+
+[ASSETS]
+code = "PIF"
+issuer = "GGCHHRDGEGLKFKXTJUD6RGWHVE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
+status = "finalized"
+fixed_number = 950000000
+is_unlimited = false
