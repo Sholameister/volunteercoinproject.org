@@ -76,7 +76,7 @@
   <p><strong>BTC Backing Progress:</strong> <span id="btcPercent">0%</span> toward full goal</p>
 
   <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
-    <div id="btc-bar" style="background: gold; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;"></div>
+    <div id="btc-bar" style="background: lightgreen; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;">0%</div>
   </div>
 </div>
   <p style="text-align:center; font-size: 0.9em;">
@@ -117,7 +117,7 @@
     document.getElementById('btc-usd').innerText = usdValue;
     document.getElementById('btc-percent').innerText = backingPercent + '%';
     document.getElementById('btc-bar').style.width = backingPercent + '%';
-    document.getElementById('btc-bar').innerText = backingPercent + '%';
+    document.getElementById('btc-bar').innerText = btcPercent + '%';
   }
 
   updateBTCInfo();
