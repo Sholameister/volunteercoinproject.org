@@ -68,15 +68,7 @@
     <p style="text-align: center; font-size: 0.85em; color: #555;">
       *Backing in progress.  Not all tokens are fully backed by BTC and gold yet.
     </p>
-
-
-    
-    <div style="text-align: center; margin-top: 40px;">
-  <h2>💰 Bitcoin-Backed Transparency</h2>
-  <p><strong>BTC in Reserve:</strong> <span id="btcAmount">Loading...</span></p>
-  <p><strong>USD Value:</strong> $<span id="btcUSD">0.00</span></p>
-  <p><strong>BTC Backing Progress:</strong> <span id="btcPercent">0%</span> toward full goal</p>
-
+ 
   <div style="width: 80%; margin: 20px auto; background: #eee; border-radius: 10px; height: 30px; position: relative;">
     <div id="progressFill" style="background: #4caf50; height: 100%; width: 0%; border-radius: 10px;"></div>
     <!-- Milestone markers -->
@@ -117,18 +109,21 @@
   setInterval(updateBTCBacking, 3600000); // Refresh every hour
 </script>
   <div style="text-align:center; margin-top: 40px;">
-  <h2>💰 Bitcoin Backing Progress (Goal: 15%)</h2>
+  <h2>💰 Bitcoin Backing Progress (Goal: 50%)</h2>
   <p><strong>Current BTC Backing:</strong> <span id="btc-amount">Loading...</span></p>
   <p><strong>USD Value:</strong> $<span id="btc-usd">Loading...</span></p>
-  <p><strong>BTC Backing Progress:</strong> <span id="btc-percent">Loading...</span></p>
+  <p><strong>BTC Backing Progress:</strong> <span id="btcPercent">0%</span> toward full goal</p>
 
   <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
     <div id="btc-bar" style="background: gold; width: 0%; height: 100%; line-height: 30px; color: black; font-weight: bold;"></div>
   </div>
 </div>
-
+<small>Stored securely in Trust Wallet
+      <a href="https://www.blockchain.com/btc/tx/6241c65455815795b7502478626cb002ff45054a632b0cc5b301dfcc238cfe64" target="_blank">View transaction 1</a> |
+      <a href="https://www.blockchain.com/btc/tx/ed06986da23c52b0b78a0ddfadb312d1251b45eb70512129f7de621a5eb3e926" target="_blank">View transaction 2</a>
+    </small>
 <div style="text-align:center; margin-top: 60px;">
-  <h2>🏆 Gold Backing Progress (Goal: 15%)</h2>
+  <h2>🏆 Gold Backing Progress (Goal: 50%)</h2>
   <p><strong>Current Gold Backing:</strong> Coming soon!</p>
   <p><strong>Gold Backing Progress:</strong> <span id="gold-percent">0%</span></p>
 
