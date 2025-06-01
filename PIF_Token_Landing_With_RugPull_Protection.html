@@ -58,7 +58,7 @@
 
     <label>
       <input type="checkbox" required>
-      I agree not to exceed the 250,000 token cap for early tiers and acknowledge the terms of fair distribution.
+      I agree not to exceed the 250,000 token cap for each early tier and acknowledge the terms of fair distribution.
     </label>
 
     <p class="disclaimer">Transparency is our virtue. All purchases support the expansion of a nonprofit ecosystem that rewards real human impact.</p>
@@ -87,7 +87,7 @@
 <div style="text-align:center; margin-top: 60px;">
   <h2>🏆 Gold Backing Progress (Goal: 50%)</h2>
   <p><strong>Current Gold Backing:</strong> Coming soon!</p>
-  <p><strong>USD Value:</strong> $<span id="gold"</p>
+  <p><strong>USD Value:</strong> $<span id="gold-USD"</p>
   <p><strong>Gold Backing Progress:</strong> <span id="gold-percent">0%</span></p>
 
   <div style="width: 80%; margin: 0 auto; background-color: #ddd; height: 30px; border-radius: 5px; overflow: hidden;">
@@ -123,7 +123,6 @@
   updateBTCInfo();
   setInterval(updateBTCInfo, 3600000); // refresh every hour
 </script>
-</div>
 
 <script>
   const btcAmount = 0.002835; // Your BTC holdings
@@ -153,6 +152,7 @@
 
   updateBTCBacking();
   setInterval(updateBTCBacking, 3600000); // Refresh every hour
+</script>
   <div
   <footer style="text-align: center; padding: 20px; background-color: #f1f1f1; font-size: 14px;">
     <p>
@@ -160,7 +160,6 @@
         <a href="https://volunteercoinproject.org/privacy-kyc-disclaimer.html" target="_blank">
             Privacy & KYC Disclaimer
         </a>
-      <br>
     </p>
     </div>
 </footer>
