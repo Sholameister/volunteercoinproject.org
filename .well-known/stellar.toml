@@ -2,12 +2,12 @@
 # Published: 2025
 
 [[CURRENCIES]]
-code="PIF"
-issuer="GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
+code="P2"
+issuer="GDX7JC5SK54GNND7VYNNOBRMOQYZHJYJ37C4EZXGBGWUVNPS4OKX3JHZ"
 image="https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/heart-coin-icon.png" # hosted via public IPFS fallback
-desc="Pay It Forward Token - Rewarding volunteer time with real-world utility. Backed by BTC, gold, and compassion."
+desc="P2 - Pay It Forward Token 2 - Rewarding volunteer time with real-world utility. Backed by BTC, gold, and compassion."
 display_decimals=2
-name="Pay It Forward"
+name="P2"
 status="live"
 anchor_asset_type="crypto"
 is_asset_anchored=false
@@ -15,11 +15,11 @@ is_asset_anchored=false
 [DOCUMENTATION]
 ORG_NAME = "Volunteer Coin Project Foundation"
 ORG_URL = "https://volunteercoinproject.org"
-ORG_DESCRIPTION = "Total supply of 950M PIF tokens permanently locked and verified on-chain."
+ORG_DESCRIPTION = "Total supply of 420M PIF tokens permanently locked and verified on-chain."
 
 [[CURRENCIES]]
-code = "PIF"
-issuer = "GCGHHRDGEGLKFKXTJUD6RWGHWE3OYPEZZWOV5CDMUXGO3NKKGWLO62KF"
+code = "P2"
+issuer = "GDX7JC5SK54GNND7VYNNOBRMOQYZHJYJ37C4EZXGBGWUVNPS4OKX3JHZ"
 status = "live"
-fixed_number = 950000000
+fixed_number = 420000000
 is_unlimited = false
