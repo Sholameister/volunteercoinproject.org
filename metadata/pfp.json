@@ -1,1 +1,7 @@
-
+{
+  "name": "Pay It Forward & Protect",
+  "symbol": "PFP",
+  "description": "A mission-driven token to protect volunteer economies with transparency and integrity.",
+  "image": "https://volunteercoinproject.org/logo.png",
+  "decimals": 9
+}
