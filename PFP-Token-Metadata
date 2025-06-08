@@ -1,1 +1,14 @@
-
+{
+  "name": "Pay it Forward & Protect",
+  "symbol": "PFP",
+  "description": "A utility token built on Solana for humanitarian protection and blockchain transparency, launched by the Volunteer Coin Project Foundation.",
+  "image": "https://volunteercoinproject.org/assets/pfp-logo.png",
+  "decimals": 6,
+  "address": "7uY8eUotGcm1oXYj8xaFiBuk5saN9QYtqervA3vK7J6U",
+  "tags": ["utility", "nonprofit", "transparency", "solana"],
+  "extensions": {
+    "website": "https://volunteercoinproject.org",
+    "twitter": "https://twitter.com/VolunteerCoin",
+    "github": "https://github.com/VolunteerCoinProject/PFP-Token-Metadata"
+  }
+}
