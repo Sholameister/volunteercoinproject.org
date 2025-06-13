@@ -1,7 +1,7 @@
 # PFP – Pay it Forward & Protect
 
 **Symbol:** `PFP`  
-**Mint Address:** `7uY8eUotGcm1oXYj8xaFiBuk5saN9QYtqervA3vK7J6U`  
+**Mint Address:** `G5bmdm1vXex8HstSgbq4WCpWXCD3cWCjBGLuUiLtwyCB`  
 **Network:** Solana
 
 PFP is a utility token built for transparency, protection, and community action. It supports nonprofit initiatives and volunteer-backed blockchain incentives under the Volunteer Coin Project Foundation.
