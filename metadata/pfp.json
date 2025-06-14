@@ -1,19 +1,12 @@
 {
   "name": "Pay It Forward & Protect",
   "symbol": "PFP",
-  "address": "G5bmdm1vXex8HstSgbq4WCpWXCD3cWCjBGLuUiLtwyCB",
-  "decimals": 6,
-  "logoURI": "https://volunteercoinproject.org/assets/pfp-logo.png",
-  "tags": [
-    "social-impact",
-    "charity",
-    "asset-backed"
-  ],
-  "extensions": {
-    "website": "https://volunteercoinproject.org",
-    "twitter": "https://twitter.com/VolunteerCoin",
-    "description": "PFP (Pay It Forward & Protect) is a Solana-based social impact token dedicated to protecting volunteers, blocking scams, and empowering transparency through blockchain.",
-    "whitepaper": "https://volunteercoinproject.org/assets/PFP_Whitepaper.pdf",
-    "explorer": "https://solscan.io/token/G5bmdm1vXex8HstSgbq4WCpWXCD3cWCjBGLuUiLtwyCB"
-  }
+  "description": "A utility token for volunteer-backed transparency and defense.",
+  "image": "https://volunteercoinproject.org/asset/pfp-logo.png",
+  "decimals": 9,
+  "mint": "7uY8eUotGcm1oXYj8xaFiBuk5saN9QYtqervA3vK7J6U",
+  "attributes": [
+    { "trait_type": "Project", "value": "Volunteer Coin Project" },
+    { "trait_type": "Purpose", "value": "Protection & Transparency" }
+  ]
 }
