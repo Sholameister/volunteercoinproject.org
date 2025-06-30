@@ -1,12 +1,10 @@
 {
-  "name": "Pay It Forward & Protect",
+  "chainId": 101,
+  "address": "7uY8eUotGcm1oXYj8xaFiBuk5saN9QYtqervA3vK7J6U",
   "symbol": "PFP",
-  "description": "A utility token for volunteer-backed transparency and defense.",
-  "image": "https://volunteercoinproject.org/asset/pfp-logo.png",
+  "name": "Pay It Forward & Protect",
   "decimals": 9,
-  "mint": "7uY8eUotGcm1oXYj8xaFiBuk5saN9QYtqervA3vK7J6U",
-  "attributes": [
-    { "trait_type": "Project", "value": "Volunteer Coin Project" },
-    { "trait_type": "Purpose", "value": "Protection & Transparency" }
-  ]
+  "logoURI": "https://volunteercoinproject.org/logo/pfp-logo.png",
+  "website": "https://volunteercoinproject.org",
+  "tags": ["charity", "community", "volunteer", "PFP"]
 }
