@@ -3,87 +3,102 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Institutional Partners | LoveButton Token</title>
+  <title>Institutional Token Pricing</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f4ef;
+      background-color: #fefefe;
       color: #333;
-      margin: 0;
       padding: 20px;
+      line-height: 1.6;
     }
     h1 {
-      text-align: center;
-      color: #d94c4c;
-    }
-    p {
-      max-width: 800px;
-      margin: 0 auto 20px;
-      line-height: 1.6;
+      color: #b22222;
       text-align: center;
     }
-    .steps {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #fff2f2;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.05);
-    }
-    .steps h2 {
-      text-align: center;
-      color: #5a0000;
-    }
-    .steps ol {
-      padding-left: 20px;
-    }
-    .steps li {
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    .btn {
-      display: block;
-      width: fit-content;
+    .token-table {
+      width: 100%;
+      max-width: 600px;
       margin: 30px auto;
-      padding: 12px 24px;
-      background-color: #d94c4c;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
+      border-collapse: collapse;
     }
-    .btn:hover {
-      background-color: #b33a3a;
-    }
-    .back-link {
+    .token-table th,
+    .token-table td {
+      padding: 12px;
+      border: 1px solid #ccc;
       text-align: center;
-      margin-top: 30px;
     }
-    .back-link a {
-      color: #444;
-      text-decoration: underline;
+    .token-table th {
+      background-color: #f4f4f4;
+    }
+    .note {
+      text-align: center;
+      font-style: italic;
+      margin-top: 10px;
+    }
+    .buy-button {
+      display: block;
+      width: 220px;
+      margin: 30px auto;
+      padding: 14px;
+      background-color: #ff3366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .buy-button:hover {
+      background-color: #cc2954;
     }
   </style>
 </head>
 <body>
+  <h1>Institutional Token Pricing</h1>
 
-  <h1>🤝 Become an Institutional Partner</h1>
-  <p>We welcome nonprofit organizations, charities, ministries, and community groups to partner with the LoveButton Token project. Each new partner receives a one-time starter pack of 314 LVBTN tokens to reward volunteers for meaningful service.</p>
+  <table class="token-table">
+    <thead>
+      <tr>
+        <th>Package</th>
+        <th>Token Amount</th>
+        <th>Price per Token</th>
+        <th>Total Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Starter Pack</strong></td>
+        <td>314 tokens</td>
+        <td><strong>FREE</strong></td>
+        <td>$0</td>
+      </tr>
+      <tr>
+        <td>Standard Package</td>
+        <td>314 tokens</td>
+        <td>$2.50</td>
+        <td>$785</td>
+      </tr>
+      <tr>
+        <td>Double Package</td>
+        <td>628 tokens</td>
+        <td>$2.25</td>
+        <td>$1,413</td>
+      </tr>
+      <tr>
+        <td>Triple Package</td>
+        <td>942 tokens</td>
+        <td>$2.125</td>
+        <td>$2,001.75</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <div class="steps">
-    <h2>How It Works</h2>
-    <ol>
-      <li><strong>Apply to Join</strong> — Complete our short request form to verify your organization and receive 314 tokens.</li>
-      <li><strong>Reward Volunteers</strong> — Pay 3.14 tokens per hour of verified service using our platform.</li>
-      <li><strong>Scale When Ready</strong> — Need more? Purchase discounted token bundles as your needs grow.</li>
-    </ol>
-  </div>
+  <p class="note">Note: All institutions must reward volunteers at the rate of 3.14 LVBTN tokens per verified hour.</p>
 
-  <a class="btn" href="https://forms.gle/YOUR-GOOGLE-FORM-ID-HERE" target="_blank">🎁 Request 314 Token Starter Pack</a>
-
-  <div class="back-link">
-   
-  </div>
-
+  <a href="mailto:info@volunteercoinproject.org?subject=Request%20to%20Purchase%20LVBTN%20Tokens" class="buy-button">Buy More Tokens</a>
 </body>
 </html>
+
