@@ -127,6 +127,18 @@
     <p>Use LVBTN to play games, earn points, and redeem real-world rewards. Volunteers will be able to earn tokens by logging hours and helping others. Love meets utility.</p>
   </div>
 </div>
+<div id="btc-price" style="font-weight:bold;">BTC Price: Loading...</div>
+
+<script>
+  async function fetchBTC() {
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+    const data = await response.json();
+    const price = data.bitcoin.usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    document.getElementById('btc-price').innerText = `BTC Price: ${price}`;
+  }
+  fetchBTC();
+  setInterval(fetchBTC, 60000); // Update every 60 seconds
+</script>
 
 <footer>
   <p>Contact us: info@volunteercoinproject.org | Follow us: 
