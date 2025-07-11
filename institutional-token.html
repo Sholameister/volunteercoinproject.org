@@ -109,8 +109,14 @@
     border-radius: 6px;
     transition: background-color 0.3s ease;
   ">
-    Purchase Tokens
+    Purchase Tokens Here
   </a>
+  <div id="paypal-container-MFYCJQJP3DYVY"></div>
+<script>
+  paypal.HostedButtons({
+    hostedButtonId: "MFYCJQJP3DYVY",
+  }).render("#paypal-container-MFYCJQJP3DYVY")
+</script>
 </div>
   
 </body>
