@@ -41,6 +41,27 @@
     <div class="rate">1 LVBTN = $2.50 USD</div>
     <div class="note">Updated manually until trading resumes after July 20, 2025.</div>
   </div>
+<body>
+  <h2>🟡 Live Bitcoin (BTC) Price</h2>
+  <p id="btc-price">Loading...</p>
 
+  <script>
+    async function updateBTCPrice() {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+        const data = await response.json();
+        const price = data.bitcoin.usd.toLocaleString("en-US", { style: "currency", currency: "USD" });
+        document.getElementById("btc-price").innerText = `BTC: ${price}`;
+      } catch (error) {
+        document.getElementById("btc-price").innerText = "Error loading BTC price.";
+        console.error("BTC price fetch error:", error);
+      }
+    }
+
+    // Update now and then every 60 seconds
+    updateBTCPrice();
+    setInterval(updateBTCPrice, 60000);
+  </script>
+</body>
 </body>
 </html>
