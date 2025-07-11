@@ -1,35 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Live BTC Price Tracker</title>
-  <style>
-    #btc-price {
-      font-size: 24px;
-      font-weight: bold;
-      color: #1a73e8;
-    }
-  </style>
+  <title>BTC & Gold Backing Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h2>🟡 Live Bitcoin (BTC) Price</h2>
-  <p id="btc-price">Loading...</p>
+  <h2>Bitcoin Backing Progress</h2>
+  <canvas id="btcChart" width="300" height="300"></canvas>
+
+  <h2>Gold Backing Progress</h2>
+  <canvas id="goldChart" width="300" height="300"></canvas>
 
   <script>
-    async function updateBTCPrice() {
-      try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-        const data = await response.json();
-        const price = data.bitcoin.usd.toLocaleString("en-US", { style: "currency", currency: "USD" });
-        document.getElementById("btc-price").innerText = `BTC: ${price}`;
-      } catch (error) {
-        document.getElementById("btc-price").innerText = "Error loading BTC price.";
-        console.error("BTC price fetch error:", error);
-      }
-    }
+    const btcData = {
+      datasets: [{
+        data: [0, 100],
+        backgroundColor: ['#f7931a', '#e0e0e0']
+      }],
+      labels: ['Backed', 'Remaining']
+    };
 
-    // Update now and then every 60 seconds
-    updateBTCPrice();
-    setInterval(updateBTCPrice, 60000);
+    const goldData = {
+      datasets: [{
+        data: [0, 100],
+        backgroundColor: ['#FFD700', '#e0e0e0']
+      }],
+      labels: ['Backed', 'Remaining']
+    };
+
+    const options = {
+      responsive: false,
+      cutout: '70%',
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.label}: ${context.parsed}%`;
+            }
+          }
+        }
+      }
+    };
+
+    new Chart(document.getElementById('btcChart'), {
+      type: 'doughnut',
+      data: btcData,
+      options: options
+    });
+
+    new Chart(document.getElementById('goldChart'), {
+      type: 'doughnut',
+      data: goldData,
+      options: options
+    });
   </script>
 </body>
 </html>
