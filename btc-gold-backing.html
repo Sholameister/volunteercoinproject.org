@@ -1,58 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BTC & Gold Backing Tracker</title>
+  <title>LVBTN Backing Progress</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container {
+      width: 300px;
+      margin: auto;
+    }
+    h2 { text-align: center; }
+  </style>
 </head>
 <body>
   <h2>Bitcoin Backing Progress</h2>
-  <canvas id="btcChart" width="300" height="300"></canvas>
+  <div class="chart-container">
+    <canvas id="btcChart"></canvas>
+  </div>
 
   <h2>Gold Backing Progress</h2>
-  <canvas id="goldChart" width="300" height="300"></canvas>
+  <div class="chart-container">
+    <canvas id="goldChart"></canvas>
+  </div>
 
   <script>
-    const btcData = {
-      datasets: [{
-        data: [0, 100],
-        backgroundColor: ['#f7931a', '#e0e0e0']
-      }],
-      labels: ['Backed', 'Remaining']
-    };
+    const btcBackingPercent = 0; // Change this number as backing increases
+    const goldBackingPercent = 0; // Change this number as gold backing increases
 
-    const goldData = {
-      datasets: [{
-        data: [0, 100],
-        backgroundColor: ['#FFD700', '#e0e0e0']
-      }],
-      labels: ['Backed', 'Remaining']
-    };
-
-    const options = {
-      responsive: false,
-      cutout: '70%',
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.label}: ${context.parsed}%`;
-            }
-          }
+    const config = (percent, label, color) => ({
+      type: 'doughnut',
+      data: {
+        labels: [label, 'Remaining'],
+        datasets: [{
+          data: [percent, 100 - percent],
+          backgroundColor: [color, '#eeeeee'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        cutout: '75%',
+        plugins: {
+          tooltip: { enabled: true },
+          legend: { display: true }
         }
       }
-    };
-
-    new Chart(document.getElementById('btcChart'), {
-      type: 'doughnut',
-      data: btcData,
-      options: options
     });
 
-    new Chart(document.getElementById('goldChart'), {
-      type: 'doughnut',
-      data: goldData,
-      options: options
-    });
+    new Chart(document.getElementById('btcChart'), config(btcBackingPercent, 'BTC Backing', '#f7931a'));
+    new Chart(document.getElementById('goldChart'), config(goldBackingPercent, 'Gold Backing', '#ffd700'));
   </script>
 </body>
 </html>
