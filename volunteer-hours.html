@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Volunteer Hours | LVBTN</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefefe;
+      color: #333;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #d94c4c;
+    }
+    .tracker-container {
+      max-width: 700px;
+      margin: 40px auto;
+    }
+    label {
+      font-size: 16px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 20px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #ffdddd;
+      color: #5a0000;
+    }
+    .summary {
+      margin-top: 30px;
+      font-size: 18px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📋 Your Volunteer Hours</h1>
+
+  <div class="tracker-container">
+    <label for="wallet">Enter your email or wallet ID to see your hours:</label>
+    <input type="text" id="wallet" placeholder="example@email.com or GABC...XYZ">
+
+    <!-- Simulated results (will later connect to Firebase or Google Sheets) -->
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Activity</th>
+        <th>Hours</th>
+        <th>Tokens Earned</th>
+      </tr>
+      <tr>
+        <td>2025-07-09</td>
+        <td>Food Drive</td>
+        <td>3</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>2025-07-10</td>
+        <td>Veteran Transport</td>
+        <td>2</td>
+        <td>2</td>
+      </tr>
+    </table>
+
+    <div class="summary">
+      <p><strong>Total Hours:</strong> 5</p>
+      <p><strong>Total LVBTN Earned:</strong> 5 Tokens</p>
+    </div>
+  </div>
+
+</body>
+</html>
