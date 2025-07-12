@@ -39,31 +39,31 @@
     tr:nth-child(even) {
       background-color: #fff0f0;
     }
-    .note {
-      text-align: center;
-      font-style: italic;
-      margin-top: 20px;
-    }
-    .btn-back {
-      display: block;
-      width: 200px;
-      margin: 30px auto;
-      padding: 10px;
-      background: #d94c4c;
+    .btn-pay {
+      display: inline-block;
+      padding: 14px 28px;
+      background-color: #007bff;
       color: white;
-      text-align: center;
-      border-radius: 5px;
+      font-size: 18px;
       text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
     }
-    .btn-back:hover {
-      background: #c23a3a;
+    .btn-pay:hover {
+      background-color: #0056b3;
+    }
+    .btn-wrapper {
+      text-align: center;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
   <h1>💖 Institutional Token Packages</h1>
-  <p>Welcome! As a nonprofit or service-based organization, you can receive 314 free LoveButton Tokens to kickstart your volunteer engagement. After that, you may purchase token bundles as needed:</p>
+
+  <p>Welcome! As a nonprofit or service-based organization, you can receive <strong>100 free LoveButton Tokens</strong> to kickstart your volunteer engagement. Additional tokens can be purchased in packages:</p>
 
   <table>
     <tr>
@@ -74,44 +74,35 @@
     </tr>
     <tr>
       <td>🎁 Starter Package (Free)</td>
-      <td>314 LVBTN</td>
+      <td>100 LVBTN</td>
       <td>$0.00</td>
       <td>$0.00</td>
     </tr>
     <tr>
       <td>🔹 Standard</td>
-      <td>314 LVBTN</td>
+      <td>1 - 100 LVBTN</td>
       <td>$2.50</td>
-      <td>$785.00</td>
+      <td>$2.50 - $250</td>
     </tr>
     <tr>
       <td>🔸 Bulk 10% Off</td>
-      <td>628 LVBTN</td>
+      <td>101 - 200 LVBTN</td>
       <td>$2.25</td>
-      <td>$1,413.00</td>
+      <td>$227 - $450</td>
     </tr>
     <tr>
       <td>💎 Bulk 15% Off</td>
-      <td>942 LVBTN</td>
+      <td>201+ LVBTN</td>
       <td>$2.125</td>
-      <td>$2,001.75</td>
+      <td>$427+</td>
     </tr>
   </table>
 
-  <p class="note">📌 All institutions are required to reward volunteers at a fixed rate of <strong>3.14 LVBTN per hour</strong> of service.</p>
-<div style="text-align: center; margin-top: 40px;"><a href="https://www.paypal.com/ncp/payment/MFYCJQJP3DYVY" target="_blank" style="
-    display: inline-block;
-    padding: 14px 28px;
-    background-color: #007bff;
-    color: white;
-    font-size: 18px;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  ">
-    Purchase Tokens Here
-  </a>
+  <div class="btn-wrapper">
+    <a href="https://www.paypal.com/ncp/payment/MFYCJQJP3DYVY" target="_blank" class="btn-pay">
+      Purchase Tokens Here
+    </a>
+  </div>
 
-  
 </body>
 </html>
