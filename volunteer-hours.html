@@ -14,6 +14,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Your Volunteer Hours | LVBTN</title>
   <style>
+    <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const logButton = document.getElementById('log-hours');
+    if (logButton) {
+      logButton.addEventListener('click', function () {
+        gtag('event', 'log_volunteer_hours_clicked', {
+          'event_category': 'engagement',
+          'event_label': 'Log Volunteer Hours Button',
+        });
+      });
+    }
+  });
+</script>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fefefe;
