@@ -37,6 +37,45 @@
     });
   }
 </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function trackClick(id, label) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('click', function () {
+          gtag('event', 'button_click', {
+            'event_category': 'engagement',
+            'event_label': label
+          });
+        });
+      }
+    }
+
+    // Home/index.html
+    trackClick('btn-solana-view', 'View Token on Solana');
+    trackClick('btn-1to2-swap', 'Submit for 1:2 Swap');
+    trackClick('btn-burn-ledger', 'Burn Ledger and Audit');
+    trackClick('btn-kyc-signup', 'KYC & Volunteer Signup');
+    trackClick('btn-token-packages', 'Institution Token Packages');
+    trackClick('btn-partners', 'Institutional Partners');
+    trackClick('btn-cashout-rate', 'View Cash-Out Rate');
+    trackClick('btn-btc-gold', 'View BTC/Gold Backing');
+    trackClick('btn-request-volunteers', 'Request Volunteers');
+    trackClick('btn-volunteer-hours', 'Volunteer Hours');
+    trackClick('btn-download-android', 'Download Love Button for Android');
+
+    // Volunteer request page
+    trackClick('btn-open-form-tab', 'Open Form in New Tab');
+    trackClick('btn-view-individual-pricing', 'View Individual Pricing');
+    trackClick('btn-purchase-tokens', 'Purchase Tokens Here');
+
+    // Institutional partner section
+    trackClick('btn-request-starter-pack', 'Request 50 Token Starter Pack');
+    trackClick('btn-institution-purchase', 'Institution Purchase Tokens');
+  });
+</script>
+
+
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
