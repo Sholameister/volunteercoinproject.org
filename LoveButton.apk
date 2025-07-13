@@ -1,4 +1,9 @@
-<a href="https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/LoveButton.apk" onclick="gtag('event', 'download_click', {
-  event_category: 'App',
-  event_label: 'APK Download'
-});" target="_blank" rel="noopener">Download LoveButton for Android</a>
+<a href="https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/LoveButton.apk"
+   onclick="gtag('event', 'download_click', {
+     event_category: 'App',
+     event_label: 'APK Download'
+   });"
+   target="_blank" rel="noopener"
+   style="background-color: #28a745; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+   Download LoveButton for Android
+</a>
