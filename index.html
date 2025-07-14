@@ -1,93 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-DF0HYPGY7M');
-</script>
-  <!-- iOS Smart App Banner -->
-<meta name="apple-mobile-web-app-title" content="LoveButton">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-
-<!-- App Manifest & Icon Setup -->
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
-<meta name="theme-color" content="#ff3366">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="application-name" content="LoveButton">
-<meta name="apple-mobile-web-app-title" content="LoveButton">
-<meta name="description" content="Volunteer. Give. Earn. The LoveButton App tracks volunteer hours and rewards people with LVBTN tokens.">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LoveButton Token (LVBTN)</title>
-  <!-- PWA Support -->
-<link rel="manifest" href="/manifest.json">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').then(function() {
-      console.log("Service Worker Registered");
-    });
-  }
-</script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
   <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    function trackClick(id, label) {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('click', function () {
-          gtag('event', 'button_click', {
-            'event_category': 'engagement',
-            'event_label': label
-          });
-        });
-      }
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DF0HYPGY7M');
+  </script>
+
+  <!-- PWA & iOS Meta -->
+  <meta name="apple-mobile-web-app-title" content="LoveButton">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+  <meta name="theme-color" content="#ff3366">
+  <meta name="description" content="Volunteer. Give. Earn. The LoveButton App tracks volunteer hours and rewards people with LVBTN tokens.">
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(() => {
+        console.log("Service Worker Registered");
+      });
     }
+  </script>
 
-    // Home/index.html
-    trackClick('btn-solana-view', 'View Token on Solana');
-    trackClick('btn-1to2-swap', 'Submit for 1:2 Swap');
-    trackClick('btn-burn-ledger', 'Burn Ledger and Audit');
-    trackClick('btn-kyc-signup', 'KYC & Volunteer Signup');
-    trackClick('btn-token-packages', 'Institution Token Packages');
-    trackClick('btn-partners', 'Institutional Partners');
-    trackClick('btn-cashout-rate', 'View Cash-Out Rate');
-    trackClick('btn-btc-gold', 'View BTC/Gold Backing');
-    trackClick('btn-request-volunteers', 'Request Volunteers');
-    trackClick('btn-volunteer-hours', 'Volunteer Hours');
-    trackClick('btn-download-android', 'Download Love Button for Android');
+  <!-- Tawk.to Live Chat -->
+  <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true;
+      s1.src='https://embed.tawk.to/687401afe5777f190f9afe5a/1j02id5no';
+      s1.charset='UTF-8';
+      s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
 
-    // Volunteer request page
-    trackClick('btn-open-form-tab', 'Open Form in New Tab');
-    trackClick('btn-view-individual-pricing', 'View Individual Pricing');
-    trackClick('btn-purchase-tokens', 'Purchase Tokens Here');
-
-    // Institutional partner section
-    trackClick('btn-request-starter-pack', 'Request 50 Token Starter Pack');
-    trackClick('btn-institution-purchase', 'Institution Purchase Tokens');
-  });
-</script>
-  <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/687401afe5777f190f9afe5a/1j02id5no';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
- <style>
+  <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fffdfd;
@@ -100,6 +59,7 @@ s0.parentNode.insertBefore(s1,s0);
       color: white;
       padding: 30px 20px;
       text-align: center;
+      position: relative;
     }
     header h1 {
       font-size: 2.5em;
@@ -109,6 +69,26 @@ s0.parentNode.insertBefore(s1,s0);
       font-size: 1.2em;
       margin-top: 10px;
       font-style: italic;
+    }
+    .top-right-links {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .top-btn {
+      background-color: #ffffff;
+      color: #ff4081;
+      padding: 8px 16px;
+      margin-left: 10px;
+      border: 2px solid #ff4081;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .top-btn:hover {
+      background-color: #ff4081;
+      color: white;
     }
     .button-group {
       margin-top: 20px;
@@ -146,6 +126,13 @@ s0.parentNode.insertBefore(s1,s0);
       padding: 15px;
       border-left: 5px solid #ffc107;
     }
+    #btc-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1a73e8;
+      text-align: center;
+      margin-bottom: 20px;
+    }
     footer {
       background-color: #f1f1f1;
       text-align: center;
@@ -157,45 +144,31 @@ s0.parentNode.insertBefore(s1,s0);
 <body>
 
 <header>
+  <div class="top-right-links">
+    <a href="http://login.html" class="top-btn" target="_blank" rel="noopener">Login</a>
+    <a href="http://signup.html" class="top-btn" target="_blank" rel="noopener">Sign Up</a>
+  </div>
   <h1>LoveButton Token (LVBTN)</h1>
   <p>"Transparency is our Virtue" — Built with Love. Backed by Integrity.</p>
-  <div class="button-group"><a href="https://solscan.io/token/Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s" target="_blank">
-    View Token on Solana
-  </a>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLScQ3ZmYbiQu36TzR6VyMnRqkvKOlG2w299mXRO3IosW1Mo7Dw/viewform?usp=dialog" target="_blank">
-    Submit for 1:2 Swap
-  </a>
-  <a href="https://volunteercoinproject.org/burn-ledger.html" target="_blank">
-    Burn Ledger & Audit
-  <a href="https://volunteercoinproject.org/volunteer-kyc.html" target="_blank" rel="noopener"><button>KYC & Volunteer Signup</button></a>
-    <a href="http://volunteercoinproject.org/institutional-token.html" target="_blank" rel="noopener"><button>Institution Token Packages</button></a>
-    <a href="http://volunteercoinproject.org/institutional-partners.html" target="_blank" rel="noopener">Institutional Partners</a>
-    <a href="http://volunteercoinproject.org/exchange-rate.html" class="btn" target="_blank" rel="noopener">View Cash-Out Rate</a>
-<a href="http://volunteercoinproject.org/btc-gold-backing.html" class="button" target="_blank" rel="noopener">View BTC / Gold Backing</a>
-<a href="http://volunteercoinproject.org/request-for-volunteer.html" class="button" target="_blank" rel="noopener">Request Volunteers</a>
-    <a href="http://volunteercoinproject.org/volunteer-hours.html" class="main-btn" target="_blank" rel="noopener">Volunteer Hours</a>
-      <a href="https://github.com/Sholameister/volunteercoinproject.org/releases/download/v1.0.0/LoveButton.apk"
-   target="_blank" rel="noopener"
-   style="background-color: #ff3366; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; font-size: 16px;">
-   📱 Download LoveButton for Android
-</a>
-    
-
-    <p style="color: white; font-size: 15px; padding-top: 10px;">
-  📲 After downloading, open your notification tray or Downloads folder and tap the file to install.  
-  If prompted, allow installs from unknown sources.
-</p>
-
-
-</a>
- </button>
-</a>
-  </button>
-</a>
-</div>
+  <div class="button-group">
+    <a href="https://solscan.io/token/Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s" target="_blank">View Token on Solana</a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLScQ3ZmYbiQu36TzR6VyMnRqkvKOlG2w299mXRO3IosW1Mo7Dw/viewform" target="_blank">Submit for 1:2 Swap</a>
+    <a href="https://volunteercoinproject.org/burn-ledger.html" target="_blank">Burn Ledger & Audit</a>
+    <a href="https://volunteercoinproject.org/volunteer-kyc.html" target="_blank">KYC & Volunteer Signup</a>
+    <a href="http://volunteercoinproject.org/institutional-token.html" target="_blank">Institution Token Packages</a>
+    <a href="http://volunteercoinproject.org/institutional-partners.html" target="_blank">Institutional Partners</a>
+    <a href="http://volunteercoinproject.org/exchange-rate.html" target="_blank">View Cash-Out Rate</a>
+    <a href="http://volunteercoinproject.org/btc-gold-backing.html" target="_blank">View BTC / Gold Backing</a>
+    <a href="http://volunteercoinproject.org/request-for-volunteer.html" target="_blank">Request Volunteers</a>
+    <a href="http://volunteercoinproject.org/volunteer-hours.html" target="_blank">Volunteer Hours</a>
+    <a href="https://github.com/Sholameister/volunteercoinproject.org/releases/download/v1.0.0/LoveButton.apk" target="_blank">📱 Download LoveButton for Android</a>
+    <p style="color: white; font-size: 15px;">📲 After downloading, open your notification tray or Downloads folder and tap the file to install. If prompted, allow installs from unknown sources.</p>
+  </div>
 </header>
 
 <div class="content">
+  <div id="btc-price">BTC Price: Loading...</div>
+
   <div class="section">
     <h2>📊 LVBTN Token Snapshot (as of July 12, 2025)</h2>
     <table>
@@ -213,8 +186,7 @@ s0.parentNode.insertBefore(s1,s0);
   <div class="section highlight">
     <h2>⏳ Token Swap Deadline</h2>
     <p><strong>1-for-2 Token Swap Ends:</strong> July 19, 2025 at 11:59 PM CST</p>
-    <p>As of <strong>July 20, 2025, 00:00 CST</strong>, all circulating LVBTN will be zeroed and new airdrops issued only to registered wallets.</p>
-   
+    <p>As of <strong>July 20, 2025</strong>, all circulating LVBTN will be zeroed and new airdrops issued only to registered wallets.</p>
   </div>
 
   <div class="section">
@@ -231,56 +203,38 @@ s0.parentNode.insertBefore(s1,s0);
     <h2>🎮 Coming Soon: Earn, Play & Give Back</h2>
     <p>Use LVBTN to play games, earn points, and redeem real-world rewards. Volunteers will be able to earn tokens by logging hours and helping others. Love meets utility.</p>
   </div>
+
+  <div class="section" style="text-align:center;">
+    <button style="padding: 10px 20px; background-color: #333; color: #fff; font-size: 16px; border: none; border-radius: 8px;">
+      LVBTN Estimated Price: $2.50 (Fixed Floor)
+    </button>
+  </div>
 </div>
- 
-<div id="btc-price" style="font-weight:bold;">BTC Price: Loading...</div>
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Live BTC Price Tracker</title>
-  <style>
-    #btc-price {
-      font-size: 24px;
-      font-weight: bold;
-      color: #1a73e8;
-    }
-  </style>
-</head>
-<body>
-  <h2>🟡 Live Bitcoin (BTC) Price</h2>
- <button style="padding: 10px 20px; background-color: #333; color: #fff; font-size: 16px; border: none; border-radius: 8px;">
-  LVBTN Estimated Price: $2.50 (Fixed Floor)
-</button>
-  <script>
-    async function updateBTCPrice() {
-      try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-        const data = await response.json();
-        const price = data.bitcoin.usd.toLocaleString("en-US", { style: "currency", currency: "USD" });
-        document.getElementById("btc-price").innerText = `BTC: ${price}`;
-      } catch (error) {
-        document.getElementById("btc-price").innerText = "Error loading BTC price.";
-        console.error("BTC price fetch error:", error);
-      }
-    }
-
-    // Update now and then every 60 seconds
-    updateBTCPrice();
-    setInterval(updateBTCPrice, 60000);
-  </script>
-</body>
-  
-</html>
-
 
 <footer>
-  <p>Contact us: info@volunteercoinproject.org | Follow us: 
-    <a href="https://t.me/+TvnQ8aJX8sc4YTkx" target="_blank">X</a> | 
-    <a href="https://t.me/sholameister" target="_blank">Telegram</a> | 
-    <a href="https://www.facebook.com/share/1ByBdXjLaW/?mibextid=wwXIfr" target="_blank">Facebook</a> | 
+  <p>Contact us: info@volunteercoinproject.org | Follow us:
+    <a href="https://t.me/+TvnQ8aJX8sc4YTkx" target="_blank">X</a> |
+    <a href="https://t.me/sholameister" target="_blank">Telegram</a> |
+    <a href="https://www.facebook.com/share/1ByBdXjLaW/?mibextid=wwXIfr" target="_blank">Facebook</a> |
     <a href="https://www.linkedin.com/company/volunteercoinprojectfoundation" target="_blank">LinkedIn</a>
   </p>
 </footer>
+
+<script>
+  async function updateBTCPrice() {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+      const data = await response.json();
+      const price = data.bitcoin.usd.toLocaleString("en-US", { style: "currency", currency: "USD" });
+      document.getElementById("btc-price").innerText = `BTC: ${price}`;
+    } catch (error) {
+      document.getElementById("btc-price").innerText = "Error loading BTC price.";
+      console.error("BTC price fetch error:", error);
+    }
+  }
+  updateBTCPrice();
+  setInterval(updateBTCPrice, 60000);
+</script>
 
 </body>
 </html>
