@@ -3,11 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <title>LoveButton Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f7f7f7;
+      color: #333;
+      text-align: center;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      width: 90%;
+      max-width: 300px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #ff3366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+
+  <!-- ✅ Firebase Setup -->
   <script type="module">
-    // ✅ Firebase Config – replace with your real values
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+    // ⚠️ Replace with your real Firebase config:
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_AUTH_DOMAIN",
@@ -21,12 +47,18 @@
     const auth = getAuth(app);
 
     window.signupUser = () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!email || !password) {
+        alert("Please enter both email and password.");
+        return;
+      }
 
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          alert("Signup successful!");
+          alert("Signup successful! Redirecting...");
+          window.location.href = "index.html"; // ✅ redirect to homepage
         })
         .catch((error) => {
           alert("Error: " + error.message);
@@ -34,11 +66,11 @@
     };
   </script>
 </head>
+
 <body>
-  <h2>Sign Up for LoveButton</h2>
-  <input type="email" id="email" placeholder="Email" required /><br />
-  <input type="password" id="password" placeholder="Password" required /><br />
-  <button onclick="signupUser()">Sign Up</button>
-  <p>Already have an account? <a href="http://login.html" target="_blank" rel="noopener">Log in here</a></p>
+  <h2>💖 Sign Up for LoveButton</h2>
+  <input type="email" id="email" placeholder="Email Address" required /><br />
+  <input type="password" id="password" placeholder="Password (min 6 chars)" required /><br />
+  <button onclick="signupUser()">Create Account</button>
 </body>
 </html>
