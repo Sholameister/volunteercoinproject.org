@@ -1,38 +1,27 @@
-<!-- Firebase App (core SDK) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-
-<script>
-  // Replace with your actual Firebase config
-  const firebaseConfig = {
-    apiKey: "",
-    authDomain: "lovebutton-heaven.firebaseapp.com",
-    projectId: "lovebutton-heaven",
-    appId: "1:1079456151721:web:15d2aa1171d977da8c11b8"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Login – LoveButton</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fff0f5;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       height: 100vh;
+      margin: 0;
     }
     .login-box {
       background: #ffffff;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 300px;
+      width: 90%;
+      max-width: 320px;
       text-align: center;
     }
     input {
@@ -51,32 +40,53 @@
       cursor: pointer;
       font-weight: bold;
     }
+    a {
+      color: #ff4081;
+      text-decoration: none;
+    }
   </style>
-</head>
-<body>
-  <div class="login-box">
-    <h2>Login to LoveButton</h2>
-    <input type="email" id="email" placeholder="Email" required /><br>
-    <input type="password" id="password" placeholder="Password" required /><br>
-    <button onclick="login()">Login</button>
-    <p id="error" style="color: red; margin-top: 10px;"></p>
-  </div>
 
-  <script>
-    function login() {
+  <!-- ✅ Firebase (Module-style) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    // ⚠️ Replace with your actual Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = () => {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
-      firebase.auth().signInWithEmailAndPassword(email, password)
+      signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Success
-          window.location.href = "index.html"; // redirect to homepage
+          // Success – redirect
+          window.location.href = "index.html";
         })
         .catch((error) => {
           document.getElementById('error').innerText = error.message;
         });
-    }
+    };
   </script>
+</head>
+
+<body>
+  <div class="login-box">
+    <h2>Login to LoveButton</h2>
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <p id="error" style="color: red; margin-top: 10px;"></p>
+    <p style="margin-top: 20px;">Don’t have an account? <a href="http://signup.html" target="_blank" rel="noopener">Sign up here</a></p>
+  </div>
 </body>
-  <p>Don't have an account? <a href="http://signup.html" target="_blank" rel="noopener">Sign up here</a></p>
 </html>
+
