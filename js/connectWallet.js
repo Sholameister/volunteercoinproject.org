@@ -35,3 +35,18 @@
     walletDisplay.innerText = "❌ No supported wallet found.";
   });
 </script>
+<script>
+  async function connectMetaMask() {
+    if (window.ethereum) {
+      try {
+        const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+        const wallet = accounts[0];
+        document.getElementById("walletAddress").innerText = `🦊 MetaMask: ${wallet}`;
+      } catch (e) {
+        console.error("MetaMask Error:", e);
+      }
+    } else {
+      alert("MetaMask not detected");
+    }
+  }
+</script>
