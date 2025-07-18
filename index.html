@@ -402,9 +402,7 @@
 
     // Show session summary
     const summary = `
-      <p><strong>Wallet:</strong><p id="walletDisplay"></p>
-      ${sessionData.wallet}</p>
-      
+      <p><strong>Wallet:</strong> <p id="walletDisplay"></p>${sessionData.wallet}</p>
       <p><strong>Start:</strong> ${sessionData.startTime.toLocaleString()}</p>
       <p><strong>Stop:</strong> ${sessionData.stopTime.toLocaleString()}</p>
       <p><strong>Duration:</strong> ${hours} hours</p>
@@ -412,34 +410,47 @@
       <p><strong>Location:</strong> ${sessionData.location?.lat ?? "N/A"}, ${sessionData.location?.lng ?? "N/A"}</p>
     `;
     document.getElementById('sessionSummary').innerHTML = summary;
-<script>
-  // Set the target date and time (example: July 19, 2025 at 23:59 CST)
-  const targetDate = new Date("2025-07-19T23:59:00-05:00").getTime();
-
-  const countdown = setInterval(function () {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
-
-    // Time calculations
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    // Output to HTML element
-    document.getElementById("countdown").innerHTML =
-      `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-    // If the countdown is finished
-    if (distance < 0) {
-      clearInterval(countdown);
-      document.getElementById("countdown").innerHTML = "🎉 Deadline reached!";
-    }
-  }, 1000);
-</script>
-
   });
+ // Countdown Timer Script
+  <script>
+    function updateCountdown()  {
+      const deadline = new Date("2025-07-19T23:59:00-05:00").getTime(); // CST
 
+  const now = new Date().getTime();
+
+  const distance = deadline - now;
+
+
+
+  if (distance <= 0) {
+
+    document.getElementById("timer").innerHTML = "✅ 1-for-2 LVBTN token swap deadline has passed!";
+
+    clearInterval(countdownInterval);
+
+    return;
+
+  }
+
+
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+
+
+  document.getElementById("timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+}
+
+
+
+const countdownInterval = setInterval
 
 </script>
 </body>
