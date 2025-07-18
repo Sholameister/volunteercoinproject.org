@@ -412,8 +412,32 @@
       <p><strong>Location:</strong> ${sessionData.location?.lat ?? "N/A"}, ${sessionData.location?.lng ?? "N/A"}</p>
     `;
     document.getElementById('sessionSummary').innerHTML = summary;
+<script>
+  // Set the target date and time (example: July 19, 2025 at 23:59 CST)
+  const targetDate = new Date("2025-07-19T23:59:00-05:00").getTime();
 
-    // Next up: send to Firebase or backend!
+  const countdown = setInterval(function () {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    // Time calculations
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Output to HTML element
+    document.getElementById("countdown").innerHTML =
+      `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+    // If the countdown is finished
+    if (distance < 0) {
+      clearInterval(countdown);
+      document.getElementById("countdown").innerHTML = "🎉 Deadline reached!";
+    }
+  }, 1000);
+</script>
+
   });
 
 
