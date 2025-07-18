@@ -394,8 +394,9 @@
 
     // Show session summary
     const summary = `
-      <p><strong>Wallet:</strong> ${sessionData.wallet}</p>
-      <p id="walletDisplay"></p>
+      <p><strong>Wallet:</strong><p id="walletDisplay"></p>
+      ${sessionData.wallet}</p>
+      
       <p><strong>Start:</strong> ${sessionData.startTime.toLocaleString()}</p>
       <p><strong>Stop:</strong> ${sessionData.stopTime.toLocaleString()}</p>
       <p><strong>Duration:</strong> ${hours} hours</p>
