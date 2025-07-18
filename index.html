@@ -306,20 +306,31 @@
   updateBTCPrice();
   setInterval(updateBTCPrice, 60000);
 </script>
-<div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px;"><h2>👷 Volunteer Check-In</h2>
+<div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;"><h2>👷 Volunteer Check-In</h2>
   <p>Connect your wallet, snap a photo, and start tracking your volunteer time.</p>
   
   <button id="connectWallet" style="padding:10px 20px; background:#6a1b9a; color:#fff; border:none; border-radius:5px;">🔗 Connect Wallet</button>
   
   <div id="walletAddress" style="margin:10px 0; font-weight:bold;"></div>
 
-  <input type="file" accept="image/*" capture="environment" id="startPhoto" />
-  <button id="startBtn">📍 Start Volunteering</button>
-  
-  <input type="file" accept="image/*" capture="environment" id="stopPhoto" />
-  <button id="stopBtn">✅ Stop Volunteering</button>
-  
+  <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
+
+    <!-- Start Section -->
+    <div>
+      <input type="file" accept="image/*" capture="environment" id="startPhoto" />
+      <button id="startBtn" style="margin-top:5px;">📍 Start Volunteering</button>
+    </div>
+
+    <!-- Stop Section -->
+    <div>
+      <input type="file" accept="image/*" capture="environment" id="stopPhoto" />
+      <button id="stopBtn" style="margin-top:5px;">✅ Stop Volunteering</button>
+    </div>
+
+  </div>
+
   <div id="sessionSummary" style="margin-top:15px;"></div>
-</div>
+</div>🔗 Connect Wallet</button>
+
 </body>
 </html>
