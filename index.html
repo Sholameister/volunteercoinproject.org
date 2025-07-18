@@ -439,6 +439,33 @@
       document.getElementById("countdown").innerHTML = "🎉 Deadline reached!";
     }
   }, 1000);
+  <div id="countdown" style="font-size: 24px; font-weight: bold; color: #c72c48; margin-top: 30px;">⏳ Final Countdown: <span id="timer"></span>
+</div>
+
+<script>
+  function updateCountdown() {
+    const deadline = new Date("2025-07-19T23:59:00-05:00").getTime(); // CST
+    const now = new Date().getTime();
+    const distance = deadline - now;
+
+    if (distance <= 0) {
+      document.getElementById("timer").innerHTML = "✅ 1-for-2 LVBTN token swap deadline has passed!";
+      clearInterval(countdownInterval);
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("timer").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  const countdownInterval = setInterval(updateCountdown, 1000);
+  updateCountdown(); // run immediately too
+</script>
+
 </script>
 
 </script>
