@@ -212,26 +212,6 @@
   <p style="margin-top: 10px; font-size: 16px;">This is a <strong>1-for-2 Swap</strong> — for every 1 LVBTN, you’ll receive 2 new ones.<br>All tokens not registered will be burned. No exceptions.</p>
 </div>
 
-<script>
-  const deadline = new Date("July 19, 2025 23:59:00 CST").getTime();
-  const x = setInterval(function() {
-    const now = new Date().getTime();
-    const t = deadline - now;
-
-    if (t < 0) {
-      document.getElementById("countdown").innerHTML = "⛔ SWAP CLOSED";
-      clearInterval(x);
-    } else {
-      const days = Math.floor(t / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((t % (1000 * 60)) / 1000);
-      document.getElementById("countdown").innerHTML =
-        days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-    }
-  }, 1000);
-</script>
-
   <div class="section" style="text-align:center;">
     <button style="padding: 10px 20px; background-color: #333; color: #fff; font-size: 16px; border: none; border-radius: 8px;">
       LVBTN Estimated Price: $2.50 (Fixed Floor)
