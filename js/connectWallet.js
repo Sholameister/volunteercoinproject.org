@@ -72,7 +72,7 @@ try {
       });
 
       const data = await res.json();
-      const balance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+      let balance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
 
       if (balance >= 1) {
         display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}\nLVBTN: ${balance}`;
