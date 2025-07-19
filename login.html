@@ -37,36 +37,35 @@
   <h1>Welcome to LoveButton</h1>
   <p>Connect your wallet to begin:</p>
 
-  <div id="wallet-buttons"></div>
+  <div id="wallet-buttons">
+    <button id="phantom-button">Connect Phantom</button>
+    <button id="solflare-button">Connect Solflare</button>
+    <button id="backpack-button">Connect Backpack</button>
+  </div>
+
   <div id="wallet-address"></div>
 
   <script>
     const { PhantomWalletAdapter, SolflareWalletAdapter, BackpackWalletAdapter } = window.SolanaWalletAdapterWallets;
 
-    const wallets = [
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
-      new BackpackWalletAdapter()
-    ];
+    const phantom = new PhantomWalletAdapter();
+    const solflare = new SolflareWalletAdapter();
+    const backpack = new BackpackWalletAdapter();
 
-    const container = document.getElementById("wallet-buttons");
+    async function connectAndDisplay(wallet, name) {
+      try {
+        await wallet.connect();
+        const address = wallet.publicKey.toString();
+        document.getElementById("wallet-address").innerText = `Connected with ${name}: ${address}`;
+      } catch (err) {
+        alert(`Failed to connect ${name}: ${err.message}`);
+        console.error(err);
+      }
+    }
 
-    wallets.forEach(wallet => {
-      const btn = document.createElement("button");
-      btn.innerText = `Connect ${wallet.name}`;
-      btn.onclick = async () => {
-        try {
-          await wallet.connect();
-          const address = wallet.publicKey.toString();
-          document.getElementById("wallet-address").innerText = `Connected: ${address}`;
-          // TODO: Add Firebase logging or redirect here
-        } catch (err) {
-          alert(`Error connecting to ${wallet.name}: ${err.message}`);
-          console.error(err);
-        }
-      };
-      container.appendChild(btn);
-    });
+    document.getElementById("phantom-button").onclick = () => connectAndDisplay(phantom, "Phantom");
+    document.getElementById("solflare-button").onclick = () => connectAndDisplay(solflare, "Solflare");
+    document.getElementById("backpack-button").onclick = () => connectAndDisplay(backpack, "Backpack");
   </script>
 </body>
 </html>
