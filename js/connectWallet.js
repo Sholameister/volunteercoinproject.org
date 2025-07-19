@@ -1,3 +1,18 @@
+// js/connectWallet.js
+async function connectPhantomWallet() {
+  const { solana } = window;
+  if (solana && solana.isPhantom) {
+    try {
+      const resp = await solana.connect();
+      alert(`Wallet connected: ${resp.publicKey.toString()}`);
+    } catch (err) {
+      console.error('Wallet connection failed', err);
+    }
+  } else {
+    alert('Phantom Wallet not found. Please install it!');
+  }
+}
+
 // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import {getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
