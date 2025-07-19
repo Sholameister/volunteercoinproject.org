@@ -58,7 +58,7 @@ try {
 }
 
       // 🧠 Check LVBTN balance
-      const res = await fetch("https://api.mainnet-beta.solana.com", {
+      const res = await fetch("https://api.helius.xyz/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
