@@ -31,6 +31,31 @@ async function solanaConnectAndCheck() {
     try {
       const resp = await solana.connect();
       const wallet = resp.publicKey.toString();
+let balance = 0;
+try {
+  const res = await fetch("https://api.helius.xyz/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer 2ad90be8-8d2c-bde9-5938674027a7"
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "getTokenAccountsByOwner",
+      params: [
+        wallet,
+        { mint: LVBTN_MINT },
+        { encoding: "jsonParsed" }
+      ]
+    })
+  });
+
+  const data = await res.json();
+  balance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+} catch (e) {
+  console.error("Token check error:", e);
+}
 
       // 🧠 Check LVBTN balance
       const res = await fetch("https://api.mainnet-beta.solana.com", {
