@@ -4,13 +4,13 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-  authDomain: "lovebutton-heaven.firebaseapp.com",
-  projectId: "lovebutton-heaven",
-  storageBucket: "lovebutton-heaven.firebasestorage.app",
-  messagingSenderId: "1079456151721",
-  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-  measurementId: "G-0261HYV08P"
+  apiKey: "AIzaSyAfoWYmt1z-hHwq1Ggceuq_ZsnehakEnWY",
+  authDomain: "lovebuttonapp-1.firebaseapp.com",
+  projectId: "lovebuttonapp-1",
+  storageBucket: "lovebuttonapp-1.firebasestorage.app",
+  messagingSenderId: "799919868790",
+  appId: "1:799919868790:web:db7a180014955585e40857",
+  measurementId: "G-ZPNP104NTK"
 };
 
 
