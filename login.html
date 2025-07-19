@@ -77,8 +77,7 @@
 </script>
 <div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;"><h2>👷 Volunteer Check-In</h2>
   <p>Connect your wallet, snap a photo, and start tracking your volunteer time.</p></div>
-<button id="connectWallet">🔗 Connect Wallet</button>
-<button id="solflare-button">Connect Solflare</button>
+<button id="connectWallet" onclick="unifiedConnect()">🔗 Connect Wallet</button>
 <div id="walletAddress" style="margin-top: 10px;"></div>
 
     <!-- Start Section -->
@@ -176,6 +175,50 @@
     document.getElementById('sessionSummary').innerHTML = summary;
   });
 </script>
+  <script>
+  async function unifiedConnect() {
+    const status = document.getElementById('status');
+
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const resp = await window.solana.connect();
+        status.innerText = `Connected: ${resp.publicKey.toString()}`;
+        sessionStorage.setItem("walletAddress", resp.publicKey.toString());
+        showVolunteerControls();
+        return;
+      } catch (err) {
+        console.error("Phantom connection error", err);
+      }
+    }
+
+    if (typeof Solflare !== "undefined") {
+      const solflare = new Solflare();
+      if (solflare.isSolflare) {
+        try {
+          await solflare.connect();
+          status.innerText = `Connected: ${solflare.publicKey.toString()}`;
+          sessionStorage.setItem("walletAddress", solflare.publicKey.toString());
+          showVolunteerControls();
+          return;
+        } catch (err) {
+          console.error("Solflare connection error", err);
+        }
+      } else {
+        alert("Please install Solflare: https://solflare.com");
+      }
+    }
+
+    if (!window.solana && typeof Solflare === "undefined") {
+      alert("No compatible wallet found. Please install Phantom or Solflare.");
+    }
+  }
+
+  function showVolunteerControls() {
+    document.getElementById("start-button").style.display = "inline-block";
+    document.getElementById("stop-button").style.display = "inline-block";
+  }
+</script>
+
   </script>
 
   <!-- Optional: Include Solflare SDK -->
