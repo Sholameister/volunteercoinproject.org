@@ -4,12 +4,15 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // ✅ Your Firebase Config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
+  const firebaseConfig = {
+  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+  authDomain: "lovebutton-heaven.firebaseapp.com",
+  projectId: "lovebutton-heaven",
+  storageBucket: "lovebutton-heaven.firebasestorage.app",
+  messagingSenderId: "1079456151721",
+  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+  measurementId: "G-0261HYV08P"
+};
 };
 
 // ✅ Initialize Firebase
@@ -28,6 +31,31 @@ async function solanaConnectAndCheck() {
     try {
       const resp = await solana.connect();
       const wallet = resp.publicKey.toString();
+let balance = 0;
+try {
+  const res = await fetch("https://api.helius.xyz/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer 2ad90be8-8d2c-bde9-5938674027a7"
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "getTokenAccountsByOwner",
+      params: [
+        wallet,
+        { mint: LVBTN_MINT },
+        { encoding: "jsonParsed" }
+      ]
+    })
+  });
+
+  const data = await res.json();
+  balance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+} catch (e) {
+  console.error("Token check error:", e);
+}
 
       // 🧠 Check LVBTN balance
       const res = await fetch("https://api.mainnet-beta.solana.com", {
