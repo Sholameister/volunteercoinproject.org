@@ -4,12 +4,15 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 // ✅ Your Firebase Config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
+  const firebaseConfig = {
+  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+  authDomain: "lovebutton-heaven.firebaseapp.com",
+  projectId: "lovebutton-heaven",
+  storageBucket: "lovebutton-heaven.firebasestorage.app",
+  messagingSenderId: "1079456151721",
+  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+  measurementId: "G-0261HYV08P"
+};
 };
 
 // ✅ Initialize Firebase
