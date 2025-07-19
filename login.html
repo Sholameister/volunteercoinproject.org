@@ -28,9 +28,10 @@
 </head>
 <body>
   <h1>Welcome to LoveButton</h1>
-  <p>Connect your wallet to begin:</p>
-
-  <div id="wallet-address"></div>
+  <div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;"><h2>👷 Volunteer Check-In</h2>
+  <p>Connect your wallet, snap a photo, and start tracking your volunteer time.</p></div>
+<button id="connectWallet" onclick="unifiedConnect()">🔗 Connect Wallet</button>
+<div id="walletAddress" style="margin-top: 10px;"></div>
 
   <script>
     async function connectPhantom() {
