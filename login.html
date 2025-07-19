@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LoveButton Login</title>
   <style>
     body {
@@ -10,9 +10,6 @@
       text-align: center;
       padding: 50px;
       background: #f9f9f9;
-    }
-    #wallet-buttons {
-      margin-top: 30px;
     }
     button {
       padding: 12px 20px;
@@ -29,30 +26,31 @@
 <body>
   <h1>Welcome to LoveButton</h1>
 
-  <div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;">
+  <div id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;">
     <h2>👷 Volunteer Check-In</h2>
     <p>Connect your wallet, snap a photo, and start tracking your volunteer time.</p>
+    <button id="connectWallet">🔗 Connect Wallet</button>
+    <div id="wallet-address"></div>
   </div>
-
-  <button id="connectWallet" onclick="unifiedConnect()">🔗 Connect Wallet</button>
-  <div id="walletAddress" style="margin-top: 10px;"></div>
 
   <!-- Start Section -->
   <div>
     <input type="file" accept="image/*" capture="environment" id="startPhoto" />
-    <button id="startBtn" style="margin-top:5px;">📍 Start Volunteering</button>
+    <button id="startBtn">📍 Start Volunteering</button>
   </div>
 
   <!-- Stop Section -->
   <div>
     <input type="file" accept="image/*" capture="environment" id="stopPhoto" />
-    <button id="stopBtn" style="margin-top:5px;">✅ Stop Volunteering</button>
+    <button id="stopBtn">✅ Stop Volunteering</button>
   </div>
 
   <div id="sessionSummary" style="margin-top:15px;"></div>
 
+  <!-- Solflare SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@solflare-wallet/sdk@0.3.1/dist/index.iife.js"></script>
-  <script type="module">
+
+  <script>
     let sessionData = {
       wallet: null,
       startTime: null,
@@ -62,34 +60,38 @@
       location: null
     };
 
-    async function unifiedConnect() {
-      const addressDisplay = document.getElementById("walletAddress");
+    document.getElementById("connectWallet").addEventListener("click", async () => {
+      const status = document.getElementById("wallet-address");
 
       if (window.solana && window.solana.isPhantom) {
         try {
           const resp = await window.solana.connect();
           sessionData.wallet = resp.publicKey.toString();
-          addressDisplay.innerText = "Wallet Connected: " + sessionData.wallet;
+          status.innerText = `✅ Connected with Phantom: ${sessionData.wallet}`;
+          return;
         } catch (err) {
-          alert("Wallet connection failed: " + err.message);
+          alert("Phantom connection failed.");
         }
-      } else if (typeof Solflare !== "undefined") {
+      }
+
+      if (typeof Solflare !== "undefined") {
         const solflare = new Solflare();
         if (!solflare.isConnected) {
           try {
             await solflare.connect();
             sessionData.wallet = solflare.publicKey.toString();
-            addressDisplay.innerText = "Wallet Connected: " + sessionData.wallet;
+            status.innerText = `✅ Connected with Solflare: ${sessionData.wallet}`;
+            return;
           } catch (err) {
-            alert("Solflare connection failed: " + err.message);
+            alert("Solflare connection failed.");
           }
         }
-      } else {
-        alert("No compatible wallet found. Please install Phantom or Solflare.");
       }
-    }
 
-    document.getElementById('startBtn').addEventListener('click', async () => {
+      alert("No compatible wallet found. Please install Phantom or Solflare.");
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
       const fileInput = document.getElementById('startPhoto');
       if (!fileInput.files.length) {
         alert("Please upload a start photo!");
@@ -115,7 +117,7 @@
       alert("Volunteer session started at " + sessionData.startTime.toLocaleString());
     });
 
-    document.getElementById('stopBtn').addEventListener('click', async () => {
+    document.getElementById('stopBtn').addEventListener('click', () => {
       const fileInput = document.getElementById('stopPhoto');
       if (!fileInput.files.length) {
         alert("Please upload a stop photo!");
@@ -127,7 +129,7 @@
       const ms = sessionData.stopTime - sessionData.startTime;
       const mins = Math.round(ms / 60000);
       const hours = (mins / 60).toFixed(2);
-      const tokensEarned = Math.floor(hours * 1); // 1 LVBTN per hour
+      const tokensEarned = Math.floor(hours * 1);
 
       const summary = `
         <p><strong>Wallet:</strong> ${sessionData.wallet}</p>
