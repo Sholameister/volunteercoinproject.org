@@ -72,15 +72,15 @@ try {
       });
 
       const data = await res.json();
-      let balance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+      let walletbalance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
 
-      if (balance >= 1) {
-        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}\nLVBTN: ${balance}`;
+      if (walletbalance >= 1) {
+        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet};
 
         // ✅ Log to Firebase
         await addDoc(collection(db, "logins"), {
           wallet,
-          balance,
+          balance: walletBalance,
           timestamp: serverTimestamp()
         });
       } else {
