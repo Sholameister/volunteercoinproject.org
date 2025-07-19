@@ -4,13 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LoveButton Login</title>
-
-  <!-- Solana Wallet Adapter CDN -->
-  <script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.9.11/lib/cdn.js"></script>
-  <script src="https://unpkg.com/@solana/wallet-adapter-base@0.9.19/lib/cdn.js"></script>
-  <script src="https://unpkg.com/@solana/wallet-adapter-web@0.9.19/lib/cdn.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,32 +33,47 @@
   <div id="wallet-buttons">
     <button id="phantom-button">Connect Phantom</button>
     <button id="solflare-button">Connect Solflare</button>
-    <button id="backpack-button">Connect Backpack</button>
   </div>
 
   <div id="wallet-address"></div>
 
   <script>
-    const { PhantomWalletAdapter, SolflareWalletAdapter, BackpackWalletAdapter } = window.SolanaWalletAdapterWallets;
-
-    const phantom = new PhantomWalletAdapter();
-    const solflare = new SolflareWalletAdapter();
-    const backpack = new BackpackWalletAdapter();
-
-    async function connectAndDisplay(wallet, name) {
-      try {
-        await wallet.connect();
-        const address = wallet.publicKey.toString();
-        document.getElementById("wallet-address").innerText = `Connected with ${name}: ${address}`;
-      } catch (err) {
-        alert(`Failed to connect ${name}: ${err.message}`);
-        console.error(err);
+    async function connectPhantom() {
+      const provider = window.solana;
+      if (provider && provider.isPhantom) {
+        try {
+          const resp = await provider.connect();
+          document.getElementById('wallet-address').innerText = `Connected with Phantom: ${resp.publicKey.toString()}`;
+        } catch (err) {
+          alert("Phantom connection failed.");
+        }
+      } else {
+        alert("Phantom wallet not found. Install it from https://phantom.app/");
       }
     }
 
-    document.getElementById("phantom-button").onclick = () => connectAndDisplay(phantom, "Phantom");
-    document.getElementById("solflare-button").onclick = () => connectAndDisplay(solflare, "Solflare");
-    document.getElementById("backpack-button").onclick = () => connectAndDisplay(backpack, "Backpack");
+    async function connectSolflare() {
+      if (window.Solflare) {
+        const solflare = new window.Solflare();
+        if (!solflare.isConnected) {
+          try {
+            await solflare.connect();
+            document.getElementById('wallet-address').innerText = `Connected with Solflare: ${solflare.publicKey.toString()}`;
+          } catch (err) {
+            alert("Solflare connection failed.");
+          }
+        }
+      } else {
+        alert("Solflare wallet not found. Install it from https://solflare.com/");
+      }
+    }
+
+    // Button listeners
+    document.getElementById("phantom-button").addEventListener("click", connectPhantom);
+    document.getElementById("solflare-button").addEventListener("click", connectSolflare);
   </script>
+
+  <!-- Optional: Include Solflare SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@solflare-wallet/sdk@0.3.1/dist/index.iife.js"></script>
 </body>
 </html>
