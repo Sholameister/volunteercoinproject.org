@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LoveButton Login</title>
   <style>
     body {
@@ -11,34 +11,31 @@
       padding: 50px;
       background: #f9f9f9;
     }
+    #wallet-buttons {
+      margin-top: 30px;
+    }
     button {
       padding: 12px 20px;
       font-size: 16px;
       margin: 10px;
       cursor: pointer;
     }
-    #walletAddress {
+    #wallet-address {
       margin-top: 20px;
       font-weight: bold;
-    }
-    .section {
-      background: #fff0f5;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 50px;
     }
   </style>
 </head>
 <body>
-
   <h1>Welcome to LoveButton</h1>
 
-  <div class="section" id="volunteer-checkin">
+  <div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;">
     <h2>👷 Volunteer Check-In</h2>
     <p>Connect your wallet, snap a photo, and start tracking your volunteer time.</p>
-    <button id="connectWallet" onclick="unifiedConnect()">🔗 Connect Wallet</button>
-    <div id="walletAddress"></div>
   </div>
+
+  <button id="connectWallet" onclick="unifiedConnect()">🔗 Connect Wallet</button>
+  <div id="walletAddress" style="margin-top: 10px;"></div>
 
   <!-- Start Section -->
   <div>
@@ -54,7 +51,7 @@
 
   <div id="sessionSummary" style="margin-top:15px;"></div>
 
-  <!-- Main Script -->
+  <script src="https://cdn.jsdelivr.net/npm/@solflare-wallet/sdk@0.3.1/dist/index.iife.js"></script>
   <script type="module">
     let sessionData = {
       wallet: null,
@@ -65,7 +62,33 @@
       location: null
     };
 
-    // Start Volunteering
+    async function unifiedConnect() {
+      const addressDisplay = document.getElementById("walletAddress");
+
+      if (window.solana && window.solana.isPhantom) {
+        try {
+          const resp = await window.solana.connect();
+          sessionData.wallet = resp.publicKey.toString();
+          addressDisplay.innerText = "Wallet Connected: " + sessionData.wallet;
+        } catch (err) {
+          alert("Wallet connection failed: " + err.message);
+        }
+      } else if (typeof Solflare !== "undefined") {
+        const solflare = new Solflare();
+        if (!solflare.isConnected) {
+          try {
+            await solflare.connect();
+            sessionData.wallet = solflare.publicKey.toString();
+            addressDisplay.innerText = "Wallet Connected: " + sessionData.wallet;
+          } catch (err) {
+            alert("Solflare connection failed: " + err.message);
+          }
+        }
+      } else {
+        alert("No compatible wallet found. Please install Phantom or Solflare.");
+      }
+    }
+
     document.getElementById('startBtn').addEventListener('click', async () => {
       const fileInput = document.getElementById('startPhoto');
       if (!fileInput.files.length) {
@@ -92,7 +115,6 @@
       alert("Volunteer session started at " + sessionData.startTime.toLocaleString());
     });
 
-    // Stop Volunteering
     document.getElementById('stopBtn').addEventListener('click', async () => {
       const fileInput = document.getElementById('stopPhoto');
       if (!fileInput.files.length) {
@@ -105,7 +127,7 @@
       const ms = sessionData.stopTime - sessionData.startTime;
       const mins = Math.round(ms / 60000);
       const hours = (mins / 60).toFixed(2);
-      const tokensEarned = Math.floor(hours * 1); // Adjust LVBTN/hour rate here
+      const tokensEarned = Math.floor(hours * 1); // 1 LVBTN per hour
 
       const summary = `
         <p><strong>Wallet:</strong> ${sessionData.wallet}</p>
@@ -117,42 +139,6 @@
       `;
       document.getElementById('sessionSummary').innerHTML = summary;
     });
-
-    // Unified Wallet Connect (Phantom + Solflare fallback)
-    async function unifiedConnect() {
-      const display = document.getElementById('walletAddress');
-
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const resp = await window.solana.connect();
-          sessionData.wallet = resp.publicKey.toString();
-          display.innerText = `Wallet Connected: ${sessionData.wallet}`;
-          return;
-        } catch (err) {
-          alert("Phantom connection failed.");
-        }
-      }
-
-      if (typeof Solflare !== "undefined") {
-        const solflare = new Solflare();
-        if (solflare.isSolflare) {
-          try {
-            await solflare.connect();
-            sessionData.wallet = solflare.publicKey.toString();
-            display.innerText = `Wallet Connected: ${sessionData.wallet}`;
-            return;
-          } catch (err) {
-            alert("Solflare connection failed.");
-          }
-        }
-      }
-
-      alert("No compatible wallet found. Please install Phantom or Solflare.");
-    }
   </script>
-
-  <!-- Solflare SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@solflare-wallet/sdk@0.3.1/dist/index.iife.js"></script>
-
 </body>
 </html>
