@@ -5,15 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LoveButton Login</title>
 
-  <!-- Wallet Adapter CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-wallets@latest/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-base@latest/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-core@latest/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-react@latest/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-react-ui@latest/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-react-ui/styles.css"></script>
-
-  <!-- Solana Web3 -->
+  <!-- Solana Wallet Adapter CDN -->
+  <script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.9.11/lib/cdn.js"></script>
+  <script src="https://unpkg.com/@solana/wallet-adapter-base@0.9.19/lib/cdn.js"></script>
+  <script src="https://unpkg.com/@solana/wallet-adapter-web@0.9.19/lib/cdn.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
   <style>
@@ -42,38 +37,36 @@
   <h1>Welcome to LoveButton</h1>
   <p>Connect your wallet to begin:</p>
 
-  <div id="wallet-buttons">
-    <button onclick="connectWallet('Phantom')">Connect Phantom</button>
-    <button onclick="connectWallet('Solflare')">Connect Solflare</button>
-    <button onclick="connectWallet('Backpack')">Connect Backpack</button>
-  </div>
-
+  <div id="wallet-buttons"></div>
   <div id="wallet-address"></div>
 
   <script>
-    const wallets = {
-      Phantom: window.solana,
-      Solflare: new window.Solflare(),
-      Backpack: new window.BackpackWalletAdapter?.()
-    };
+    const { PhantomWalletAdapter, SolflareWalletAdapter, BackpackWalletAdapter } = window.SolanaWalletAdapterWallets;
 
-    async function connectWallet(type) {
-      const wallet = wallets[type];
-      if (!wallet) {
-        alert(`${type} Wallet not detected`);
-        return;
-      }
+    const wallets = [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+      new BackpackWalletAdapter()
+    ];
 
-      try {
-        const response = await wallet.connect();
-        const address = wallet.publicKey?.toString() || response.publicKey?.toString();
-        document.getElementById("wallet-address").innerText = `Connected: ${address}`;
-        // Optional: log to Firebase or store session
-      } catch (error) {
-        console.error("Connection failed:", error);
-        alert(`Error connecting to ${type} wallet`);
-      }
-    }
+    const container = document.getElementById("wallet-buttons");
+
+    wallets.forEach(wallet => {
+      const btn = document.createElement("button");
+      btn.innerText = `Connect ${wallet.name}`;
+      btn.onclick = async () => {
+        try {
+          await wallet.connect();
+          const address = wallet.publicKey.toString();
+          document.getElementById("wallet-address").innerText = `Connected: ${address}`;
+          // TODO: Add Firebase logging or redirect here
+        } catch (err) {
+          alert(`Error connecting to ${wallet.name}: ${err.message}`);
+          console.error(err);
+        }
+      };
+      container.appendChild(btn);
+    });
   </script>
 </body>
 </html>
