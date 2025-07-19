@@ -28,7 +28,7 @@ async function solanaConnectAndCheck() {
   if (solana && solana.isPhantom) {
     try {
       const resp = await solana.connect();
-      const wallet = resp.publicKey.toString();
+      const wallet = window.solana?.publicKey?.toString();
 let balance = 0;
 try {
   const res = await fetch("https://api.helius.xyz/", {
@@ -75,7 +75,7 @@ try {
       let walletbalance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
 
       if (walletbalance >= 1) {
-        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}';
+        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}`;
         
         await addDoc(collection(db, "logins"), {
           wallet,
