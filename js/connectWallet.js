@@ -75,7 +75,7 @@ try {
       let walletbalance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
 
       if (walletbalance >= 1) {
-        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet};
+        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}';
 
         // ✅ Log to Firebase
         await addDoc(collection(db, "logins"), {
