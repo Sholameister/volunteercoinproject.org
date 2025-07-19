@@ -79,7 +79,107 @@
   <p><strong>Total Value:</strong> <span id="summary-total"></span></p>
   <p><strong>Milestone Achieved:</strong> <span id="summary-milestone"></span></p>
 </div>
+</script>
+<div class="section" id="volunteer-checkin" style="background:#fff0f5; padding:20px; border-radius:10px; margin-top:100px;"><h2>👷 Volunteer Check-In</h2>
+  <p>Connect your wallet, snap a photo, and start tracking your volunteer time.</p></div>
+<button id="connectWallet">🔗 Connect Wallet</button>
+<div id="walletAddress" style="margin-top: 10px;"></div>
 
+    <!-- Start Section -->
+    <div>
+      <input type="file" accept="image/*" capture="environment" id="startPhoto" />
+      <button id="startBtn" style="margin-top:5px;">📍 Start Volunteering</button>
+    </div>
+
+    <!-- Stop Section -->
+    <div>
+      <input type="file" accept="image/*" capture="environment" id="stopPhoto" />
+      <button id="stopBtn" style="margin-top:5px;">✅ Stop Volunteering</button>
+    </div>
+
+  <div id="sessionSummary" style="margin-top:15px;"></div>
+
+<script type="module">
+  let sessionData = {
+    wallet: null,
+    startTime: null,
+    startPhoto: null,
+    stopTime: null,
+    stopPhoto: null,
+    location: null
+  };
+
+  // Simulated wallet connect
+  document.getElementById("connectWallet").addEventListener("click", async function () {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const resp = await window.solana.connect();
+      sessionData.wallet = resp.publicKey.toString();
+      document.getElementById("walletAddress").innerText = "Wallet Connected: " + sessionData.wallet;
+    } catch (err) {
+      alert("Wallet connection failed: " + err.message);
+    }
+  } else {
+    alert("Phantom Wallet not detected. Please install it from https://phantom.app");
+  }
+  });
+
+  // Start Volunteering
+  document.getElementById('startBtn').addEventListener('click', async () => {
+    const fileInput = document.getElementById('startPhoto');
+    if (!fileInput.files.length) {
+      alert("Please upload a start photo!");
+      return;
+    }
+    sessionData.startPhoto = fileInput.files[0];
+    sessionData.startTime = new Date();
+
+    // Get Geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          sessionData.location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
+        }
+      );
+    }
+
+    alert("Volunteer session started at " + sessionData.startTime.toLocaleString());
+  });
+
+  // Stop Volunteering
+  document.getElementById('stopBtn').addEventListener('click', async () => {
+    const fileInput = document.getElementById('stopPhoto');
+    if (!fileInput.files.length) {
+      alert("Please upload a stop photo!");
+      return;
+    }
+    sessionData.stopPhoto = fileInput.files[0];
+    sessionData.stopTime = new Date();
+
+    // Calculate duration
+    const ms = sessionData.stopTime - sessionData.startTime;
+    const mins = Math.round(ms / 60000);
+    const hours = (mins / 60).toFixed(2);
+    const tokensEarned = Math.floor(hours * 1); // ⬅️ 1 LVBTN per hour, adjust if needed
+
+    // Show session summary
+    const summary = `
+      <p><strong>Wallet:</strong> <p id="walletDisplay"></p>${sessionData.wallet}</p>
+      <p><strong>Start:</strong> ${sessionData.startTime.toLocaleString()}</p>
+      <p><strong>Stop:</strong> ${sessionData.stopTime.toLocaleString()}</p>
+      <p><strong>Duration:</strong> ${hours} hours</p>
+      <p><strong>Tokens Earned:</strong> ${tokensEarned} LVBTN</p>
+      <p><strong>Location:</strong> ${sessionData.location?.lat ?? "N/A"}, ${sessionData.location?.lng ?? "N/A"}</p>
+    `;
+    document.getElementById('sessionSummary').innerHTML = summary;
+  });
+</script>
   </script>
 
   <!-- Optional: Include Solflare SDK -->
