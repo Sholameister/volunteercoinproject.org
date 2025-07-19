@@ -76,14 +76,14 @@ try {
 
       if (walletbalance >= 1) {
         display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}';
-
-        // ✅ Log to Firebase
+        
         await addDoc(collection(db, "logins"), {
           wallet,
           balance: walletBalance,
           timestamp: serverTimestamp()
         });
-      } else {
+      } 
+      else {
         display.innerText = `⚠️ You need at least 1 LVBTN to access this area.\nWallet: ${wallet}`;
       }
     } catch (err) {
