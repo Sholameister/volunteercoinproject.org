@@ -102,7 +102,25 @@
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
   </script>
+async function fetchVolunteerData(walletAddress) {
+  const docRef = firebase.firestore().collection("volunteers").doc(walletAddress);
+  const docSnap = await docRef.get();
 
+  if (docSnap.exists) {
+    const data = docSnap.data();
+    const usdValue = (data.tokensEarned * 2.5).toFixed(2);
+
+    document.getElementById("volunteerDataDisplay").innerHTML = `
+      <p><strong>Date:</strong> ${data.date}</p>
+      <p><strong>Activity:</strong> ${data.activity}</p>
+      <p><strong>Total Hours:</strong> ${data.hours}</p>
+      <p><strong>LVBTN Earned:</strong> ${data.tokensEarned} tokens</p>
+      <p><strong>Value at $2.50:</strong> $${usdValue}</p>
+    `;
+  } else {
+    document.getElementById("volunteerDataDisplay").innerHTML = `<p>No data found for this wallet.</p>`;
+  }
+}
   <!-- Wallet Connect Scripts -->
   <script>
   let currentWallet = null;
