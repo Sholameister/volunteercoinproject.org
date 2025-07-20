@@ -2,7 +2,7 @@
 
 **Declaration Date:** July 20, 2025  
 **Token:** LoveButton Token (LVBTN)  
-**Mint Address:** [INSERT MINT ADDRESS HERE]  
+**Mint Address:** Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s  
 
 These wallets held LVBTN as of the close of the 1-for-2 token exchange window on **July 19, 2025, 23:59 CST**, but did **not** register for the exchange. As of this declaration, all balances below are marked **UNRECOGNIZED** and are ineligible for use within the LoveButton Token system.
 
