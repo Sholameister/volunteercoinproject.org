@@ -63,44 +63,60 @@
       measurementId: "G-0261HYV08P"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    let auth, db; 
-    window.onload = () => {
-      auth = firebase.auth();
-      db = firebase.firestore();
+    <script>
+  let auth, db;
+
+  window.onload = () => {
+    const firebaseConfig = {
+      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+      authDomain: "lovebutton-heaven.firebaseapp.com",
+      projectId: "lovebutton-heaven",
+      storageBucket: "lovebutton-heaven.firebasestorage.app",
+      messagingSenderId: "1079456151721",
+      appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+      measurementId: "G-0261HYV08P"
     };
 
-    async function signup() {
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const wallet = document.getElementById('wallet').value.trim();
-      const messageEl = document.getElementById('message');
-if (!wallet) {
-  messageE1.style.color = 'red';
-  messageE1.innertext = 'Wallet address is required.';
-}
-      try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+  };
 
-        await db.collection('users').doc(user.uid).set({
-          name,
-          email,
-          wallet,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+  async function signup() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const wallet = document.getElementById('wallet').value.trim();
+    const messageEl = document.getElementById('message');
 
-        messageEl.style.color = 'green';
-        messageEl.innerText = 'Signup successful! Redirecting...';
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 1500);
-      } catch (error) {
-        messageEl.style.color = 'red';
-        messageEl.innerText = error.message;
-      }
+    if (!wallet) {
+      messageEl.style.color = 'red';
+      messageEl.innerText = 'Wallet address is required.';
+      return;
     }
+
+    try {
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+
+      await db.collection('users').doc(user.uid).set({
+        name,
+        email,
+        wallet,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      messageEl.style.color = 'green';
+      messageEl.innerText = 'Signup successful! Redirecting...';
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    } catch (error) {
+      messageEl.style.color = 'red';
+      messageEl.innerText = error.message;
+    }
+  }
+</script>
   </script>
 </body>
 </html>
