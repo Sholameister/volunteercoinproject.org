@@ -5,26 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LoveButton Wallet Login</title>
 
-  <!-- Solana Wallet Adapter CDN -->
+  <!-- Solana Wallet Adapter + Web3.js -->
   <script src="https://unpkg.com/@solana/wallet-adapter-wallets@latest/lib/umd/index.iife.min.js"></script>
-  <script src="https://unpkg.com/@solana/wallet-adapter-base@latest/lib/umd/index.iife.min.js"></script>
-  <script src="https://unpkg.com/@solana/wallet-adapter-wallets@latest/lib/umd/index.iife.min.js"></script>
-  <script src="https://unpkg.com/@solana/wallet-adapter-react-ui/styles.css"></script>
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #fff0f2;
-      margin: 0;
       padding: 40px;
       text-align: center;
     }
-
-    h1 {
-      color: #c72c48;
-    }
-
+    h1 { color: #c72c48; }
     .wallet-btn {
       padding: 15px 30px;
       margin: 10px;
@@ -35,28 +31,8 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
-    #exchangeModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #exchangeModalContent {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 500px;
-      text-align: center;
-    }
   </style>
 </head>
-
 <body>
   <h1>Welcome Back Volunteers!</h1>
   <p>Connect your wallet to continue</p>
@@ -64,36 +40,29 @@
   <!-- Wallet Buttons -->
   <button class="wallet-btn" onclick="connectPhantom()">Connect Phantom</button>
   <button class="wallet-btn" onclick="connectSolflare()">Connect Solflare</button>
-  <button class="wallet-btn" onclick="connectBackpack()">Connect Backpack</button>
-  <h3>⏳ Track My Volunteer Time</h3>
-<button onclick="startVolunteerSession()">Start Volunteering</button>
-<button onclick="stopVolunteerSession()">Stop Volunteering</button>
-<div id="sessionStatus"></div>
 
-  <!-- Exchange Rate Modal -->
-  <div id="exchangeModal">
-    <div id="exchangeModalContent">
-      <h2 style="color:#c72c48;">Current Exchange Rate</h2>
-      <p style="font-size:1.5em;"><strong>1 LVBTN = $2.50 USD</strong></p>
-      <p style="font-style:italic; margin-bottom:20px;">Updated manually until trading resumes after <strong>July 20, 2025</strong>.</p>
-      <h3>🔶 Live Bitcoin (BTC) Price</h3>
-      <p id="btcPrice" style="font-size:1.2em;">Loading...</p>
-      <button onclick="closeExchangeModal()" style="margin-top:20px; padding:10px 20px; font-size:1em;">Continue</button>
-    </div>
+  <h3>⏳ Track My Volunteer Time</h3>
+
+  <p><strong>Upload BEFORE photo:</strong></p>
+  <input type="file" id="beforePhoto" accept="image/*"><br><br>
+
+  <p><strong>Upload AFTER photo:</strong></p>
+  <input type="file" id="afterPhoto" accept="image/*"><br><br>
+
+  <button class="wallet-btn" onclick="startVolunteerSession()">Start Volunteering</button>
+  <button class="wallet-btn" onclick="stopVolunteerSession()">Stop Volunteering</button>
+
+  <div id="sessionStatus" style="margin-top: 20px;"></div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none; padding: 20px; margin-top: 20px;">
+    <h2>📊 Volunteer Dashboard</h2>
+    <p><strong>Wallet Connected:</strong> <span id="walletAddressDisplay"></span></p>
+    <div id="volunteerDataDisplay"><p>Loading your data...</p></div>
   </div>
-<!-- DASHBOARD SECTION (initially hidden) -->
-<div id="dashboard" style="display:none; padding: 20px; border: 1px solid #ccc; margin-top: 20px;">
-  <h2>📊 Volunteer Dashboard</h2>
-  <p><strong>Wallet Connected:</strong> <span id="walletAddressDisplay"></span></p>
-  <div id="volunteerDataDisplay">
-    <!-- Fetched volunteer data from Firebase will appear here -->
-    <p>Loading your data...</p>
-  </div>
-</div>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
   <script>
+    // Firebase setup
     const firebaseConfig = {
       apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
       authDomain: "lovebutton-heaven.firebaseapp.com",
@@ -105,177 +74,110 @@
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    async function fetchVolunteerData(walletAddress) {
-  const docRef = firebase.firestore().collection("volunteers").doc(walletAddress);
-  const docSnap = await docRef.get();
 
-  if (docSnap.exists) {
-    const data = docSnap.data();
-    const usdValue = (data.tokensEarned * 2.5).toFixed(2);
+    let currentWallet = null;
+    let startTime = null;
 
-    document.getElementById("volunteerDataDisplay").innerHTML = `
-      <p><strong>Date:</strong> ${data.date}</p>
-      <p><strong>Activity:</strong> ${data.activity}</p>
-      <p><strong>Total Hours:</strong> ${data.hours}</p>
-      <p><strong>LVBTN Earned:</strong> ${data.tokensEarned} tokens</p>
-      <p><strong>Value at $2.50:</strong> $${usdValue}</p>
-    `;
-  } else {
-    document.getElementById("volunteerDataDisplay").innerHTML = `<p>No data found for this wallet.</p>`;
-  }
-}
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-    authDomain: "lovebutton-heaven.firebaseapp.com",
-    projectId: "lovebutton-heaven",
-    storageBucket: "lovebutton-heaven.firebasestorage.app",
-    messagingSenderId: "1079456151721",
-    appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-    measurementId: "G-0261HYV08P"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Store start time
-  let startTime = null;
-
-  window.startVolunteerSession = () => {
-    startTime = new Date();
-    document.getElementById("sessionStatus").innerText = `⏱️ Started at: ${startTime.toLocaleTimeString()}`;
-  };
-
-  window.stopVolunteerSession = () => {
-    const stopTime = new Date();
-    const durationHours = (stopTime - startTime) / (1000 * 60 * 60);
-    const tokensEarned = Math.round(durationHours * 1 * 100) / 100;
-    const usdValue = tokensEarned * 2.5;
-    const wallet = localStorage.getItem("walletAddress");
-
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      try {
-        await addDoc(collection(db, "volunteerSessions"), {
-          wallet,
-          startTime,
-          stopTime,
-          durationHours,
-          tokensEarned,
-          usdValue,
-          location: { lat, lng },
-          activity: "General Volunteering"
-        });
-
-        document.getElementById("sessionStatus").innerHTML = `
-          ✅ Session saved!<br>
-          ⌛ Duration: ${durationHours.toFixed(2)} hrs<br>
-          💖 LVBTN Earned: ${tokensEarned}<br>
-          💵 USD Value: $${usdValue.toFixed(2)}
-        `;
-      } catch (error) {
-        console.error("❌ Error saving session:", error);
-      }
-    });
-  };
-</script>
-  </script>
-
-  <!-- Wallet Connect Scripts -->
-  <script>
-  let currentWallet = null;
-
-  function showExchangeModal() {
-    document.getElementById("exchangeModal").style.display = "flex";
-    const btc = 118016; // Static BTC value for now
-    document.getElementById("btcPrice").innerText = `BTC: $${btc.toLocaleString()}`;
-  }
-
-  function closeExchangeModal() {
-    document.getElementById("exchangeModal").style.display = "none";
-    if (currentWallet) {
-      const walletDisplay = document.createElement("p");
-      walletDisplay.textContent = `✅ Connected Wallet: ${currentWallet}`;
-      walletDisplay.style.color = "#333";
-      walletDisplay.style.marginTop = "20px";
-      walletDisplay.style.fontWeight = "bold";
-      document.body.appendChild(walletDisplay);
-
-      // Optional: save wallet session for later use
-      localStorage.setItem("lvbtn_wallet", currentWallet);
-    }
-  }
-
-  async function connectPhantom() {
-    try {
+    async function connectPhantom() {
       const provider = window.solana;
       if (provider?.isPhantom) {
         const resp = await provider.connect();
         currentWallet = resp.publicKey.toString();
-        console.log("Phantom connected:", currentWallet);
-        showExchangeModal();
+        document.getElementById("walletAddressDisplay").innerText = currentWallet;
+        document.getElementById("dashboard").style.display = "block";
+        localStorage.setItem("walletAddress", currentWallet);
       } else {
-        alert("Phantom wallet not found.");
+        alert("Phantom not found.");
       }
-    } catch (err) {
-      console.error("Phantom connection failed", err);
     }
-  }
 
-  async function connectSolflare() {
-    try {
-      const solflare = new window.Solflare();
-      if (!solflare.isConnected) await solflare.connect();
-      currentWallet = solflare.publicKey.toString();
-      console.log("Solflare connected:", currentWallet);
-      showExchangeModal();
-    } catch (err) {
-      alert("Solflare not installed.");
+    async function connectSolflare() {
+      try {
+        const solflare = new window.Solflare();
+        await solflare.connect();
+        currentWallet = solflare.publicKey.toString();
+        document.getElementById("walletAddressDisplay").innerText = currentWallet;
+        document.getElementById("dashboard").style.display = "block";
+        localStorage.setItem("walletAddress", currentWallet);
+      } catch {
+        alert("Solflare not available.");
+      }
     }
-  }
 
-  async function connectBackpack() {
-    alert("Backpack wallet support coming soon!");
-  }
+    window.startVolunteerSession = () => {
+      const beforePhoto = document.getElementById("beforePhoto");
+      if (!beforePhoto.files.length) {
+        alert("Upload BEFORE photo before starting.");
+        return;
+      }
 
-  // Optional: auto-load saved wallet on page load
-  window.onload = () => {
-    const savedWallet = localStorage.getItem("lvbtn_wallet");
-    if (savedWallet) {
-      const walletDisplay = document.createElement("p");
-      walletDisplay.textContent = `✅ Connected Wallet: ${savedWallet} (from previous session)`;
-      walletDisplay.style.color = "#333";
-      walletDisplay.style.marginTop = "20px";
-      walletDisplay.style.fontWeight = "bold";
-      document.body.appendChild(walletDisplay);
-    }
-  }
-    let connectedWallet = null;
+      startTime = new Date();
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        localStorage.setItem("sessionStart", JSON.stringify({
+          time: startTime.toISOString(),
+          lat, lng
+        }));
+        document.getElementById("sessionStatus").innerText =
+          `⏱️ Started at ${startTime.toLocaleTimeString()} @ (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+      });
+    };
 
-// Handle Phantom wallet connection
-async function connectPhantom() {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const resp = await window.solana.connect();
-      connectedWallet = resp.publicKey.toString();
-      document.getElementById("walletAddressDisplay").innerText = connectedWallet;
-      document.getElementById("dashboard").style.display = "block"; // Reveal dashboard
-      fetchVolunteerData(connectedWallet); // Load from Firebase
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-    }
-  } else {
-    alert("Phantom Wallet not installed.");
-  }
-}
+    window.stopVolunteerSession = () => {
+      const afterPhoto = document.getElementById("afterPhoto");
+      if (!afterPhoto.files.length) {
+        alert("Upload AFTER photo before stopping.");
+        return;
+      }
 
-// Hook to button
-document.getElementById("connectPhantomBtn").addEventListener("click", connectPhantom);
-</script>
+      const stopTime = new Date();
+      const wallet = localStorage.getItem("walletAddress");
+      const startData = JSON.parse(localStorage.getItem("sessionStart"));
+      if (!startData) {
+        alert("Start session first.");
+        return;
+      }
+
+      const duration = (stopTime - new Date(startData.time)) / (1000 * 60 * 60);
+      const tokensEarned = Math.round(duration * 100) / 100;
+      const usdValue = tokensEarned * 2.5;
+
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const stopLat = pos.coords.latitude;
+        const stopLng = pos.coords.longitude;
+
+        try {
+          await db.collection("volunteerSessions").add({
+            wallet,
+            startTime: new Date(startData.time),
+            stopTime,
+            durationHours: duration,
+            tokensEarned,
+            usdValue,
+            startLocation: { lat: startData.lat, lng: startData.lng },
+            stopLocation: { lat: stopLat, lng: stopLng },
+            activity: "General Volunteering",
+            date: stopTime.toLocaleDateString()
+          });
+
+          document.getElementById("sessionStatus").innerHTML = `
+            ✅ Session saved!<br>
+            ⌛ Duration: ${duration.toFixed(2)} hrs<br>
+            💖 LVBTN Earned: ${tokensEarned}<br>
+            💵 Value: $${usdValue.toFixed(2)}
+          `;
+
+          // Clear file inputs
+          document.getElementById("beforePhoto").value = "";
+          document.getElementById("afterPhoto").value = "";
+
+        } catch (err) {
+          console.error("❌ Error saving session:", err);
+        }
+      });
+    };
+  </script>
 </body>
 </html>
+
