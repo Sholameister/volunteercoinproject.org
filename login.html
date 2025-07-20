@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Volunteer Logger – LoveButton</title>
+  <title>LoveButton Volunteer Login</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #fdf2f8;
-      padding: 20px;
       text-align: center;
+      padding: 20px;
     }
     h1 {
       color: #e60073;
@@ -33,97 +33,191 @@
       background-color: #cc005f;
     }
     #summaryBox {
+      display: none;
       margin-top: 20px;
       background-color: #fff0f5;
-      padding: 15px;
-      border: 1px solid #e60073;
+      padding: 20px;
       border-radius: 10px;
-      display: none;
+      border: 1px solid #e60073;
     }
   </style>
 </head>
 <body>
 
-<h1>Volunteer Time Logger</h1>
+  <h1>LoveButton Volunteer Tracker</h1>
 
-<!-- Wallet Connect -->
-<button id="connectWalletBtn">Connect Wallet</button>
-<p id="walletAddress"></p>
+  <!-- Wallet Connection -->
+  <button id="connectWalletBtn">Connect Wallet</button>
+  <p id="walletAddress"></p>
 
-<!-- Before/After Photo Uploads -->
-<h3>Upload Before Photo</h3>
-<input type="file" id="beforePhoto" accept="image/*">
-<h3>Upload After Photo</h3>
-<input type="file" id="afterPhoto" accept="image/*">
+  <!-- Before / After Photos -->
+  <h3>Before Volunteering Photo</h3>
+  <input type="file" id="beforePhoto" accept="image/*">
 
-<!-- Volunteer Session Buttons -->
-<br>
-<button id="startBtn" onclick="startVolunteering()">Start Volunteering</button>
-<button id="stopBtn" onclick="stopVolunteering()">Stop Volunteering</button>
+  <h3>After Volunteering Photo</h3>
+  <input type="file" id="afterPhoto" accept="image/*">
 
-<!-- Session Summary -->
-<div id="summaryBox"></div>
+  <!-- Start / Stop Buttons -->
+  <br>
+  <button id="startBtn" onclick="startVolunteering()">Start Volunteering</button>
+  <button id="stopBtn" onclick="stopVolunteering()">Stop Volunteering</button>
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+  <!-- Summary -->
+  <div id="summaryBox"></div>
 
-<!-- Firebase Init -->
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-    authDomain: "lovebutton-heaven.firebaseapp.com",
-    projectId: "lovebutton-heaven",
-    storageBucket: "lovebutton-heaven.firebasestorage.app",
-    messagingSenderId: "1079456151721",
-    appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-    measurementId: "G-0261HYV08P"
-  };
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+      authDomain: "lovebutton-heaven.firebaseapp.com",
+      projectId: "lovebutton-heaven",
+      storageBucket: "lovebutton-heaven.firebasestorage.app",
+      messagingSenderId: "1079456151721",
+      appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+      measurementId: "G-0261HYV08P"
+    };
 
-<!-- Solana Wallet Adapter (CDN Version) -->
-<script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.11.13/lib/cdn/index.iife.min.js"></script>
-<script>
-  const { WalletAdapterNetwork } = solanaWalletAdapterBase;
-  const { PhantomWalletAdapter, SolflareWalletAdapter } = solanaWalletAdapterWallets;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 
-  let wallet;
-  const network = WalletAdapterNetwork.Mainnet;
+  <!-- Solana Wallet Adapter -->
+  <script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.11.13/lib/cdn/index.iife.min.js"></script>
 
-  const phantom = new PhantomWalletAdapter();
-  const solflare = new SolflareWalletAdapter();
+  <script>
+    const { PhantomWalletAdapter, SolflareWalletAdapter } = solanaWalletAdapterWallets;
+    let wallet = null;
 
-  const wallets = [phantom, solflare];
+    const phantom = new PhantomWalletAdapter();
+    const solflare = new SolflareWalletAdapter();
 
-  document.getElementById("connectWalletBtn").addEventListener("click", async () => {
-    try {
-      await phantom.connect();
-      wallet = phantom;
-      document.getElementById("walletAddress").innerText = `Connected: ${wallet.publicKey.toString()}`;
-    } catch (e) {
-      alert("Phantom wallet not found or user rejected.");
+    document.getElementById("connectWalletBtn").addEventListener("click", async () => {
+      try {
+        await phantom.connect();
+        wallet = phantom;
+        document.getElementById("walletAddress").innerText = `Connected: ${wallet.publicKey.toString()}`;
+        console.log("Wallet connected:", wallet.publicKey.toString());
+      } catch (e) {
+        console.error("Wallet connect error:", e);
+        alert("Could not connect Phantom wallet.");
+      }
+    });
+
+    let sessionStartTime = null;
+    let sessionGeo = null;
+
+    async function startVolunteering() {
+      const beforePhoto = document.getElementById('beforePhoto').files[0];
+      if (!wallet || !wallet.publicKey) {
+        alert("Please connect your wallet first.");
+        return;
+      }
+      if (!beforePhoto) {
+        alert("Please upload your BEFORE photo.");
+        return;
+      }
+
+      sessionStartTime = new Date();
+      sessionGeo = await getGeolocation();
+
+      alert(`✅ You have begun volunteering for Volunteer Coin Project Foundation!
+📅 ${sessionStartTime.toLocaleDateString()}
+🕒 ${sessionStartTime.toLocaleTimeString()}
+📍 ${sessionGeo}
+🎁 Vouchers: Check your dashboard if eligible`);
+
+      console.log("Session started:", sessionStartTime, "Location:", sessionGeo);
     }
-  });
 
-  let sessionStart = null;
-  let sessionGeo = null;
+    async function stopVolunteering() {
+      const afterPhoto = document.getElementById('afterPhoto').files[0];
+      if (!wallet || !wallet.publicKey) {
+        alert("Please connect your wallet first.");
+        return;
+      }
+      if (!afterPhoto) {
+        alert("Please upload your AFTER photo.");
+        return;
+      }
+      if (!sessionStartTime) {
+        alert("You must click START before clicking STOP.");
+        return;
+      }
 
-  async function startVolunteering() {
-    const beforePhoto = document.getElementById('beforePhoto').files[0];
-    if (!wallet || !wallet.publicKey) {
-      alert("Please connect your wallet first.");
-      return;
+      const sessionEndTime = new Date();
+      const durationMs = sessionEndTime - sessionStartTime;
+      const hours = parseFloat((durationMs / 3600000).toFixed(2));
+      const tokens = hours; // 1 LVBTN per hour
+      const rate = 2.50;
+      const usd = parseFloat((tokens * rate).toFixed(2));
+
+      // Save session to Firestore
+      try {
+        await db.collection("volunteerSessions").add({
+          wallet: wallet.publicKey.toString(),
+          timestampStart: firebase.firestore.Timestamp.fromDate(sessionStartTime),
+          timestampEnd: firebase.firestore.Timestamp.fromDate(sessionEndTime),
+          durationHours: hours,
+          tokensEarned: tokens,
+          usdValue: usd,
+          fixedRate: rate,
+          geolocation: sessionGeo,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Show session summary
+        const summaryBox = document.getElementById("summaryBox");
+        summaryBox.style.display = "block";
+        summaryBox.innerHTML = `
+          <h3>✅ Session Complete</h3>
+          <p>Start Time: ${sessionStartTime.toLocaleTimeString()}</p>
+          <p>End Time: ${sessionEndTime.toLocaleTimeString()}</p>
+          <p>Date: ${sessionStartTime.toLocaleDateString()}</p>
+          <p>LVBTN Earned: <strong>${tokens}</strong></p>
+          <p>Value at $2.50: <strong>$${usd}</strong></p>
+        `;
+
+        console.log("Session saved:", {
+          wallet: wallet.publicKey.toString(),
+          start: sessionStartTime,
+          end: sessionEndTime,
+          hours,
+          tokens,
+          usd
+        });
+
+        // Reset session
+        sessionStartTime = null;
+        sessionGeo = null;
+
+      } catch (e) {
+        console.error("Error saving session:", e);
+        alert("Error saving session. Check console.");
+      }
     }
-    if (!beforePhoto) {
-      alert("Please upload your before photo.");
-      return;
+
+    function getGeolocation() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+          resolve("Unknown Location");
+        } else {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const lat = position.coords.latitude.toFixed(4);
+              const lon = position.coords.longitude.toFixed(4);
+              resolve(`Lat: ${lat}, Lon: ${lon}`);
+            },
+            () => {
+              resolve("Geolocation Denied");
+            }
+          );
+        }
+      });
     }
-
-    sessionStart = new Date();
-    sessionGeo = await getLocation();
-
-    alert(`✅ You have begun volunteering for Volunteer Coin Project
+  </script>
+</body>
+</html>
