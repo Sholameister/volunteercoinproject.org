@@ -38,6 +38,11 @@
   </style>
 </head>
 <body>
+<!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"></script>
+  
   <h1>Sign Up To Volunteer with Volunteer Coin Project Foundation!</h1>
   <input type="text" id="name" placeholder="Your Full Name" required>
   <input type="email" id="email" placeholder="Email Address" required>
@@ -46,11 +51,6 @@
     <button onclick="signup()">Create Account</button>
   
   <p id="message"></p>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"></script>
 
     <script>
   let auth, db;
