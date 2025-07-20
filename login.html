@@ -50,7 +50,7 @@
 </head>
 <body>
 
-  <h1>Volunteer Session Tracker</h1>
+  <h1>Volunteer Reward Tracker</h1>
 
   <button onclick="connectWallet()">Connect Phantom Wallet</button>
   <p id="walletAddress"></p>
@@ -101,14 +101,14 @@
   // Example usage after connecting wallet:
   // onWalletConnect("EgNa...Uup");
 </script>
-  <h3>Upload BEFORE Volunteering Photo</h3>
+  <h3>Upload BEFORE & AFTER Pics to start and stop Volunteering</h3>
   <input type="file" id="beforePhoto" accept="image/*">
 
-  <h3>Upload AFTER Volunteering Photo</h3>
+  <h3>Choose file below to stop Volunteering</h3>
   <input type="file" id="afterPhoto" accept="image/*">
 
-  <button onclick="startVolunteering()">Start Volunteering</button>
-  <button onclick="stopVolunteering()">Stop Volunteering</button>
+  <button onclick="startVolunteering()">Start Time Volunteering</button>
+  <button onclick="stopVolunteering()">Stop Time Volunteering</button>
 
   <div id="summaryBox"></div>
   <div id="afterPhotosBox"></div>
