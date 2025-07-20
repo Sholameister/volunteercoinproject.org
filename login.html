@@ -101,8 +101,7 @@
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-  </script>
-async function fetchVolunteerData(walletAddress) {
+    async function fetchVolunteerData(walletAddress) {
   const docRef = firebase.firestore().collection("volunteers").doc(walletAddress);
   const docSnap = await docRef.get();
 
@@ -121,6 +120,8 @@ async function fetchVolunteerData(walletAddress) {
     document.getElementById("volunteerDataDisplay").innerHTML = `<p>No data found for this wallet.</p>`;
   }
 }
+  </script>
+
   <!-- Wallet Connect Scripts -->
   <script>
   let currentWallet = null;
