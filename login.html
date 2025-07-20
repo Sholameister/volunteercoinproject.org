@@ -97,47 +97,73 @@
 
   <!-- Wallet Connect Scripts -->
   <script>
-    function showExchangeModal() {
-      document.getElementById("exchangeModal").style.display = "flex";
-      const btc = 118016; // Static value for now
-      document.getElementById("btcPrice").innerText = `BTC: $${btc.toLocaleString()}`;
-    }
+  let currentWallet = null;
 
-    function closeExchangeModal() {
-      document.getElementById("exchangeModal").style.display = "none";
-    }
+  function showExchangeModal() {
+    document.getElementById("exchangeModal").style.display = "flex";
+    const btc = 118016; // Static BTC value for now
+    document.getElementById("btcPrice").innerText = `BTC: $${btc.toLocaleString()}`;
+  }
 
-    async function connectPhantom() {
-      try {
-        const provider = window.solana;
-        if (provider?.isPhantom) {
-          const resp = await provider.connect();
-          const walletAddress = resp.publicKey.toString();
-          console.log("Phantom connected:", walletAddress);
-          showExchangeModal();
-        } else {
-          alert("Phantom wallet not found.");
-        }
-      } catch (err) {
-        console.error("Phantom connection failed", err);
-      }
-    }
+  function closeExchangeModal() {
+    document.getElementById("exchangeModal").style.display = "none";
+    if (currentWallet) {
+      const walletDisplay = document.createElement("p");
+      walletDisplay.textContent = `✅ Connected Wallet: ${currentWallet}`;
+      walletDisplay.style.color = "#333";
+      walletDisplay.style.marginTop = "20px";
+      walletDisplay.style.fontWeight = "bold";
+      document.body.appendChild(walletDisplay);
 
-    async function connectSolflare() {
-      try {
-        const solflare = new window.Solflare();
-        if (!solflare.isConnected) await solflare.connect();
-        const walletAddress = solflare.publicKey.toString();
-        console.log("Solflare connected:", walletAddress);
+      // Optional: save wallet session for later use
+      localStorage.setItem("lvbtn_wallet", currentWallet);
+    }
+  }
+
+  async function connectPhantom() {
+    try {
+      const provider = window.solana;
+      if (provider?.isPhantom) {
+        const resp = await provider.connect();
+        currentWallet = resp.publicKey.toString();
+        console.log("Phantom connected:", currentWallet);
         showExchangeModal();
-      } catch (err) {
-        alert("Solflare not installed.");
+      } else {
+        alert("Phantom wallet not found.");
       }
+    } catch (err) {
+      console.error("Phantom connection failed", err);
     }
+  }
 
-    async function connectBackpack() {
-      alert("Backpack wallet support coming soon!");
+  async function connectSolflare() {
+    try {
+      const solflare = new window.Solflare();
+      if (!solflare.isConnected) await solflare.connect();
+      currentWallet = solflare.publicKey.toString();
+      console.log("Solflare connected:", currentWallet);
+      showExchangeModal();
+    } catch (err) {
+      alert("Solflare not installed.");
     }
-  </script>
+  }
+
+  async function connectBackpack() {
+    alert("Backpack wallet support coming soon!");
+  }
+
+  // Optional: auto-load saved wallet on page load
+  window.onload = () => {
+    const savedWallet = localStorage.getItem("lvbtn_wallet");
+    if (savedWallet) {
+      const walletDisplay = document.createElement("p");
+      walletDisplay.textContent = `✅ Connected Wallet: ${savedWallet} (from previous session)`;
+      walletDisplay.style.color = "#333";
+      walletDisplay.style.marginTop = "20px";
+      walletDisplay.style.fontWeight = "bold";
+      document.body.appendChild(walletDisplay);
+    }
+  }
+</script>
 </body>
 </html>
