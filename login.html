@@ -65,6 +65,10 @@
   <button class="wallet-btn" onclick="connectPhantom()">Connect Phantom</button>
   <button class="wallet-btn" onclick="connectSolflare()">Connect Solflare</button>
   <button class="wallet-btn" onclick="connectBackpack()">Connect Backpack</button>
+  <h3>⏳ Track My Volunteer Time</h3>
+<button onclick="startVolunteerSession()">Start Volunteering</button>
+<button onclick="stopVolunteerSession()">Stop Volunteering</button>
+<div id="sessionStatus"></div>
 
   <!-- Exchange Rate Modal -->
   <div id="exchangeModal">
@@ -120,6 +124,66 @@
     document.getElementById("volunteerDataDisplay").innerHTML = `<p>No data found for this wallet.</p>`;
   }
 }
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+    authDomain: "lovebutton-heaven.firebaseapp.com",
+    projectId: "lovebutton-heaven",
+    storageBucket: "lovebutton-heaven.firebasestorage.app",
+    messagingSenderId: "1079456151721",
+    appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+    measurementId: "G-0261HYV08P"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Store start time
+  let startTime = null;
+
+  window.startVolunteerSession = () => {
+    startTime = new Date();
+    document.getElementById("sessionStatus").innerText = `⏱️ Started at: ${startTime.toLocaleTimeString()}`;
+  };
+
+  window.stopVolunteerSession = () => {
+    const stopTime = new Date();
+    const durationHours = (stopTime - startTime) / (1000 * 60 * 60);
+    const tokensEarned = Math.round(durationHours * 1 * 100) / 100;
+    const usdValue = tokensEarned * 2.5;
+    const wallet = localStorage.getItem("walletAddress");
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      try {
+        await addDoc(collection(db, "volunteerSessions"), {
+          wallet,
+          startTime,
+          stopTime,
+          durationHours,
+          tokensEarned,
+          usdValue,
+          location: { lat, lng },
+          activity: "General Volunteering"
+        });
+
+        document.getElementById("sessionStatus").innerHTML = `
+          ✅ Session saved!<br>
+          ⌛ Duration: ${durationHours.toFixed(2)} hrs<br>
+          💖 LVBTN Earned: ${tokensEarned}<br>
+          💵 USD Value: $${usdValue.toFixed(2)}
+        `;
+      } catch (error) {
+        console.error("❌ Error saving session:", error);
+      }
+    });
+  };
+</script>
   </script>
 
   <!-- Wallet Connect Scripts -->
