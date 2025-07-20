@@ -1,76 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
   <title>LoveButton Signup</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      background-color: #f7f7f7;
-      color: #333;
+      background-color: #fdf2f8;
+      font-family: 'Arial', sans-serif;
       text-align: center;
+      padding: 40px;
     }
-    input, button {
-      margin: 10px;
-      padding: 10px;
-      width: 90%;
-      max-width: 300px;
-      font-size: 16px;
+    h1 {
+      color: #e60073;
+    }
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 12px;
+      width: 80%;
+      max-width: 350px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
     button {
-      background-color: #ff3366;
+      background-color: #e60073;
       color: white;
       border: none;
+      padding: 12px 24px;
       border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
     }
+    button:hover {
+      background-color: #cc005f;
+    }
   </style>
+</head>
+<body>
+  <h1>Sign Up for LoveButton</h1>
+  <input type="text" id="name" placeholder="Your Full Name" required>
+  <input type="email" id="email" placeholder="Email Address" required>
+  <input type="password" id="password" placeholder="Password" required>
+  <input type="text" id="wallet" placeholder="Wallet Address (Optional)">
+  <button onclick="signup()">Create Account</button>
 
-  <!-- ✅ Firebase Setup -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  <p id="message"></p>
 
-    // ⚠️ Replace with your real Firebase config:
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"></script>
+
+  <script>
     const firebaseConfig = {
-      apiKey: "",
+      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
       authDomain: "lovebutton-heaven.firebaseapp.com",
       projectId: "lovebutton-heaven",
       storageBucket: "lovebutton-heaven.firebasestorage.app",
       messagingSenderId: "1079456151721",
-      appId: "1:1079456151721:web:15d2aa1171d977da8c11b8"
+      appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+      measurementId: "G-0261HYV08P"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    window.signupUser = () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    async function signup() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const wallet = document.getElementById('wallet').value.trim();
+      const messageEl = document.getElementById('message');
 
-      if (!email || !password) {
-        alert("Please enter both email and password.");
-        return;
-      }
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          alert("Signup successful! Redirecting...");
-          window.location.href = "index.html"; // ✅ redirect to homepage
-        })
-        .catch((error) => {
-          alert("Error: " + error.message);
+        await db.collection('users').doc(user.uid).set({
+          name,
+          email,
+          wallet,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-    };
-  </script>
-</head>
 
-<body>
-  <h2>💖 Sign Up for LoveButton</h2>
-  <input type="email" id="email" placeholder="Email Address" required /><br />
-  <input type="password" id="password" placeholder="Password (min 6 chars)" required /><br />
-  <button onclick="signupUser()">Create Account</button>
+        messageEl.style.color = 'green';
+        messageEl.innerText = 'Signup successful! Redirecting...';
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1500);
+      } catch (error) {
+        messageEl.style.color = 'red';
+        messageEl.innerText = error.message;
+      }
+    }
+  </script>
 </body>
 </html>
