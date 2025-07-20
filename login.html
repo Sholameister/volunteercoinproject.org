@@ -92,6 +92,7 @@
     let sessionGeo = "";
 
     async function connectWallet() {
+      window.connectWallet = connectWallet;
       if (window.solana && window.solana.isPhantom) {
         try {
           const resp = await window.solana.connect();
@@ -106,6 +107,7 @@
     }
 
     async function startVolunteering() {
+      window.startVolunteering = startVolunteering;
       const beforePhoto = document.getElementById("beforePhoto").files[0];
       if (!walletAddress) return alert("Connect your wallet first.");
       if (!beforePhoto) return alert("Upload your BEFORE photo first.");
@@ -122,6 +124,7 @@
     }
 
     async function stopVolunteering() {
+      window.stopVolunteering = stopVolunteering;
       const afterPhoto = document.getElementById("afterPhoto").files[0];
       if (!walletAddress) return alert("Connect your wallet first.");
       if (!afterPhoto) return alert("Upload your AFTER photo first.");
