@@ -62,7 +62,7 @@
     try {
       const res = await fetch("https://raw.githubusercontent.com/sholameister/volunteercoinproject.org/main/legacy_wallets.json");
       const data = await res.json();
-      legacyWallets = data.unrecognized_wallets.map(w => w.toLowerCase());
+      legacyWallets = data.blocked_wallets.map(w => w.toLowerCase());
     } catch (e) {
       console.error("Failed to load legacy wallet list:", e);
     }
@@ -71,8 +71,17 @@
   async function checkWallet(walletAddress) {
     const cleanAddress = walletAddress.toLowerCase();
     if (legacyWallets.includes(cleanAddress)) {
-      alert("🚫 This wallet is recognized as holding legacy LVBTN tokens.\nIt is not eligible for rewards, trading, or volunteer access.");
-      return false;
+     document.body.innerHTML = ` 
+   <div style="text-align:center; padding:40px; background-color:#fff0f0; color:#b00000; font-family:sans-serif;">
+      <h1>🚫 This Wallet is Blocked</h1>
+      <p>This wallet has been flagged by the Volunteer Coin Project Foundation as holding legacy or unrecognized LVBTN tokens.</p>
+      <p><strong>All LVBTN in this wallet are considered void and unsupported.</strong></p>
+      <p>You have <strong>10 days to appeal</strong> this decision by contacting:<br>
+      <a href="mailto:info@VolunteerCoinProject.org">info@VolunteerCoinProject.org</a></p>
+    </div>
+  `;
+  throw new Error("Wallet is blocked – session terminated.");
+}  
     }
     return true;
   }
