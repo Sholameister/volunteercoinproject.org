@@ -55,6 +55,43 @@
   <button onclick="connectWallet()">Connect Phantom Wallet</button>
   <p id="walletAddress"></p>
 
+  <script>
+  let legacyWallets = [];
+
+  async function fetchLegacyWallets() {
+    try {
+      const res = await fetch("https://raw.githubusercontent.com/sholameister/volunteercoinproject.org/main/legacy_wallets.json");
+      const data = await res.json();
+      legacyWallets = data.unrecognized_wallets.map(w => w.toLowerCase());
+    } catch (e) {
+      console.error("Failed to load legacy wallet list:", e);
+    }
+  }
+
+  async function checkWallet(walletAddress) {
+    const cleanAddress = walletAddress.toLowerCase();
+    if (legacyWallets.includes(cleanAddress)) {
+      alert("🚫 This wallet is recognized as holding legacy LVBTN tokens.\nIt is not eligible for rewards, trading, or volunteer access.");
+      return false;
+    }
+    return true;
+  }
+
+  async function onWalletConnect(walletAddress) {
+    await fetchLegacyWallets();
+    const isEligible = await checkWallet(walletAddress);
+    if (!isEligible) {
+      // Optionally disable UI
+      document.getElementById("startBtn").disabled = true;
+      document.getElementById("stopBtn").disabled = true;
+    } else {
+      document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
+    }
+  }
+
+  // Example usage after connecting wallet:
+  // onWalletConnect("EgNa...Uup");
+</script>
   <h3>Upload BEFORE Volunteering Photo</h3>
   <input type="file" id="beforePhoto" accept="image/*">
 
