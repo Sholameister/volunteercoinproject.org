@@ -172,6 +172,27 @@
       document.body.appendChild(walletDisplay);
     }
   }
+    let connectedWallet = null;
+
+// Handle Phantom wallet connection
+async function connectPhantom() {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const resp = await window.solana.connect();
+      connectedWallet = resp.publicKey.toString();
+      document.getElementById("walletAddressDisplay").innerText = connectedWallet;
+      document.getElementById("dashboard").style.display = "block"; // Reveal dashboard
+      fetchVolunteerData(connectedWallet); // Load from Firebase
+    } catch (err) {
+      console.error("Wallet connection failed:", err);
+    }
+  } else {
+    alert("Phantom Wallet not installed.");
+  }
+}
+
+// Hook to button
+document.getElementById("connectPhantomBtn").addEventListener("click", connectPhantom);
 </script>
 </body>
 </html>
