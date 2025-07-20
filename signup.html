@@ -45,11 +45,6 @@
   <input type="text" id="wallet" placeholder="Wallet Address" required>
     <button onclick="signup()">Create Account</button>
   
-if (!wallet) {
-  messageE1.style.color = 'red';
-  messageE1.innertext = 'Wallet address is required.';
-}
-  
   <p id="message"></p>
 
   <!-- Firebase SDKs -->
@@ -81,7 +76,10 @@ if (!wallet) {
       const password = document.getElementById('password').value;
       const wallet = document.getElementById('wallet').value.trim();
       const messageEl = document.getElementById('message');
-
+if (!wallet) {
+  messageE1.style.color = 'red';
+  messageE1.innertext = 'Wallet address is required.';
+}
       try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
