@@ -47,6 +47,11 @@
       border: 2px solid #e60073;
     }
   </style>
+   <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
+
 </head>
 <body>
 
@@ -100,11 +105,7 @@
   <div id="summaryBox"></div>
   <div id="afterPhotosBox"></div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
-
+ 
   <script>
     // Firebase Config
     const firebaseConfig = {
@@ -140,16 +141,6 @@
     }
 
   let blockedWallets = [];
-
-  async function fetchBlockedWallets() {
-    try {
-      const res = await fetch("https://raw.githubusercontent.com/sholameister/volunteercoinproject.org/main/legacy_wallets.json");
-      const data = await res.json();
-      blockedWallets = data.blocked_wallets.map(w => w.toLowerCase());
-    } catch (e) {
-      console.error("❌ Could not load wallet blocklist:", e);
-    }
-  }
 
   async function enforceWalletBlock(walletAddress) {
     const userWallet = walletAddress.toLowerCase();
