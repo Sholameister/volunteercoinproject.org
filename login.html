@@ -145,22 +145,6 @@
 
   let blockedWallets = [];
 
-  async function enforceWalletBlock(walletAddress) {
-    const userWallet = walletAddress.toLowerCase();
-    if (blockedWallets.includes(userWallet)) {
-      // Replace page with red flag
-      document.body.innerHTML = `
-        <div style="text-align:center; padding:40px; background-color:#fff0f0; color:#b00000; font-family:sans-serif;">
-          <h1>🚫 This Wallet is Blocked</h1>
-          <p>This wallet has been flagged by the Volunteer Coin Project Foundation as holding legacy or unrecognized LVBTN tokens.</p>
-          <p><strong>All LVBTN in this wallet are considered void and unsupported.</strong></p>
-          <p>You have <strong>10 days to appeal</strong> this decision by contacting:<br>
-          <a href="mailto:info@VolunteerCoinProject.org">info@VolunteerCoinProject.org</a></p>
-        </div>
-      `;
-      throw new Error("Wallet is blocked – session terminated.");
-    }
-  }
 
   async function onWalletConnect(walletAddress) {
     await fetchBlockedWallets();
