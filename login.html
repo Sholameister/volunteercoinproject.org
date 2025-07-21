@@ -146,13 +146,6 @@
   let blockedWallets = [];
 
 
-  async function onWalletConnect(walletAddress) {
-    await fetchBlockedWallets();
-    await enforceWalletBlock(walletAddress);
-
-    // Continue your app logic here
-    document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
-  }
     async function startVolunteering() {
       window.startVolunteering = startVolunteering;
       const beforePhoto = document.getElementById("beforePhoto").files[0];
