@@ -271,7 +271,8 @@ try {
         .get();
 
       snaps.forEach(doc => {
-        const url = doc.data().afterPhotoUrl;
+        const data = doc.data();
+        const url = data?.afterPhotoUrl;
         if (url) {
           const img = document.createElement("img");
           img.src = url;
