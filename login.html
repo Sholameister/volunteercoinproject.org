@@ -86,18 +86,7 @@
     return true;
   }
 
-  async function onWalletConnect(walletAddress) {
-    await fetchLegacyWallets();
-    const isEligible = await checkWallet(walletAddress);
-    if (!isEligible) {
-      // Optionally disable UI
-      document.getElementById("startBtn").disabled = true;
-      document.getElementById("stopBtn").disabled = true;
-    } else {
-      document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
-    }
-  }
-
+ 
   // Example usage after connecting wallet:
   // onWalletConnect("EgNa...Uup");
 </script>
@@ -293,3 +282,37 @@
   </script>
 </body>
 </html>
+let afterUrl = "";
+try {
+  console.log("Uploading after photo...");
+  const afterRef = storage.ref().child(`afterPhotos/${walletAddress}_${sessionEndTime.getTime()}`);
+  await afterRef.put(afterPhoto);
+  afterUrl = await afterRef.getDownloadURL();
+  console.log("✅ After photo uploaded. URL:", afterUrl);
+} catch (e) {
+  console.error("❌ Failed to upload after photo:", e);
+  alert("Failed to upload AFTER photo. Please check your internet or permissions.");
+  return;
+}
+ async function onWalletConnect(walletAddress) {
+    await fetchLegacyWallets();
+    const isEligible = await checkWallet(walletAddress);
+    if (!isEligible) {
+      // Optionally disable UI
+      document.getElementById("startBtn").disabled = true;
+      document.getElementById("stopBtn").disabled = true;
+    } else {
+      document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
+    }
+  }
+   async function onWalletConnect(walletAddress) {
+    await fetchLegacyWallets();
+    const isEligible = await checkWallet(walletAddress);
+    if (!isEligible) {
+      // Optionally disable UI
+      document.getElementById("startBtn").disabled = true;
+      document.getElementById("stopBtn").disabled = true;
+    } else {
+      document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
+    }
+  }
