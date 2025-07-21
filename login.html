@@ -228,27 +228,6 @@
         <p>Value (@ $2.50): $${usd}</p>
       `;
 
-      // Show previous after photos
-      const afterPhotosBox = document.getElementById("afterPhotosBox");
-      afterPhotosBox.style.display = "block";
-      afterPhotosBox.innerHTML = `<h3>Your Previous After Photos</h3>`;
-      const snaps = await db.collection("volunteerSessions")
-        .where("wallet", "==", walletAddress)
-        .orderBy("timestampEnd", "desc")
-        .limit(5)
-        .get();
-
-      snaps.forEach(doc => {
-        const data = doc.data();
-        const url = data?.afterPhotoUrl;
-        if (url) {
-          const img = document.createElement("img");
-          img.src = url;
-          img.className = "afterPhoto";
-          afterPhotosBox.appendChild(img);
-        }
-      });
-
       // Reset
       sessionStartTime = null;
       sessionGeo = "";
