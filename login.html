@@ -105,7 +105,17 @@
  <button onclick="stopVolunteering()">Stop Time Volunteering</button>
   <div id="summaryBox"></div>
   <div id="afterPhotosBox"></div>
+<div id="totalsBox" style="margin-top: 30px; padding: 20px; background-color: #f0f8ff; border-radius: 10px; border: 1px solid #e60073; display: none;"><h3>📊 My Totals</h3>
+  <p id="totalSessions"></p>
+  <p id="totalLVBTN"></p>
+  <p id="totalUSD"></p>
+  <p id="lastDate"></p>
+</div>
 
+<div id="galleryBox" style="margin-top: 30px; padding: 20px; background-color: #fffaf0; border-radius: 10px; border: 1px solid #e60073; display: none;">
+  <h3>📷 My Joy Gallery</h3>
+  <div id="galleryPhotos" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+</div>
  
   <script>
     // Firebase Config
