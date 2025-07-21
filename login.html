@@ -176,7 +176,7 @@
       const usd = parseFloat((tokens * rate).toFixed(2));
 
      try {
-       const afterRef = storage.ref().child(`afterPhotos/${walletAddress}_${Date.now()}`);
+       const afterRef = storage.ref().child(`afterPhoto/${walletAddress}_${Date.now()}`);
        await afterRef.put(afterPhoto);
        const afterUrl = await afterRef.getDownloadURL();
 
@@ -187,7 +187,7 @@
          durationHours: hours,
          tokensEarned: tokens,
          usdValue: usd,
-         afterPhotoUrl: afterPhoto,
+         afterPhotoUrl: afterUrl,
          createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
        
