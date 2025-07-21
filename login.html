@@ -38,7 +38,7 @@
       border-radius: 10px;
       background-color: #fff0f5;
       border: 1px solid #e60073;
-      display: thanks;
+      display: none;
     }
     img.afterPhoto {
       max-width: 150px;
@@ -206,11 +206,7 @@
         <p>Value (@ $2.50): $${usd}</p>
       `;
     
-} catch (e) {
-  console.error("❌ Failed to save session to Firestore:", e);
-  alert("Could not save session data.");
-  return;
-}
+
 
       // Reset
       sessionStartTime = null;
