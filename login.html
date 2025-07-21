@@ -216,7 +216,7 @@
     durationHours: hours,
     tokensEarned: tokens,
     usdValue: usd,
-    afterPhotoUrl: afterUrl,
+    afterPhotoUrl: afterPhoto,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
   console.log("✅ Session saved to Firestore.");
@@ -304,15 +304,4 @@ try {
     } else {
       document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
     }
-  }
-   async function onWalletConnect(walletAddress) {
-    await fetchLegacyWallets();
-    const isEligible = await checkWallet(walletAddress);
-    if (!isEligible) {
-      // Optionally disable UI
-      document.getElementById("startBtn").disabled = true;
-      document.getElementById("stopBtn").disabled = true;
-    } else {
-      document.getElementById("welcome").innerText = "✅ Welcome back, volunteer!";
-    }
-  }
+ 
