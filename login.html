@@ -218,18 +218,6 @@
       const tokens = hours;
       const rate = 2.5;
       const usd = parseFloat((tokens * rate).toFixed(2));
-let afterUrl = "";
-try {
-  console.log("Uploading after photo...");
-  const afterRef = storage.ref().child(`afterPhotos/${walletAddress}_${sessionEndTime.getTime()}`);
-  await afterRef.put(afterPhoto);
-  afterUrl = await afterRef.getDownloadURL();
-  console.log("✅ After photo uploaded. URL:", afterUrl);
-} catch (e) {
-  console.error("❌ Failed to upload after photo:", e);
-  alert("Failed to upload AFTER photo. Please check your internet or permissions.");
-  return;
-}
 
      try {
   await db.collection("volunteerSessions").add({
