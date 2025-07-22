@@ -106,35 +106,36 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  async function checkKYCStatus() {
-    const wallet = localStorage.getItem("connectedWallet") || "demo_wallet";
-    const statusBox = document.getElementById("status");
+async function checkKYCStatus() {
+  const wallet = localStorage.getItem("connectedWallet") || "demo_wallet";
+  const statusBox = document.getElementById("status");
 
-    try {
-      const doc = await db.collection("verifiedKYC").doc(wallet).get();
-      if (doc.exists) {
-        const status = doc.data().status;
+  try {
+    const doc = await db.collection("verifiedKYC").doc(wallet).get();
+    if (doc.exists) {
+      const status = doc.data().status;
 
-        if (status === "approved") {
-          statusBox.textContent = "✅ KYC Approved! Redirecting to your dashboard...";
-          statusBox.className = "success";
-          setTimeout(() => {
-            window.location.href = "https://github/sholameister/volunteercoinproject.org/index.html";
-          }, 3000);
-        } else {
-          statusBox.textContent = "🕐 Your KYC is still pending. Please check back soon.";
-          statusBox.className = "pending";
-        }
+      if (status === "approved") {
+        statusBox.textContent = "✅ KYC Approved! Redirecting to your homepage...";
+        statusBox.className = "success";
+        setTimeout(() => {
+          window.location.href = "index.html";  // this is your homepage
+        }, 3000);
       } else {
-        statusBox.textContent = "⚠️ No KYC submission found. Please create an account above.";
-        statusBox.className = "error";
+        statusBox.textContent = "🕐 Your KYC is still pending. Please check back soon.";
+        statusBox.className = "pending";
       }
-    } catch (error) {
-      statusBox.textContent = "Error checking KYC status.";
+    } else {
+      statusBox.textContent = "⚠️ No KYC submission found. Please create an account above.";
       statusBox.className = "error";
-      console.error("Firestore error:", error);
     }
+
+  } catch (error) {
+    statusBox.textContent = "Error checking KYC status.";
+    statusBox.className = "error";
+    console.error("Firestore error:", error);
   }
+}
 
   checkKYCStatus();
 </script>
