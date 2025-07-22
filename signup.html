@@ -203,10 +203,10 @@ async function checkKYCStatus() {
       const status = doc.data().status;
 
       if (status === "approved") {
-        statusBox.textContent = "✅ KYC Approved! Redirecting to your homepage...";
+        statusBox.textContent = "✅ KYC Approved! Redirecting to your signin page...";
         statusBox.className = "success";
         setTimeout(() => {
-          window.location.href = "index.html";  // this is your homepage
+          window.location.href = "login.html";  // this is your homepage
         }, 3000);
       } else {
         statusBox.textContent = "🕐 Your KYC is still pending. Please check back soon.";
