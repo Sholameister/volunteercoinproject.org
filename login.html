@@ -163,7 +163,11 @@
 
       sessionStartTime = new Date();
       sessionGeo = await getLocation();
-
+      
+localstorage.setItem("volunteerSessionStart", sessionStartTime.toISOString());
+localstorage.setItem("volunteerGeo", sessionGeo);
+localstorage.setItem("volunteerWallet", walletAddress);
+      
       alert(`✅ You have begun volunteering for Volunteer Coin Project Foundation!
 📅 ${sessionStartTime.toLocaleDateString()}
 🕒 ${sessionStartTime.toLocaleTimeString()}
