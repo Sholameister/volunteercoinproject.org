@@ -294,6 +294,36 @@ localstorage.setItem("volunteerWallet", walletAddress);
     console.error("Error loading dashboard:", e);
   }
 }
+    window.addEventListener("load", async () => {
+  const storedStart = localStorage.getItem("volunteerSessionStart");
+  const storedGeo = localStorage.getItem("volunteerGeo");
+  const storedWallet = localStorage.getItem("volunteerWallet");
+
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const resp = await window.solana.connect({ onlyIfTrusted: true });
+      const connectedWallet = resp.publicKey.toString();
+
+      if (storedStart && storedGeo && storedWallet === connectedWallet) {
+        walletAddress = connectedWallet;
+        sessionStartTime = new Date(storedStart);
+        sessionGeo = storedGeo;
+
+        document.getElementById("walletAddress").innerText = "Wallet: " + walletAddress;
+
+        alert(`⏳ Resumed volunteering session!
+📅 ${sessionStartTime.toLocaleDateString()}
+🕒 ${sessionStartTime.toLocaleTimeString()}
+📍 ${sessionGeo}`);
+
+        console.log("✅ Session resumed from storage.");
+      }
+    } catch (err) {
+      console.warn("🛑 Silent wallet connect failed or rejected.");
+    }
+  }
+});
+
   </script>
  
 </body>
