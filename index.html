@@ -45,24 +45,7 @@
       s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
-  <script  
-  document.getElementById("connectWallet").onclick = async () => {
-    if ('solana' in window) {
-      const provider = window.solana;
-      if (provider.isPhantom) {
-        try {
-          const response = await provider.connect();
-          wallet = response.publicKey.toString();
-          document.getElementById("walletAddress").innerText = `Connected: ${wallet}`;
-        } catch (err) {
-          alert("Wallet connection failed.");
-        }
-      }
-    } else {
-      alert("Phantom wallet not found. Please install it.");
-    }
-  };
-
+<script
   document.getElementById("startBtn").onclick = () => {
     const file = document.getElementById("startPhoto").files[0];
     if (!file) return alert("Please take a 'Start' photo.");
