@@ -45,13 +45,7 @@
       s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
-
-  <style>
-    <script type="module">
-  let startTime, stopTime, startPic, stopPic, geoStart, geoStop;
-  let wallet;
-</script>
-    
+  <script  
   document.getElementById("connectWallet").onclick = async () => {
     if ('solana' in window) {
       const provider = window.solana;
@@ -110,6 +104,7 @@
     `;
   };
 </script>
+  <style
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #fffdfd;
@@ -309,6 +304,16 @@
   updateBTCPrice();
   setInterval(updateBTCPrice, 60000);
   
+</script>
+    <script type="module">'
+  let startTime, stopTime, startPic, stopPic, geoStart, geoStop;
+  let wallet;
+    document.getElementById("connectWallet").onclick = async () => {
+  };
+    document.getElementById("startBtn").onclick = () => {
+    };
+    document.getElementById("stopBtn").onclick = () => {
+    };  
 </script>
 </body>
 </html>
