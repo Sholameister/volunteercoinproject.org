@@ -2,14 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>KYC Signup – LoveButton</title>
+  <title>Connect Wallet</title>
   <style>
     body {
       background-color: #fff0f5;
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 0;
-      padding: 0;
+      padding: 50px;
+      background-color: #fdf2f8;
+    }
+    .btn {
+      background-color: #e60073;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      margin: 10px;
+    }
+    .btn:hover {
+      background-color: #cc005f;
     }
 
     .container {
@@ -17,7 +30,11 @@
       margin: auto;
       padding: 40px 20px;
     }
-
+#wallet-status {
+  margin-top: 20px;
+  font-weight: bold;
+  color: green;
+}
     h2 {
       color: #e60073;
     }
@@ -72,6 +89,76 @@
   </style>
 </head>
 <body>
+  <h2>Connect Your Wallet</h2>
+  <p>Required to verify KYC status and earn LVBTN tokens.</p>
+
+  <button class="btn" onclick="connectWallet()">Connect Phantom Wallet</button>
+
+  <div id="wallet-status">No wallet connected</div>
+
+
+
+  <script>
+
+    async function connectWallet() {
+
+      if (window.solana && window.solana.isPhantom) {
+
+        try {
+
+          const response = await window.solana.connect();
+
+          const walletAddress = response.publicKey.toString();
+
+          localStorage.setItem("connectedWallet", walletAddress);
+
+
+
+          document.getElementById("wallet-status").textContent =
+
+            `✅ Wallet connected: ${walletAddress}`;
+
+
+
+          // Optional: Redirect after connection
+
+          // window.location.href = "signup.html";
+
+
+
+        } catch (err) {
+
+          console.error("Wallet connection error:", err);
+
+          alert("Failed to connect to wallet.");
+
+        }
+
+      } else {
+
+        alert("Phantom wallet not found. Please install Phantom to continue.");
+
+      }
+
+    }
+
+
+
+    // Auto-display stored wallet if already connected
+
+    const savedWallet = localStorage.getItem("connectedWallet");
+
+    if (savedWallet) {
+
+      document.getElementById("wallet-status").textContent =
+
+        `✅ Wallet previously connected: ${savedWallet}`;
+
+    }
+
+  </script>
+
+
   <div class="container">
     <h2>Identity Verification (KYC)</h2>
     <p>To unlock volunteer rewards, please complete the KYC process below.</p>
