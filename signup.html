@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>LoveButton Signup</title>
   <meta charset="UTF-8">
+  <title>Sign Up & KYC – LoveButton</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      background-color: #fdf2f8;
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #fff5f5;
       text-align: center;
-      padding: 40px;
+      padding: 2em;
     }
     h1 {
       color: #e60073;
@@ -35,77 +35,101 @@
     button:hover {
       background-color: #cc005f;
     }
+    iframe {
+      border: none;
+      width: 100%;
+      max-width: 600px;
+      height: 750px;
+      margin-top: 30px;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 16px;
+    }
   </style>
-</head>
-<body>
-<!-- Firebase SDKs -->
+
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
-  
-    <script>
-  let auth, db;
 
-  window.onload = () => {
-    const firebaseConfig = {
-      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-      authDomain: "lovebutton-heaven.firebaseapp.com",
-      projectId: "lovebutton-heaven",
-      storageBucket: "lovebutton-heaven.firebasestorage.app",
-      messagingSenderId: "1079456151721",
-      appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-      measurementId: "G-0261HYV08P"
+  <script>
+    let auth, db;
+
+    window.onload = () => {
+      const firebaseConfig = {
+        apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+        authDomain: "lovebutton-heaven.firebaseapp.com",
+        projectId: "lovebutton-heaven",
+        storageBucket: "lovebutton-heaven.firebasestorage.app",
+        messagingSenderId: "1079456151721",
+        appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+        measurementId: "G-0261HYV08P"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
     };
 
-    firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
-  };
+    async function signup() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const wallet = document.getElementById('wallet').value.trim();
+      const messageEl = document.getElementById('message');
 
-  async function signup() {
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const wallet = document.getElementById('wallet').value.trim();
-    const messageEl = document.getElementById('message');
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
 
-    if (!wallet) {
-      messageEl.style.color = 'red';
-      messageEl.innerText = 'Wallet address is required.';
-      return;
+        await db.collection('users').doc(user.uid).set({
+          name,
+          email,
+          wallet,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          accessLevel: 1  // default Tier 1
+        });
+
+        messageEl.style.color = 'green';
+        messageEl.innerText = 'Signup successful! Please complete your KYC to unlock volunteer access.';
+        // Optionally scroll to the KYC widget
+        document.getElementById('kyc-frame').scrollIntoView({ behavior: 'smooth' });
+
+      } catch (error) {
+        messageEl.style.color = 'red';
+        messageEl.innerText = error.message;
+      }
     }
+  </script>
+</head>
 
-    try {
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
+<body>
+  <h1>Sign Up To Volunteer with LoveButton</h1>
 
-      await db.collection('users').doc(user.uid).set({
-        name,
-        email,
-        wallet,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      messageEl.style.color = 'green';
-      messageEl.innerText = 'Signup successful! Redirecting...';
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 1500);
-    } catch (error) {
-      messageEl.style.color = 'red';
-      messageEl.innerText = error.message;
-
-    }
-  }
-</script>
-   <h1>Sign Up To Volunteer with Volunteer Coin Project Foundation!</h1>
   <input type="text" id="name" placeholder="Your Full Name" required>
   <input type="email" id="email" placeholder="Email Address" required>
   <input type="password" id="password" placeholder="Password" required>
-  <input type="text" id="wallet" placeholder="Wallet Address" required>
-    <button onclick="signup()">Create Account</button>
-  
+  <input type="text" id="wallet" placeholder="Wallet Address (required to earn LVBTN)" required>
+
+  <button onclick="signup()">Create Account</button>
   <p id="message"></p>
-  </script>
+
+  <h2 style="margin-top: 40px;">Identity Verification (KYC)</h2>
+  <p>To unlock volunteer rewards, please complete the KYC process below.</p>
+  <p>The more verified you are, the more access and token rewards you'll earn.</p>
+
+  <iframe id="kyc-frame" src="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b"></iframe>
+
+  <p style="margin-top: 20px;">
+    💗 LVBTN token earnings:<br>
+    • Tier 1 – 1 LVBTN/hr<br>
+    • Tier 2 – 1.25 LVBTN/hr (KYC + driver)<br>
+    • Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + hours)
+  </p>
+
+  <button style="margin-top: 20px; background-color: #333;">
+    LVBTN Fixed Rate: $2.50 USD
+  </button>
 </body>
 </html>
