@@ -2,134 +2,128 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up & KYC – LoveButton</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KYC Signup – LoveButton</title>
   <style>
     body {
+      background-color: #fff0f5;
       font-family: Arial, sans-serif;
-      background-color: #fff5f5;
       text-align: center;
-      padding: 2em;
+      margin: 0;
+      padding: 0;
     }
-    h1 {
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    h2 {
       color: #e60073;
     }
-    input {
-      display: block;
-      margin: 10px auto;
-      padding: 12px;
-      width: 80%;
-      max-width: 350px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+
+    ul {
+      list-style: none;
+      padding: 0;
     }
-    button {
+
+    ul li {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    .btn, .home-btn {
       background-color: #e60073;
       color: white;
-      border: none;
       padding: 12px 24px;
-      border-radius: 6px;
+      border: none;
       font-size: 16px;
       cursor: pointer;
+      border-radius: 6px;
+      margin: 15px 10px;
     }
-    button:hover {
+
+    .btn:hover, .home-btn:hover {
       background-color: #cc005f;
     }
-    iframe {
-      border: none;
-      width: 100%;
-      max-width: 600px;
-      height: 750px;
-      margin-top: 30px;
-    }
-    #message {
+
+    .love-icon {
+      height: 80px;
       margin-top: 20px;
-      font-size: 16px;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    #status.success {
+      color: green;
+    }
+
+    #status.pending {
+      color: orange;
+    }
+
+    #status.error {
+      color: red;
     }
   </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Identity Verification (KYC)</h2>
+    <p>To unlock volunteer rewards, please complete the KYC process below.</p>
+    <p>The more verified you are, the more access and token rewards you'll earn.</p>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+    <ul>
+      <li>💗 LVBTN token earnings:</li>
+      <li>• Tier 1 – 1 LVBTN/hr</li>
+      <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
+      <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + hours)</li>
+    </ul>
+
+    <button class="btn" onclick="window.location.href='Create" rel="noopener" target="_blank">https://verify.blockpass.org/?clientId=volunteer_coin_project_68f8b'">Create Account</button>
+    <button class="home-btn" onclick="window.location.href='index.html'">Back to Home</button>
+
+    <img src="lovebutton.png" alt="LoveButton Token Logo" class="love-icon">
+
+    <div id="status" class="pending">Checking KYC status...</div>
+  </div>
 
   <script>
-    let auth, db;
-
-    window.onload = () => {
-      const firebaseConfig = {
-        apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-        authDomain: "lovebutton-heaven.firebaseapp.com",
-        projectId: "lovebutton-heaven",
-        storageBucket: "lovebutton-heaven.firebasestorage.app",
-        messagingSenderId: "1079456151721",
-        appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-        measurementId: "G-0261HYV08P"
-      };
-
-      firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
-      db = firebase.firestore();
-    };
-
-    async function signup() {
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const wallet = document.getElementById('wallet').value.trim();
-      const messageEl = document.getElementById('message');
-
+    // Simulated KYC status check (you can integrate this with Firebase/your backend later)
+    async function checkKYCStatus() {
       try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
+        // Simulated check — replace with real status fetch
+        const wallet = localStorage.getItem("connectedWallet") || "demo_wallet";
+        const response = await fetch(`https://your-backend.com/checkKYC?wallet=${wallet}`);
+        const data = await response.json();
 
-        await db.collection('users').doc(user.uid).set({
-          name,
-          email,
-          wallet,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          accessLevel: 1  // default Tier 1
-        });
+        const statusBox = document.getElementById("status");
 
-        messageEl.style.color = 'green';
-        messageEl.innerText = 'Signup successful! Please complete your KYC to unlock volunteer access.';
-        // Optionally scroll to the KYC widget
-        document.getElementById('kyc-frame').scrollIntoView({ behavior: 'smooth' });
-
-      } catch (error) {
-        messageEl.style.color = 'red';
-        messageEl.innerText = error.message;
+        if (data.status === "approved") {
+          statusBox.textContent = "✅ KYC Approved! Redirecting to your dashboard...";
+          statusBox.className = "success";
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 3000);
+        } else if (data.status === "pending") {
+          statusBox.textContent = "🕐 Your KYC is still pending. Please check back soon.";
+          statusBox.className = "pending";
+        } else {
+          statusBox.textContent = "⚠️ No KYC submission found. Please create an account above.";
+          statusBox.className = "error";
+        }
+      } catch (err) {
+        const statusBox = document.getElementById("status");
+        statusBox.textContent = "Error checking KYC status.";
+        statusBox.className = "error";
       }
     }
+
+    checkKYCStatus();
   </script>
-</head>
-
-<body>
-  <h1>Sign Up To Volunteer with VCPF!</h1>
-
-  <input type="text" id="name" placeholder="Your Full Name" required>
-  <input type="email" id="email" placeholder="Email Address" required>
-  <input type="password" id="password" placeholder="Password" required>
-  <input type="text" id="wallet" placeholder="Wallet Address (required to earn LVBTN)" required>
-
-  <button onclick="signup()">Create Account</button>
-  <p id="message"></p>
-
-  <h2 style="margin-top: 40px;">Identity Verification (KYC)</h2>
-  <p>To unlock volunteer rewards, please complete the KYC process below.</p>
-  <p>The more verified you are, the more access and token rewards you'll earn.</p>
-
- <p style="margin-top: 20px;">
-    💗 LVBTN token earnings:<br>
-    • Tier 1 – 1 LVBTN/hr<br>
-    • Tier 2 – 1.25 LVBTN/hr (KYC + driver)<br>
-    • Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + hours)
-  </p>
-  
-  <iframe id="kyc-frame" src="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b"></iframe>
-
 </body>
-  <button style="margin-top: 20px; background-color: #333;">
-    LVBTN Fixed Rate: $2.50 USD
-  </button> 
 </html>
