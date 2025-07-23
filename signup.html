@@ -108,54 +108,16 @@
 
           const response = await window.solana.connect();
 
-          const walletAddress = response.publicKey.toString();
-
-          localStorage.setItem("connectedWallet", walletAddress);
-
-
-
-          document.getElementById("wallet-status").textContent =
-
-            `✅ Wallet connected: ${walletAddress}`;
-
-
-
-          // Optional: Redirect after connection
-
-          // window.location.href = "signup.html";
-
-
-
+          const walletAddress = resp.publicKey.toString();
+document.getElementById("walletAddress").innerText = `Wallet: ${Wallet}`;
+          console.log("Connected Wallet:", wallet);
         } catch (err) {
-
-          console.error("Wallet connection error:", err);
-
-          alert("Failed to connect to wallet.");
-
+          console.error("Wallet connection cancelled", err);
         }
-
       } else {
-
-        alert("Phantom wallet not found. Please install Phantom to continue.");
-
+        alert("Phantom wallet not detected.  Please install Phantom.");
       }
-
     }
-
-
-
-    // Auto-display stored wallet if already connected
-
-    const savedWallet = localStorage.getItem("connectedWallet");
-
-    if (savedWallet) {
-
-      document.getElementById("wallet-status").textContent =
-
-        `✅ Wallet previously connected: ${savedWallet}`;
-
-    }
-
   </script>
 
 
