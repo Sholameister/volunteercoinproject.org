@@ -403,6 +403,28 @@ async function checkKYCStatus(walletAddress) {
   }
 }
   </script>
+  <script>
+let startTime = null;
+
+document.getElementById("startVolunteering").addEventListener("click", () => {
+  startTime = new Date();
+  alert(`Start time recorded: ${startTime.toLocaleString()}`);
+});
+
+document.getElementById("stopVolunteering").addEventListener("click", () => {
+  if (!startTime) {
+    alert("Please start volunteering first.");
+    return;
+  }
+  const stopTime = new Date();
+  const durationMs = stopTime - startTime;
+  const durationHours = (durationMs / (1000 * 60 * 60)).toFixed(2);
+  const tokensEarned = (durationHours * 1).toFixed(2); // Tier 1 default
+
+  alert(`You earned ${tokensEarned} LVBTN tokens for ${durationHours} hours.`);
+});
+</script>
+
 </body>
   
 </html>
