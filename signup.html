@@ -96,7 +96,6 @@
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
   <script>
-    window.onload = () => {
   const connectWalletBtn = document.getElementById('connectWalletBtn');
   const walletStatus = document.getElementById('walletStatus');
   const kycStatus = document.getElementById('kycStatus');
@@ -119,7 +118,7 @@
   });
     };
   </script>
-  <script
+  <script>
   async function checkKYC(walletAddress) {
     // Firestore check
     const db = firebase.firestore();
