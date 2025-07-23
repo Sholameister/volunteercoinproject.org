@@ -107,10 +107,10 @@
         try {
 
           const response = await window.solana.connect();
-
-          const walletAddress = resp.publicKey.toString();
-document.getElementById("walletAddress").innerText = `Wallet: ${Wallet}`;
-          console.log("Connected Wallet:", wallet);
+          const walletAddress = response.publicKey.toString();
+          document.getElementById("wallet-status").innerText = `Wallet: ${WalletAddress}`;
+          localStorage.setItem("connectedWallet",walletAddress);
+          console.log("Connected Wallet:", walletaddress);
         } catch (err) {
           console.error("Wallet connection cancelled", err);
         }
