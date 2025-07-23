@@ -96,6 +96,7 @@
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
   <script>
+    window.onload = () => {
   const connectWalletBtn = document.getElementById('connectWalletBtn');
   const walletStatus = document.getElementById('walletStatus');
   const kycStatus = document.getElementById('kycStatus');
@@ -104,8 +105,8 @@
     if (window.solana && window.solana.isPhantom) {
       try {
         const resp = await window.solana.connect();
-        const walletAddress = resp.publicKey.toString();
-        walletStatus.textContent = `✅ Connected: ${walletAddress}`;
+        const address = resp.publicKey.toString();
+        walletStatus.textContent = `✅ Connected: ${address}`;
         walletStatus.style.color = 'green';
       } catch (err) {
         console.error('Connection rejected', err);
