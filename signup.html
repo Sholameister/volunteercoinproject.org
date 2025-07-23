@@ -92,41 +92,10 @@
   <h2>Connect Your Wallet</h2>
   <p>Required to verify KYC status and earn LVBTN tokens.</p>
 
-  <button class="btn" onclick="connectWallet()">Connect Phantom Wallet</button>
+  <button id="connectWalletBtn">Connect Phantom Wallet</button>
+  <div id="wallet-status" style="color: red;">Wallet Not Connected</div>
 
-  <div id="wallet-status">No wallet connected</div>
-
-
-
-  <script>
-  async function connectWallet() {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const response = await window.solana.connect();
-        const walletAddress = response.publicKey.toString();
-        document.getElementById("wallet-status").innerText = `Wallet: ${walletAddress}`;
-        localStorage.setItem("connectedWallet", walletAddress);
-        console.log("Connected Wallet:", walletAddress);
-        checkKYCStatus();
-      } catch (err) {
-        console.error("Wallet connection cancelled", err);
-      }
-    } else {
-      alert("Phantom wallet not detected. Please install Phantom.");
-    }
-  }
-
-  // ✅ This runs after the DOM is loaded
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedWallet = localStorage.getItem("connectedWallet");
-    if (savedWallet) {
-      document.getElementById("wallet-status").innerText = `Wallet: ${savedWallet}`;
-    }
-  });
-</script>
-
-
-
+  
   <div class="container">
     <h2>Identity Verification (KYC)</h2>
     <p>To unlock volunteer rewards, please complete the KYC process below.</p>
