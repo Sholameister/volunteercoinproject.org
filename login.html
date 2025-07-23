@@ -300,11 +300,20 @@ localStorage.setItem("volunteerWallet", walletAddress);
   const storedGeo = localStorage.getItem("volunteerGeo");
   const storedWallet = localStorage.getItem("volunteerWallet");
 
-  if (window.solana && window.solana.isPhantom) {
+  document.getElementById('connectWalletBtn').addEventListener('click', async () => }
+    if (window.solana && window.solana.isPhantom) {
     try {
-      const resp = await window.solana.connect({ onlyIfTrusted: true });
-      const connectedWallet = resp.publicKey.toString();
-
+      const resp = await window.solana.connect();
+      const walletAddress = response.publicKey.toString();
+      console.log(Wallet connected:', walletAddress);
+        localStorage.setItem('walletAddress', walletAddress);
+    } catch (err) {
+      console.error('Wallet connection cancelled:', err);
+    }
+    } else {
+      alert('Phantom wallet not found.  Please install Phantom.');
+    }
+    });
       if (storedStart && storedGeo && storedWallet === connectedWallet) {
         walletAddress = connectedWallet;
         sessionStartTime = new Date(storedStart);
