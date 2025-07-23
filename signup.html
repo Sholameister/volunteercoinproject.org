@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0>
   <title>Connect Wallet</title>
   <style>
     body {
@@ -93,7 +94,7 @@
   <p>Required to verify KYC status and earn LVBTN tokens.</p>
 
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
- 
+  <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
   <script>
   const connectWalletBtn = document.getElementById('connectWalletBtn');
   const walletStatus = document.getElementById('walletStatus');
