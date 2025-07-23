@@ -96,6 +96,7 @@
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
   <script>
+    window.onload = () => {
   const connectWalletBtn = document.getElementById('connectWalletBtn');
   const walletStatus = document.getElementById('walletStatus');
   const kycStatus = document.getElementById('kycStatus');
@@ -107,22 +108,18 @@
         const walletAddress = resp.publicKey.toString();
         walletStatus.textContent = `✅ Connected: ${walletAddress}`;
         walletStatus.style.color = 'green';
-
-        // ✅ Now reveal the KYC checker
-        kycStatus.style.display = 'block';
-
-        // Run your Firestore KYC check logic here
-        checkKYC(walletAddress);
       } catch (err) {
         console.error('Connection rejected', err);
-        walletStatus.textContent = '❌ Connection failed';
+        walletStatus.textContent = '❌ Connection rejected';
         walletStatus.style.color = 'red';
       }
     } else {
       alert('Phantom wallet not found. Please install it.');
     }
   });
-
+    };
+  </script>
+  <script
   async function checkKYC(walletAddress) {
     // Firestore check
     const db = firebase.firestore();
