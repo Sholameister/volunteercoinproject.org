@@ -94,7 +94,7 @@
 
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
-  <div id="kycStatus" style="margin-top: 10px; font-weight: boldd; color: orange;">
+  <div id="kycStatus" style="margin-top: 10px; font-weight: bold; color: orange;">
     KYC checking
   </div>
   <script>
@@ -110,6 +110,7 @@
         const address = resp.publicKey.toString();
         walletStatus.textContent = `✅ Connected: ${address}`;
         walletStatus.style.color = 'green';
+        checkKYCStatus(address);
       } catch (err) {
         console.error('Connection rejected', err);
         walletStatus.textContent = '❌ Connection rejected';
