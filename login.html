@@ -219,6 +219,32 @@
     document.getElementById("afterPhoto").disabled = true;
     document.getElementById("stopBtn").disabled = true;
   });
+  let connectedWalletAddress = null;
+
+document.getElementById("connectWalletBtn").addEventListener("click", async () => {
+  try {
+    const provider = window.solana;
+
+    if (!provider || !provider.isPhantom) {
+      alert("Phantom Wallet not found. Please install it.");
+      return;
+    }
+
+    const resp = await provider.connect();
+    connectedWalletAddress = resp.publicKey.toString();
+    console.log("Wallet connected:", connectedWalletAddress);
+
+    // Enable other UI
+    document.getElementById("walletStatus").innerText = `Wallet connected: ${connectedWalletAddress}`;
+    document.getElementById("beforePhoto").disabled = false;
+
+    // Check for legacy ban
+    checkLegacyBan(connectedWalletAddress);
+  } catch (err) {
+    console.error("Wallet connection error:", err);
+  }
+});
+
 </script>
 </body>
 </html>
