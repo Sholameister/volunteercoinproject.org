@@ -203,5 +203,26 @@ async function checkKYCStatus() {
   }
 }
 </script>
+  <script>
+  const connectWalletBtn = document.getElementById('connectWalletBtn');
+  const walletStatus = document.getElementById('walletStatus');
+
+  connectWalletBtn.addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const response = await window.solana.connect();
+        const address = response.publicKey.toString();
+        walletStatus.textContent = `✅ Connected: ${address}`;
+        walletStatus.style.color = 'green';
+      } catch (err) {
+        console.error('User rejected the connection request', err);
+        walletStatus.textContent = '❌ Connection rejected';
+      }
+    } else {
+      alert('Phantom wallet not found. Please install it: https://phantom.app');
+    }
+  });
+</script>
+
 </body>
 </html>
