@@ -233,48 +233,6 @@
   updateBTCPrice();
   setInterval(updateBTCPrice, 60000);
   
-
-  let startTime, stopTime, startPic, stopPic, geoStart, geoStop, wallet;
-
-  document.getElementById("startBtn")?.addEventListener("click", () => {
-    const file = document.getElementById("startPhoto").files[0];
-    if (!file) return alert("Please take a 'Start' photo.");
-    startTime = new Date();
-    navigator.geolocation.getCurrentPosition(pos => {
-      geoStart = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-    });
-    startPic = file.name;
-    alert("Volunteer session started!");
-  });
-
-  document.getElementById("stopBtn")?.addEventListener("click", () => {
-    const file = document.getElementById("stopPhoto").files[0];
-    if (!file) return alert("Please take a 'Stop' photo.");
-    if (!startTime) return alert("Please start volunteering first.");
-
-    stopTime = new Date();
-    const durationMs = stopTime - startTime;
-    const hours = (durationMs / 3600000).toFixed(2);
-    const earned = (hours * 2.5).toFixed(2);
-
-    navigator.geolocation.getCurrentPosition(pos => {
-      geoStop = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-    });
-
-    stopPic = file.name;
-    document.getElementById("sessionSummary").innerHTML = `
-      <p><strong>Session Summary:</strong></p>
-      <ul>
-        <li>Wallet: ${wallet || 'N/A'}</li>
-        <li>Start: ${startTime.toLocaleTimeString()} | Stop: ${stopTime.toLocaleTimeString()}</li>
-        <li>Time Volunteered: ${hours} hours</li>
-        <li>Tokens Earned: ${earned} LVBTN</li>
-        <li>Geo Start: ${geoStart} | Geo Stop: ${geoStop}</li>
-        <li>Photos: ✅ Start & Stop submitted</li>
-      </ul>
-    `;
-  });
-
 </script>
    
 </body>
