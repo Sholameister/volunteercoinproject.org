@@ -72,7 +72,7 @@
       const resp = await window.solana.connect();
       const walletAddress = resp.publicKey.toString();
       document.getElementById("walletStatus").textContent = `✅ Connected: ${walletAddress}`;
-      // Save to session or Firebase if needed
+     checkKYCStatus(walletAddress);
     } catch (err) {
       alert("Phantom connection failed.");
     }
