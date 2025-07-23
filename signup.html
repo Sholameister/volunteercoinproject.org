@@ -107,6 +107,7 @@
         document.getElementById("wallet-status").innerText = `Wallet: ${walletAddress}`;
         localStorage.setItem("connectedWallet", walletAddress);
         console.log("Connected Wallet:", walletAddress);
+        checkKYCStatus();
       } catch (err) {
         console.error("Wallet connection cancelled", err);
       }
@@ -190,8 +191,6 @@ async function checkKYCStatus() {
     console.error("Firestore error:", error);
   }
 }
-
-  checkKYCStatus();
 </script>
 </body>
 </html>
