@@ -61,7 +61,7 @@
 
 <div id="summaryBox" style="display:none;"></div>
 <div id="afterPhotosBox"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -245,7 +245,28 @@ document.getElementById("connectWalletBtn").addEventListener("click", async () =
     console.error("Wallet connection error:", err);
   }
 });
+document.getElementById("connectWalletBtn").addEventListener("click", async () => {
+  try {
+    if (window.solana && window.solana.isPhantom) {
+      const response = await window.solana.connect();
+      const wallet = response.publicKey.toString();
+      document.getElementById("walletAddress").textContent = wallet;
+      document.getElementById("walletStatus").textContent = "✅ Wallet connected";
+      document.getElementById("walletStatus").style.color = "green";
 
+      // Enable beforePhoto input now that wallet is connected
+      document.getElementById("beforePhoto").disabled = false;
+
+    } else {
+      document.getElementById("walletStatus").textContent = "❌ Phantom Wallet not found.";
+      document.getElementById("walletStatus").style.color = "red";
+    }
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+    document.getElementById("walletStatus").textContent = "❌ Failed to connect wallet.";
+    document.getElementById("walletStatus").style.color = "red";
+  }
+});
 </script>
 </body>
 </html>
