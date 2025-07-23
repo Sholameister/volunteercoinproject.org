@@ -52,8 +52,6 @@
 <body>
 
   <h1>Volunteer Reward Tracker</h1>
-
-  <button id="connectBtn">Connect Phantom Wallet</button>
 <script type="module">
   import {
     Connection,
@@ -373,6 +371,7 @@ localStorage.setItem("volunteerWallet", walletAddress);
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
+  <script>
 async function checkKYCStatus(walletAddress) {
   const kycStatus = document.getElementById("kycStatus");
 
@@ -399,7 +398,7 @@ async function checkKYCStatus(walletAddress) {
     kycStatus.style.color = "red";
   }
 }
-
+  </script>
 </body>
   
 </html>
