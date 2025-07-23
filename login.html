@@ -80,7 +80,7 @@
   async function fetchLegacyWallets() {
     try {
       const res = await fetch("https://raw.githubusercontent.com/sholameister/volunteercoinproject.org/main/legacy_wallets.json");
-      const res = await fetchLegacyWallets();
+      res = await fetchLegacyWallets();
       const data = await res.json();
       legacyWallets = data.blocked_wallets.map(w => w.toLowerCase());
     } catch (e) {
@@ -251,9 +251,8 @@ localStorage.setItem("volunteerWallet", walletAddress);
               resolve(`Lat: ${lat}, Lon: ${lon}`);
             },
             () => resolve("Location access denied.")
-          );
-        }
-      });
+            } );
+        
     }
      async function loadVolunteerDashboard() {
   if (!walletAddress) return;
