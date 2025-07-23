@@ -99,30 +99,31 @@
 
 
   <script>
-
-    async function connectWallet() {
-
-      if (window.solana && window.solana.isPhantom) {
-
-        try {
-
-          const response = await window.solana.connect();
-          const walletAddress = response.publicKey.toString();
-          document.getElementById("wallet-status").innerText = `Wallet: ${walletAddress}`;
-          localStorage.setItem("connectedWallet",walletAddress);
-          console.log("Connected Wallet:", walletAddress);
-        } catch (err) {
-          console.error("Wallet connection cancelled", err);
-        }
-      } else {
-        alert("Phantom wallet not detected.  Please install Phantom.");
+  async function connectWallet() {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const response = await window.solana.connect();
+        const walletAddress = response.publicKey.toString();
+        document.getElementById("wallet-status").innerText = `Wallet: ${walletAddress}`;
+        localStorage.setItem("connectedWallet", walletAddress);
+        console.log("Connected Wallet:", walletAddress);
+      } catch (err) {
+        console.error("Wallet connection cancelled", err);
       }
+    } else {
+      alert("Phantom wallet not detected. Please install Phantom.");
     }
+  }
+
+  // ✅ This runs after the DOM is loaded
+  window.addEventListener("DOMContentLoaded", () => {
     const savedWallet = localStorage.getItem("connectedWallet");
-if (savedWallet) {
-  document.getElementById("wallet-status").innerText = `Wallet: ${savedWallet}`;
-}
-  </script>
+    if (savedWallet) {
+      document.getElementById("wallet-status").innerText = `Wallet: ${savedWallet}`;
+    }
+  });
+</script>
+
 
 
   <div class="container">
