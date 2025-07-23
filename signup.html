@@ -123,7 +123,7 @@
   async function checkKYC(walletAddress) {
     // Firestore check
     const db = firebase.firestore();
-    const doc = await db.collection("kycVerifiedWallets").doc(walletAddress).get();
+    const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
 
     if (doc.exists) {
       kycStatus.innerHTML = `✅ KYC Verified`;
@@ -200,25 +200,6 @@ async function checkKYCStatus() {
     console.error("Firestore error:", error);
   }
 }
-</script>
-  <script>
-  const walletStatus = document.getElementById('walletStatus');
-
-  connectWalletBtn.addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const response = await window.solana.connect();
-        const address = response.publicKey.toString();
-        walletStatus.textContent = `✅ Connected: ${address}`;
-        walletStatus.style.color = 'green';
-      } catch (err) {
-        console.error('User rejected the connection request', err);
-        walletStatus.textContent = '❌ Connection rejected';
-      }
-    } else {
-      alert('Phantom wallet not found. Please install it: https://phantom.app');
-    }
-  });
 </script>
 
 </body>
