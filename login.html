@@ -137,25 +137,32 @@
     let sessionStartTime = null;
     let sessionGeo = "";
 
-    async function connectWallet() {
-      window.connectWallet = connectWallet;
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const resp = await window.solana.connect();
-          walletAddress = resp.publicKey.toString();
-          document.getElementById("walletAddress").innerText = "Wallet: " + walletAddress;
-          await checkWallet(walletAddress);
-        } catch (err) {
-          alert("Wallet connection rejected.");
-        }
-      } else {
-        alert("Phantom wallet not found. Please install Phantom.");
+   <script>
+  let walletAddress = null;
+
+  document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const response = await window.solana.connect();
+        walletAddress = response.publicKey.toString();
+        console.log('Connected wallet:', walletAddress);
+        localStorage.setItem('walletAddress', walletAddress);
+
+        // Optional: hide connect button, show app features
+        document.getElementById('connectWalletBtn').style.display = 'none';
+        document.getElementById('volunteerPanel').style.display = 'block';
+
+      } catch (err) {
+        console.error('User declined wallet connection:', err);
       }
+    } else {
+      alert('Phantom Wallet not found. Please install it to continue.');
     }
+  });
+</script>
 
-  let blockedWallets = [];
 
-
+<script
     async function startVolunteering() {
       window.startVolunteering = startVolunteering;
       const beforePhoto = document.getElementById("beforePhoto").files[0];
