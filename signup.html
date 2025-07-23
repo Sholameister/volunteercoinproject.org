@@ -93,8 +93,10 @@
   <p>Required to verify KYC status and earn LVBTN tokens.</p>
 
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
+  <div id="kycStatus" style="margin-top: 10px; font-weight: bold; color: orange;">
+    Checking KYC status...
+  </div>
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
-  
   <script>
     window.onload = () => {
   const connectWalletBtn = document.getElementById('connectWalletBtn');
