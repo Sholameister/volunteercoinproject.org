@@ -67,7 +67,7 @@
 
   connectButton.addEventListener("click", async () => {
     try {
-      const resp = await window.solana.connect();
+      const resp = await window.solana.connect({ onlyIfTrusted: true });
       const walletAddress = resp.publicKey.toString();
       document.getElementById("walletStatus").textContent = `✅ Connected: ${walletAddress}`;
        localStorage.setItem("connectWallet", walletAddress);
@@ -85,7 +85,7 @@
       document.getElementById("walletStatus").textContent = ` Connected: ${cached}
       checkKYCStatus(cached);
     if (cached) {
-      document.getElementById("walletStatus
+      document.getElementById("walletStatus";
     } else {
       alert("Phantom wallet not found. Install Phantom to continue.");
     }
