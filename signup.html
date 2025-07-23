@@ -118,6 +118,10 @@
         alert("Phantom wallet not detected.  Please install Phantom.");
       }
     }
+    const savedWallet = localStorage.getItem("connectedWallet");
+if (savedWallet) {
+  document.getElementById("wallet-status").innerText = `Wallet: ${savedWallet}`;
+}
   </script>
 
 
