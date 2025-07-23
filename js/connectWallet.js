@@ -1,4 +1,36 @@
-// js/connectWallet.js
+window.addEventListener("DOMContentLoaded", () => {
+  const connectBtn = document.getElementById("connectBtn"); // Make sure this ID matches your button
+  const walletStatus = document.getElementById("walletStatus");
+
+  if (!connectBtn || !walletStatus) {
+    console.error("Connect button or status box not found.");
+    return;
+  }
+
+  if (window.solana && window.solana.isPhantom) {
+    console.log("✅ Phantom Wallet detected");
+
+    connectBtn.addEventListener("click", async () => {
+      try {
+        const resp = await window.solana.connect();
+        const walletAddress = resp.publicKey.toString();
+
+        walletStatus.textContent = `✅ Connected: ${walletAddress}`;
+        walletStatus.style.color = 'green';
+
+        // Save for future use
+        localStorage.setItem("connectedWallet", walletAddress);
+      } catch (err) {
+        console.error("Connection rejected:", err);
+        walletStatus.textContent = "❌ Connection rejected";
+        walletStatus.style.color = 'red';
+      }
+    });
+  } else {
+    alert("Phantom Wallet not found. Please install it: https://phantom.app");
+  }
+});
+
 async function connectPhantomWallet() {
   const { solana } = window;
   if (solana && solana.isPhantom) {
@@ -31,11 +63,6 @@ async function connectPhantomWallet() {
     appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
     measurementId: "G-0261HYV08P"
   };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-
 // ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -78,24 +105,6 @@ try {
 } catch (e) {
   console.error("Token check error:", e);
 }
-
-      // 🧠 Check LVBTN balance
-      const res = await fetch("https://api.helius.xyz/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "getTokenAccountsByOwner",
-          params: [
-            wallet,
-            { mint: LVBTN_MINT },
-            { encoding: "jsonParsed" }
-          ]
-        })
-      });
-
-      const data = await res.json();
       let walletbalance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
 
       if (walletbalance >= 1) {
@@ -118,6 +127,3 @@ try {
     alert("Please install Phantom or Solflare Wallet.");
   }
 }
-
-// ✅ Button Listener
-document.getElementById("connectWallet").addEventListener("click", solanaConnectAndCheck);
