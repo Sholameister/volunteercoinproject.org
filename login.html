@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>LoveButton Volunteer Logger</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       background-color: #fdf2f8;
@@ -35,219 +34,191 @@
     #summaryBox, #afterPhotosBox {
       margin-top: 20px;
       padding: 15px;
-      border: 2px dashed #e60073;
-      border-radius: 10px;
-      background-color: #fff;
-      display: none;
+      border: 1px solid #ccc;
+      background-color: #fff0f5;
+      border-radius: 8px;
     }
-    #progressContainer {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .progress-bar {
-      height: 20px;
-      background-color: #e60073;
-      width: 0%;
-      border-radius: 10px;
-      transition: width 1s ease;
-    }
-    .progress-track {
-      width: 80%;
-      height: 20px;
-      background-color: #ffe6f0;
-      border-radius: 10px;
-      margin: 0 auto;
+    img.thumbnail {
+      max-width: 100px;
+      margin: 5px;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
 
 <h1>LoveButton Volunteer Logger</h1>
-<p>Please connect your wallet and upload photos to begin!</p>
 
-<button onclick="connectWallet()">Connect Phantom Wallet</button>
-<p id="walletStatus">Wallet not connected</p>
+<button id="connectWalletBtn">Connect Phantom Wallet</button>
+<div id="walletAddress"></div>
 
-<input type="file" id="beforePhoto" accept="image/*" disabled>
+<input type="file" id="beforePhoto" accept="image/*" disabled />
 <button id="startBtn" disabled>Start Volunteering</button>
 
-<input type="file" id="afterPhoto" accept="image/*" disabled>
+<input type="file" id="afterPhoto" accept="image/*" disabled />
 <button id="stopBtn" disabled>Stop Volunteering</button>
 
-<div id="summaryBox"></div>
-<div id="afterPhotosBox"><h3>Past Accomplishments:</h3></div>
+<div id="summaryBox" style="display:none;"></div>
+<div id="afterPhotosBox"></div>
 
-<div id="progressContainer">
-  <h3>Milestone Progress</h3>
-  <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
-</div>
-
-<!-- Firebase -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-  authDomain: "lovebutton-heaven.firebaseapp.com",
-  projectId: "lovebutton-heaven",
-  storageBucket: "lovebutton-heaven.appspot.com",
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
+  const firebaseConfig = {
+    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+    authDomain: "lovebutton-heaven.firebaseapp.com",
+    projectId: "lovebutton-heaven",
+    storageBucket: "lovebutton-heaven.appspot.com"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-let connectedWallet = null;
-let startTime = null;
-let tier = 1;
-let tokenRate = 1;
+  let startTime, walletAddress = null;
 
-async function connectWallet() {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const res = await window.solana.connect();
-      const addr = res.publicKey.toString();
+  async function checkWalletBlocklist(address) {
+    const response = await fetch("https://raw.githubusercontent.com/Volunteer-Coin-Project/lvbtn/main/legacy-unrecognized-LVBTN.md");
+    const text = await response.text();
+    return text.includes(address);
+  }
 
-      // Check against legacy-unrecognized-LVBTN.md
-      const response = await fetch("https://raw.githubusercontent.com/VolunteerCoinProject/lvbtn/main/legacy-unrecognized-LVBTN.md");
-      const blacklist = await response.text();
-      if (blacklist.includes(addr)) {
-        alert("This wallet is blocked. You have 10 days to appeal to VCPF.");
-        return;
+  document.getElementById("connectWalletBtn").addEventListener("click", async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const resp = await window.solana.connect();
+        walletAddress = resp.publicKey.toString();
+
+        if (await checkWalletBlocklist(walletAddress)) {
+          alert("This wallet is blocked. You have 10 days to appeal to VCPF.");
+          return;
+        }
+
+        document.getElementById("walletAddress").innerText = `Wallet: ${walletAddress}`;
+        document.getElementById("beforePhoto").disabled = false;
+      } catch (err) {
+        alert("Wallet connection failed.");
       }
-
-      connectedWallet = addr;
-      document.getElementById("walletStatus").innerText = `Wallet: ${addr}`;
-      document.getElementById("beforePhoto").disabled = false;
-
-      const doc = await db.collection("volunteers").doc(addr).get();
-      tier = doc.exists && doc.data().tier ? doc.data().tier : 1;
-      tokenRate = tier === 3 ? 1.5 : tier === 2 ? 1.25 : 1;
-
-    } catch (err) {
-      console.error("Wallet connection failed", err);
+    } else {
+      alert("Phantom Wallet not found. Please install Phantom.");
     }
-  } else {
-    alert("Phantom wallet not detected.");
-  }
-}
+  });
 
-document.getElementById("beforePhoto").addEventListener("change", () => {
-  if (connectedWallet && document.getElementById("beforePhoto").files.length > 0) {
+  document.getElementById("beforePhoto").addEventListener("change", () => {
     document.getElementById("startBtn").disabled = false;
-  }
-});
+  });
 
-document.getElementById("afterPhoto").addEventListener("change", () => {
-  if (startTime && document.getElementById("afterPhoto").files.length > 0) {
+  document.getElementById("startBtn").addEventListener("click", async () => {
+    const file = document.getElementById("beforePhoto").files[0];
+    if (!walletAddress || !file) return;
+
+    const geolocation = await new Promise(resolve =>
+      navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords))
+    );
+    const timestamp = new Date().toISOString();
+    startTime = Date.now();
+
+    const storageRef = storage.ref(`beforePhotos/${walletAddress}_${timestamp}`);
+    await storageRef.put(file);
+    const beforePhotoURL = await storageRef.getDownloadURL();
+
+    await db.collection("volunteerSessions").add({
+      wallet: walletAddress,
+      type: "start",
+      timestamp,
+      lat: geolocation.latitude,
+      lon: geolocation.longitude,
+      beforePhotoURL
+    });
+
+    alert("Thank you for volunteering through Volunteer Coin Project Foundation!");
+    document.getElementById("beforePhoto").disabled = true;
+    document.getElementById("startBtn").disabled = true;
+    document.getElementById("afterPhoto").disabled = false;
+  });
+
+  document.getElementById("afterPhoto").addEventListener("change", () => {
     document.getElementById("stopBtn").disabled = false;
-  }
-});
-
-document.getElementById("startBtn").addEventListener("click", async () => {
-  startTime = new Date();
-  const geo = await getLocation();
-  const file = document.getElementById("beforePhoto").files[0];
-  const beforeRef = storage.ref(`beforePhotos/${connectedWallet}_${Date.now()}`);
-  await beforeRef.put(file);
-  const beforeURL = await beforeRef.getDownloadURL();
-
-  localStorage.setItem("sessionStart", startTime.toISOString());
-  localStorage.setItem("startLocation", JSON.stringify(geo));
-
-  alert(`You have begun volunteering!\nTime: ${startTime.toLocaleTimeString()}\nLocation: ${geo.lat}, ${geo.lon}`);
-});
-
-document.getElementById("stopBtn").addEventListener("click", async () => {
-  const endTime = new Date();
-  const stopLocation = await getLocation();
-  const start = new Date(localStorage.getItem("sessionStart"));
-  const duration = Math.max((endTime - start) / (1000 * 60 * 60), 0);
-  const tokens = (duration * tokenRate).toFixed(2);
-
-  const file = document.getElementById("afterPhoto").files[0];
-  const afterRef = storage.ref(`afterPhotos/${connectedWallet}_${Date.now()}`);
-  await afterRef.put(file);
-  const afterURL = await afterRef.getDownloadURL();
-
-  await db.collection("volunteerSessions").add({
-    wallet: connectedWallet,
-    start: firebase.firestore.Timestamp.fromDate(start),
-    end: firebase.firestore.Timestamp.fromDate(endTime),
-    tokens: parseFloat(tokens),
-    tokenRate,
-    beforePhoto: localStorage.getItem("lastBeforeURL"),
-    afterPhoto: afterURL,
-    latStart: JSON.parse(localStorage.getItem("startLocation")).lat,
-    lonStart: JSON.parse(localStorage.getItem("startLocation")).lon,
-    latStop: stopLocation.lat,
-    lonStop: stopLocation.lon
   });
 
-  const walletTotal = await getTotalBalance(); // Mocked
-  const livePrice = await getLiveLVBTNPrice();
-  const totalValue = (walletTotal + parseFloat(tokens)) * livePrice;
+  document.getElementById("stopBtn").addEventListener("click", async () => {
+    const file = document.getElementById("afterPhoto").files[0];
+    if (!walletAddress || !file || !startTime) return;
 
-  updateProgressBar(walletTotal + parseFloat(tokens));
-  renderSessionSummary(start, endTime, tokens, walletTotal, livePrice, totalValue);
-  loadAfterPhotos();
+    const endTime = Date.now();
+    const sessionDurationHrs = (endTime - startTime) / (1000 * 60 * 60);
+    const tier = 1.25; // Adjust this per actual tier in DB later
+    const tokensEarned = (sessionDurationHrs * tier).toFixed(2);
 
-  startTime = null;
-});
+    const storageRef = storage.ref(`afterPhotos/${walletAddress}_${endTime}`);
+    await storageRef.put(file);
+    const afterPhotoURL = await storageRef.getDownloadURL();
 
-async function getLocation() {
-  return new Promise(resolve => {
-    navigator.geolocation.getCurrentPosition(pos => {
-      resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-    }, () => resolve({ lat: 0, lon: 0 }));
+    await db.collection("volunteerSessions").add({
+      wallet: walletAddress,
+      type: "stop",
+      timestamp: new Date().toISOString(),
+      tokensEarned: parseFloat(tokensEarned),
+      afterPhotoURL
+    });
+
+    // Fetch existing tokens
+    let totalTokens = 0;
+    const snapshot = await db.collection("volunteerSessions").where("wallet", "==", walletAddress).get();
+    const afterPhotosBox = document.getElementById("afterPhotosBox");
+    afterPhotosBox.innerHTML = "<h3>Previous Accomplishments:</h3>";
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.tokensEarned) totalTokens += data.tokensEarned;
+      if (data.afterPhotoURL) {
+        const img = document.createElement("img");
+        img.src = data.afterPhotoURL;
+        img.className = "thumbnail";
+        afterPhotosBox.appendChild(img);
+      }
+    });
+
+    const livePrice = 2.50;
+    const usdValue = (totalTokens * livePrice).toFixed(2);
+    const sessionUSD = (tokensEarned * livePrice).toFixed(2);
+
+    document.getElementById("summaryBox").style.display = "block";
+    document.getElementById("summaryBox").innerHTML = `
+      <h2>Session Summary</h2>
+      <p><strong>Start Time:</strong> ${new Date(startTime).toLocaleString()}</p>
+      <p><strong>End Time:</strong> ${new Date(endTime).toLocaleString()}</p>
+      <p><strong>LVBTN Earned this Session:</strong> ${tokensEarned} (=$${sessionUSD})</p>
+      <p><strong>Total LVBTN:</strong> ${totalTokens.toFixed(2)}</p>
+      <p><strong>Total Value:</strong> $${usdValue}</p>
+    `;
+    updateProgressBar(totalTokens);
+    function updateProgressBar(totalTokens) {
+  const milestones = [25, 50, 100, 250, 500, 1000]; // You can adjust these
+  let maxMilestone = milestones.find(m => totalTokens <= m) || 1000;
+  let percent = Math.min((totalTokens / maxMilestone) * 100, 100).toFixed(2);
+
+  const progressBar = document.getElementById("progressBar");
+  const progressLabel = document.getElementById("progressLabel");
+
+  progressBar.style.width = `${percent}%`;
+  progressBar.innerText = `${percent}%`;
+  progressLabel.innerText = `You’ve earned ${totalTokens.toFixed(2)} LVBTN — next goal: ${maxMilestone} tokens!`;
+
+  document.getElementById("progressContainer").style.display = "block";
+}
+
+<div id="progressContainer" style="margin-top: 20px; display:none;"><h3>Your Progress</h3>
+  <div style="background: #ddd; border-radius: 20px; overflow: hidden; max-width: 400px; margin: 0 auto;">
+    <div id="progressBar" style="height: 25px; width: 0%; background: #e60073; color: white; text-align: center; line-height: 25px; transition: width 0.5s ease;"></div>
+  </div>
+  <p id="progressLabel" style="margin-top: 5px;"></p>
+</div>
+    document.getElementById("afterPhoto").disabled = true;
+    document.getElementById("stopBtn").disabled = true;
   });
-}
-
-function updateProgressBar(total) {
-  const percent = Math.min((total / 100) * 100, 100);
-  document.getElementById("progressBar").style.width = percent + "%";
-}
-
-async function renderSessionSummary(start, end, tokens, walletTokens, price, totalVal) {
-  const box = document.getElementById("summaryBox");
-  box.innerHTML = `
-    <h3>Session Summary</h3>
-    <p>Start: ${start.toLocaleTimeString()}</p>
-    <p>End: ${end.toLocaleTimeString()}</p>
-    <p>LVBTN Earned: ${tokens}</p>
-    <p>Wallet Balance: ${walletTokens}</p>
-    <p>Total Tokens: ${(walletTokens + parseFloat(tokens)).toFixed(2)}</p>
-    <p>Value at $${price}/token: $${totalVal.toFixed(2)}</p>
-  `;
-  box.style.display = "block";
-}
-
-async function loadAfterPhotos() {
-  const box = document.getElementById("afterPhotosBox");
-  const snaps = await db.collection("volunteerSessions").where("wallet", "==", connectedWallet).get();
-  let html = "";
-  snaps.forEach(doc => {
-    const url = doc.data().afterPhoto;
-    html += `<img src="${url}" width="150" style="margin:10px; border-radius:8px;">`;
-  });
-  box.innerHTML += html;
-  box.style.display = "block";
-}
-
-async function getLiveLVBTNPrice() {
-  try {
-    // Placeholder for future API call
-    return 2.50;
-  } catch (e) {
-    return 2.50;
-  }
-}
-
-async function getTotalBalance() {
-  // Replace with actual wallet balance fetch when LVBTN is pooled
-  return 10.0;
-}
 </script>
 </body>
 </html>
