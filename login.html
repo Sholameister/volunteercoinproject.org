@@ -47,10 +47,6 @@
       border: 2px solid #e60073;
     }
   </style>
- <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
 
 </head>
 <body>
@@ -372,8 +368,38 @@ localStorage.setItem("volunteerWallet", walletAddress);
   }
 });
 
-  </script>
- 
+  </script> 
+  
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-storage-compat.js"></script>
+async function checkKYCStatus(walletAddress) {
+  const kycStatus = document.getElementById("kycStatus");
+
+  try {
+    const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
+    
+    if (doc.exists && doc.data().status === "approved") {
+      kycStatus.textContent = "✅ KYC Approved! Redirecting to login...";
+      kycStatus.style.color = "green";
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2500);
+    } else if (doc.exists) {
+      kycStatus.textContent = "🕐 KYC still pending. Please check back later.";
+      kycStatus.style.color = "orange";
+    } else {
+      kycStatus.textContent = "⚠️ KYC not found. Please sign up using the button above.";
+      kycStatus.style.color = "red";
+    }
+
+  } catch (err) {
+    console.error("❌ Firestore error:", err);
+    kycStatus.textContent = "❌ Error checking KYC.";
+    kycStatus.style.color = "red";
+  }
+}
+
 </body>
   
 </html>
