@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>LoveButton Volunteer Logger</title>
+  <title>Volunteer Time Logger</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -57,9 +57,22 @@
 
   <h1>Volunteer Reward Tracker</h1>
 
-  <button onclick="connectWallet()">Connect Phantom Wallet</button>
-  <p id="walletAddress"></p>
-
+  <button id="connectBtn">Connect Phantom Wallet</button>
+<script>document.getElementById("connectBtn").addEventListener("click", async () => {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const response = await window.solana.connect();
+      const wallet = response.publicKey.toString();
+      document.getElementById("walletAddress").innerText = `Connected: ${wallet}`;
+      console.log("Wallet connected:", wallet);
+    } catch (err) {
+      console.error("User rejected the connection:", err);
+    }
+  } else {
+    alert("Phantom Wallet not detected.");
+  }
+});
+</script>
 
   <script>
   let legacyWallets = [];
