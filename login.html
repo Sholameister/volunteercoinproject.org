@@ -81,6 +81,11 @@
   window.addEventListener("load", () => {
     if (window.solana?.isPhantom) {
       console.log("Phantom detected");
+      const cached = localStorage.getItem("connectedWallet");
+      document.getElementById("walletStatus").textContent = ` Connected: ${cached}
+      checkKYCStatus(cached);
+    if (cached) {
+      document.getElementById("walletStatus
     } else {
       alert("Phantom wallet not found. Install Phantom to continue.");
     }
