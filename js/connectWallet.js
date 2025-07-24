@@ -1,129 +1,204 @@
-window.addEventListener("DOMContentLoaded", () => {
-  const connectBtn = document.getElementById("connectBtn"); // Make sure this ID matches your button
-  const walletStatus = document.getElementById("walletStatus");
+// Firebase
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-  if (!connectBtn || !walletStatus) {
-    console.error("Connect button or status box not found.");
+let walletAddress = null;
+let tierLevel = null;
+let sessionStart = null;
+let startPhotoUrl = null;
+
+// DOM Elements
+const connectBtn = document.getElementById('connectWalletBtn');
+const walletDisplay = document.getElementById('walletAddress');
+const kycStatus = document.getElementById('kycStatus');
+const tierDisplay = document.getElementById('tierInfo');
+const beforeInput = document.getElementById('beforePhoto');
+const afterInput = document.getElementById('afterPhoto');
+const summaryBox = document.getElementById('summaryBox');
+const sessionTimes = document.getElementById('sessionTimes');
+const tokensEarned = document.getElementById('tokensEarned');
+const totalLVBTN = document.getElementById('totalLVBTN');
+const usdValue = document.getElementById('usdValue');
+const priceDisplay = document.getElementById('lvbtnPrice');
+const photoGallery = document.getElementById('photoGallery');
+const afterPhotosBox = document.getElementById('afterPhotosBox');
+
+// ---- 1. Connect Wallet ----
+connectBtn.addEventListener('click', async () => {
+  if (!window.solana || !window.solana.isPhantom) {
+    alert('Phantom Wallet not found!');
     return;
   }
 
-  if (window.solana && window.solana.isPhantom) {
-    console.log("✅ Phantom Wallet detected");
-
-    connectBtn.addEventListener("click", async () => {
-      try {
-        const resp = await window.solana.connect();
-        const walletAddress = resp.publicKey.toString();
-
-        walletStatus.textContent = `✅ Connected: ${walletAddress}`;
-        walletStatus.style.color = 'green';
-
-        // Save for future use
-        localStorage.setItem("connectedWallet", walletAddress);
-      } catch (err) {
-        console.error("Connection rejected:", err);
-        walletStatus.textContent = "❌ Connection rejected";
-        walletStatus.style.color = 'red';
-      }
-    });
-  } else {
-    alert("Phantom Wallet not found. Please install it: https://phantom.app");
+  try {
+    const resp = await window.solana.connect();
+    walletAddress = resp.publicKey.toString();
+    walletDisplay.innerText = `Wallet: ${walletAddress}`;
+    await checkKYC(walletAddress);
+  } catch (err) {
+    console.error('Wallet connect error:', err);
   }
 });
 
-async function connectPhantomWallet() {
-  const { solana } = window;
-  if (solana && solana.isPhantom) {
-    try {
-      const resp = await solana.connect();
-      alert(`Wallet connected: ${resp.publicKey.toString()}`);
-    } catch (err) {
-      console.error('Wallet connection failed', err);
+// ---- 2. Check KYC & Tier ----
+async function checkKYC(wallet) {
+  try {
+    const doc = await db.collection("users").doc(wallet).get();
+    if (!doc.exists || !doc.data().kycApproved) {
+      kycStatus.innerText = "❌ KYC not approved";
+      tierDisplay.innerText = "Tier: N/A";
+      return;
     }
-  } else {
-    alert('Phantom Wallet not found. Please install it!');
+
+    const userData = doc.data();
+    tierLevel = userData.tier || 1;
+
+    kycStatus.innerText = "✅ KYC Approved";
+    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
+    logTier(wallet, tierLevel);
+
+    beforeInput.disabled = false;
+  } catch (err) {
+    console.error("Error checking KYC:", err);
   }
 }
 
-// Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-  import {getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+function getTierName(tier) {
+  switch (tier) {
+    case 1: return "Basic";
+    case 2: return "Driver";
+    case 3: return "Advanced";
+    default: return "Unknown";
+  }
+}
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-    authDomain: "lovebutton-heaven.firebaseapp.com",
-    projectId: "lovebutton-heaven",
-    storageBucket: "lovebutton-heaven.firebasestorage.app",
-    messagingSenderId: "1079456151721",
-    appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-    measurementId: "G-0261HYV08P"
-  };
-// ✅ Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const analytics = getAnalytics(app);
+function getTierMultiplier(tier) {
+  switch (tier) {
+    case 1: return 1.0;
+    case 2: return 1.25;
+    case 3: return 1.5;
+    default: return 1.0;
+  }
+}
 
-// ✅ LVBTN Token Mint Address
-const LVBTN_MINT = "Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s";
+async function logTier(wallet, tier) {
+  await db.collection("sessionTracking").doc(wallet).set({
+    wallet,
+    tier,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
 
-// ✅ Connect and Verify
-async function solanaConnectAndCheck() {
-  const solana = window.solana;
-  const display = document.getElementById("walletAddress");
+// ---- 3. Start Volunteering ----
+beforeInput.addEventListener('change', async () => {
+  const file = beforeInput.files[0];
+  if (!file || !walletAddress) return;
 
-  if (solana && solana.isPhantom) {
-    try {
-      const resp = await solana.connect();
-      const wallet = window.solana?.publicKey?.toString();
-let balance = 0;
-try {
-  const res = await fetch("https://api.helius.xyz/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer 2ad90be8-8d2c-bde9-5938674027a7"
-    },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "getTokenAccountsByOwner",
-      params: [
-        wallet,
-        { mint: LVBTN_MINT },
-        { encoding: "jsonParsed" }
-      ]
-    })
+  const ref = storage.ref(`volunteerPhotos/${walletAddress}/before_${Date.now()}.jpg`);
+  const snap = await ref.put(file);
+  startPhotoUrl = await snap.ref.getDownloadURL();
+
+  sessionStart = new Date();
+  beforeInput.disabled = true;
+  afterInput.disabled = false;
+
+  const position = await getGeolocation();
+  alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}`);
+
+  await db.collection("volunteerSessions").doc(`${walletAddress}_${Date.now()}`).set({
+    wallet: walletAddress,
+    startTime: firebase.firestore.Timestamp.fromDate(sessionStart),
+    startPhoto: startPhotoUrl,
+    startLocation: position,
+    tier: tierLevel
+  });
+});
+
+// ---- 4. Stop Volunteering ----
+afterInput.addEventListener('change', async () => {
+  const file = afterInput.files[0];
+  if (!file || !walletAddress || !sessionStart) return;
+
+  const sessionEnd = new Date();
+  const durationHours = (sessionEnd - sessionStart) / (1000 * 60 * 60);
+  const multiplier = getTierMultiplier(tierLevel);
+  const tokensThisSession = parseFloat((durationHours * multiplier).toFixed(2));
+
+  const ref = storage.ref(`volunteerPhotos/${walletAddress}/after_${Date.now()}.jpg`);
+  const snap = await ref.put(file);
+  const afterPhotoUrl = await snap.ref.getDownloadURL();
+
+  const docId = `${walletAddress}_${sessionStart.getTime()}`;
+  await db.collection("volunteerSessions").doc(docId).update({
+    endTime: firebase.firestore.Timestamp.fromDate(sessionEnd),
+    duration: durationHours,
+    tokensEarned: tokensThisSession,
+    afterPhoto: afterPhotoUrl
   });
 
-  const data = await res.json();
-  balance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
-} catch (e) {
-  console.error("Token check error:", e);
-}
-      let walletbalance = data.result.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
+  // Summary
+  const totalTokens = await getTotalTokens(walletAddress);
+  const livePrice = await fetchLVBTNPrice();
+  const usd = (totalTokens * livePrice).toFixed(2);
 
-      if (walletbalance >= 1) {
-        display.innerText = `✅ Welcome back Volunteers!\nWallet: ${wallet}`;
-        
-        await addDoc(collection(db, "logins"), {
-          wallet,
-          balance: walletBalance,
-          timestamp: serverTimestamp()
-        });
-      } 
-      else {
-        display.innerText = `⚠️ You need at least 1 LVBTN to access this area.\nWallet: ${wallet}`;
-      }
-    } catch (err) {
-      console.error("Solana error:", err);
-      display.innerText = "❌ Error connecting to wallet.";
-    }
-  } else {
-    alert("Please install Phantom or Solflare Wallet.");
+  sessionTimes.innerText = `Started: ${sessionStart.toLocaleString()} | Ended: ${sessionEnd.toLocaleString()}`;
+  tokensEarned.innerText = `Session Tokens: ${tokensThisSession}`;
+  totalLVBTN.innerText = `Total LVBTN: ${totalTokens}`;
+  usdValue.innerText = `USD Value: $${usd}`;
+  priceDisplay.innerText = `Live LVBTN Price: $${livePrice}`;
+
+  summaryBox.style.display = 'block';
+  await loadAfterPhotos();
+});
+
+async function getGeolocation() {
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      }),
+      () => resolve({ lat: null, lng: null })
+    );
+  });
+}
+
+async function getTotalTokens(wallet) {
+  const query = await db.collection("volunteerSessions").where("wallet", "==", wallet).get();
+  let total = 0;
+  query.forEach(doc => {
+    const data = doc.data();
+    total += data.tokensEarned || 0;
+  });
+  return parseFloat(total.toFixed(2));
+}
+
+async function fetchLVBTNPrice() {
+  try {
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=lovebutton&vs_currencies=usd");
+    const data = await res.json();
+    return data.lovebutton?.usd || 2.50;
+  } catch (err) {
+    console.warn("LVBTN price fetch failed, fallback to $2.50");
+    return 2.50;
   }
+}
+
+// ---- 5. Load Past After Photos ----
+async function loadAfterPhotos() {
+  const query = await db.collection("volunteerSessions").where("wallet", "==", walletAddress).get();
+  if (query.empty) return;
+
+  photoGallery.innerHTML = "";
+  afterPhotosBox.style.display = 'block';
+
+  query.forEach(doc => {
+    const data = doc.data();
+    if (data.afterPhoto) {
+      const img = document.createElement("img");
+      img.src = data.afterPhoto;
+      img.className = "after-photo";
+      photoGallery.appendChild(img);
+    }
+  });
 }
