@@ -1,9 +1,3 @@
-import {
-  connectWallet,
-  getWalletAddress,
-  fetchLiveLVBTNPrice
-} from './walletUtils.js'; // (Optional if separating logic)
-
 // Firebase
 const db = firebase.firestore();
 const storage = firebase.storage();
@@ -13,7 +7,7 @@ let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
 
-// Elements
+// DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
 const kycStatus = document.getElementById('kycStatus');
@@ -50,22 +44,17 @@ connectBtn.addEventListener('click', async () => {
 async function checkKYC(wallet) {
   try {
     const doc = await db.collection("users").doc(wallet).get();
-    if (!doc.exists) {
+    if (!doc.exists || !doc.data().kycApproved) {
       kycStatus.innerText = "❌ KYC not approved";
       tierDisplay.innerText = "Tier: N/A";
       return;
     }
 
     const userData = doc.data();
-    if (!userData.kycApproved) {
-      kycStatus.innerText = "❌ KYC not approved";
-      tierDisplay.innerText = "Tier: Pending";
-      return;
-    }
-
     tierLevel = userData.tier || 1;
+
     kycStatus.innerText = "✅ KYC Approved";
-    tierDisplay.innerText = `Tier: ${tierLevel} (${getTierName(tierLevel)})`;
+    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
     logTier(wallet, tierLevel);
 
     beforeInput.disabled = false;
