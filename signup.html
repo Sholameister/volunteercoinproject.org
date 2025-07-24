@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Connect Wallet</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LoveButton – KYC Sign Up</title>
   <style>
     body {
-      background-color: #fff0f5;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
       background-color: #fdf2f8;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+      color: #333;
+    }
+    h2 {
+      color: #e60073;
+      margin-top: 20px;
+    }
+    p {
+      margin-bottom: 20px;
+      font-size: 16px;
     }
     .btn {
       background-color: #e60073;
@@ -24,139 +33,160 @@
     .btn:hover {
       background-color: #cc005f;
     }
-
-    .container {
-      max-width: 600px;
-      margin: auto;
-      padding: 40px 20px;
+    #walletStatus, #kycStatus, #tierStatus, #tokenCalc, #badge {
+      font-weight: bold;
+      margin-top: 15px;
     }
-#wallet-status {
-  margin-top: 20px;
-  font-weight: bold;
-  color: green;
-}
-    h2 {
-      color: #e60073;
-    }
-
+    #walletStatus { color: green; }
+    #kycStatus.pending { color: orange; }
+    #kycStatus.approved { color: green; }
+    #kycStatus.notfound, #kycStatus.error { color: red; }
     ul {
       list-style: none;
       padding: 0;
+      text-align: left;
+      max-width: 500px;
+      margin: 0 auto 20px;
     }
-
     ul li {
       margin: 8px 0;
-      font-size: 16px;
+      font-size: 15px;
     }
-
-    .btn, .home-btn {
-      background-color: #e60073;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 6px;
-      margin: 15px 10px;
-    }
-
-    .btn:hover, .home-btn:hover {
-      background-color: #cc005f;
-    }
-
     .love-icon {
       height: 80px;
       margin-top: 20px;
     }
-
-    #status {
-      margin-top: 20px;
-      font-weight: bold;
-      color: #444;
-    }
-
-    #status.success {
-      color: green;
-    }
-
-    #status.pending {
-      color: orange;
-    }
-
-    #status.error {
-      color: red;
-    }
   </style>
 </head>
 <body>
-  <h2>Connect Your Wallet</h2>
-  <p>Required to verify KYC status and earn LVBTN tokens.</p>
 
-  <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
-  <p id="kycStatus" style="...">KYC check</p>
-  <button id="connectWalletBtn">Connect Phantom Wallet</button>
+  <h2>Identity Verification (KYC)</h2>
+  <p>To unlock volunteer rewards, please complete the KYC process below.  
+  The more verified you are, the more access and token rewards you'll earn.</p>
+
+  <ul>
+    <li>💗 LVBTN Token Earnings:</li>
+    <li>• Tier 1 – 1 LVBTN/hr (basic signup)</li>
+    <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
+    <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + 25+ hours)</li>
+  </ul>
+
+  <img src="assets/LVBTN_logo.png" alt="LoveButton Token Logo" class="love-icon" />
+
+  <div>
+    <button class="btn" onclick="window.open('https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b', '_blank')">Create Account via Blockpass</button>
+  </div>
+
+  <div>
+    <button id="connectWalletBtn" class="btn">Connect Phantom Wallet</button>
+    <div id="walletStatus">Wallet not connected</div>
+    <div id="kycStatus" class="pending">KYC status: not checked</div>
+    <div id="tierStatus"></div>
+    <div id="tokenCalc"></div>
+    <div id="badge"></div>
+  </div>
+
+  <button class="btn" onclick="window.location.href='index.html'">Back to Home</button>
+
+  <!-- Firebase + Wallet Script -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script>
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-    authDomain: "lovebutton-heaven.firebaseapp.com",
-    projectId: "lovebutton-heaven",
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+      authDomain: "lovebutton-heaven.firebaseapp.com",
+      projectId: "lovebutton-heaven"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const connectWalletBtn = document.getElementById("connectWalletBtn");
-    console.log("Button found:", connectWalletBtn");
-    const walletStatus = document.getElementById("walletStatus");
-    const kycStatus = document.getElementById("kycStatus");
+    document.addEventListener("DOMContentLoaded", () => {
+      const connectWalletBtn = document.getElementById("connectWalletBtn");
+      const walletStatus = document.getElementById("walletStatus");
+      const kycStatus = document.getElementById("kycStatus");
+      const tierStatus = document.getElementById("tierStatus");
+      const tokenCalc = document.getElementById("tokenCalc");
+      const badge = document.getElementById("badge");
 
-    connectWalletBtn.addEventListener("click", async () => {
-      console.log("Button click triggered");
-      if (window.solana && window.solana.isPhantom) {
+      connectWalletBtn.addEventListener("click", async () => {
+        if (!window.solana || !window.solana.isPhantom) {
+          alert("Phantom Wallet not found. Please install it.");
+          return;
+        }
+
         try {
           const resp = await window.solana.connect();
           const walletAddress = resp.publicKey.toString();
           walletStatus.textContent = `✅ Connected: ${walletAddress}`;
           localStorage.setItem("connectedWallet", walletAddress);
 
-          if (kycStatus) {
-            kycStatus.textContent = "KYC status: checking...";
-            checkKYCStatus(walletAddress);
-          }
-        } catch (err) {
-          console.error("Wallet connection error:", err);
-        }
-      } else {
-        alert("Phantom wallet not found.");
-      }
-    });
+          kycStatus.textContent = "Checking KYC status...";
+          kycStatus.className = "pending";
 
-    async function checkKYCStatus(walletAddress) {
-      try {
-        const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
-        if (doc.exists) {
-          const status = doc.data().status || "approved";
-          if (status === "approved") {
-            kycStatus.textContent = "✅ KYC Approved";
-            kycStatus.style.color = "green";
+          const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
+          if (doc.exists) {
+            const data = doc.data();
+            const status = data.status || "pending";
+            const tier = data.tier || 1;
+
+            if (status === "approved") {
+              kycStatus.textContent = "✅ KYC Approved";
+              kycStatus.className = "approved";
+
+              // Display Tier
+              tierStatus.textContent = `🎖️ Verified Tier: ${tier}`;
+              let tokensPerHour = 1;
+              let tierBadge = "🧡 Tier 1: Starter";
+              if (tier == 2) {
+                tokensPerHour = 1.25;
+                tierBadge = "🚗 Tier 2: Driver";
+              }
+              if (tier == 3) {
+                tokensPerHour = 1.5;
+                tierBadge = "⚡ Tier 3: Elite Volunteer";
+              }
+
+              tokenCalc.textContent = `💰 You earn ${tokensPerHour} LVBTN/hour`;
+              badge.textContent = `🏅 ${tierBadge}`;
+
+              // 🔒 Log wallet + tier to Firestore
+              await db.collection("sessionLogs").add({
+                wallet: walletAddress,
+                tier: tier,
+                timestamp: new Date()
+              });
+
+              // 🔁 Auto-redirect to dashboard
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 3500);
+
+            } else {
+              kycStatus.textContent = "🕐 KYC Pending";
+              kycStatus.className = "pending";
+              tierStatus.textContent = "";
+              tokenCalc.textContent = "";
+              badge.textContent = "";
+            }
+
           } else {
-            kycStatus.textContent = "🕐 KYC Pending";
-            kycStatus.style.color = "orange";
+            kycStatus.textContent = "❌ KYC Not Found";
+            kycStatus.className = "notfound";
+            tierStatus.textContent = "";
+            tokenCalc.textContent = "";
+            badge.textContent = "";
           }
-        } else {
-          kycStatus.textContent = "❌ KYC Not Found";
-          kycStatus.style.color = "red";
+
+        } catch (err) {
+          console.error("Wallet/KYC error:", err);
+          kycStatus.textContent = "❌ Error checking KYC";
+          kycStatus.className = "error";
+          tierStatus.textContent = "";
+          tokenCalc.textContent = "";
+          badge.textContent = "";
         }
-      } catch (error) {
-        console.error("KYC Fetch Error:", error);
-        kycStatus.textContent = "❌ Error checking KYC";
-        kycStatus.style.color = "red";
-      }
-    }
-  });
-</script>
+      });
+    });
+  </script>
 </body>
 </html>
