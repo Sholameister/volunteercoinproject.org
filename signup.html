@@ -95,41 +95,47 @@
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
   <p id="kycStatus" style="...">KYC check</p>
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
+  
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+  const connectionWalletBtn = document.getById('connectWalletBtn');
+  const walletStatus = document.getById("walletStatus");
   const kycStatus = document.getElementById("kycStatus");
-  if (kycStatus) {
+connectWalletBtn.addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const resp = await window.solana.connect();
+        const walletaddress = resp.publicKey.toString();
+        walletStatus.textContent = `✅ Connected: ${walletaddress}`;
+if (kycStatus) {
    kycStatus.textContent = "KYC status: checking...";
-  } else {
-   console.error("kycStatus element not found in DOM.");
+ checkKYCStatus(walletAddress);
+} else {
+   console.error("kycStatus element not found.");
   }
+    }
+      } catch (err) {
+        console.error("wallet Connection error", err);
+}
+          } else {
+      alert('Phantom wallet not found. Please install it.');
+    }
+  });                    
+
+    function checkKYCStatus(walletAddress) {
+      const kycStatus = document.getElementById("kycStatus");
+      if (!kycStatus) return;
+    }
     });
-  </script>
+    </script>
+  
   </div>
   <script>
     window.onload = () => {
   const connectWalletBtn = document.getElementById('connectWalletBtn');
   const walletStatus = document.getElementById('walletStatus');
   const kycStatus = document.getElementById('kycStatus');
-
-  connectWalletBtn.addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const resp = await window.solana.connect();
-        const address = resp.publicKey.toString();
-        walletStatus.textContent = `✅ Connected: ${address}`;
-        walletStatus.style.color = 'green';
-        checkKYCStatus(address);
-      } catch (err) {
-        console.error('Connection rejected', err);
-        walletStatus.textContent = '❌ Connection rejected';
-        walletStatus.style.color = 'red';
-      }
-    } else {
-      alert('Phantom wallet not found. Please install it.');
-    }
-  });
-    };
+   };
   </script>
   <script>
   async function checkKYC(walletAddress) {
