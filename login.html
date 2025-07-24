@@ -1,273 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>LoveButton Volunteer Logger</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Volunteer Session Logger</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       background-color: #fdf2f8;
-      font-family: Arial, sans-serif;
-      text-align: center;
+      font-family: 'Arial', sans-serif;
       padding: 20px;
+      margin: 0;
+      text-align: center;
     }
+
     h1 {
       color: #e60073;
+      margin-bottom: 5px;
     }
-    input, button {
+
+    .step {
+      margin: 25px 0;
+    }
+
+    button, input[type="file"] {
       display: block;
-      margin: 10px auto;
-      padding: 12px;
-      width: 80%;
-      max-width: 400px;
-      border-radius: 6px;
+      margin: 12px auto;
+      padding: 14px;
+      border-radius: 8px;
       font-size: 16px;
+      width: 90%;
+      max-width: 400px;
+      border: none;
     }
+
     button {
       background-color: #e60073;
       color: white;
-      border: none;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #cc005f;
     }
+
+    input[type="file"] {
+      background-color: #fff;
+      border: 2px dashed #ccc;
+      padding: 18px;
+    }
+
     #summaryBox, #afterPhotosBox {
-      margin-top: 20px;
-      padding: 15px;
+      margin-top: 30px;
+      padding: 20px;
       border: 1px solid #ccc;
-      background-color: #fff0f5;
+      border-radius: 10px;
+      background-color: #fff;
+      display: none;
+    }
+
+    .after-photo {
+      width: 100px;
+      height: auto;
+      margin: 10px;
       border-radius: 8px;
     }
-    img.thumbnail {
-      max-width: 100px;
-      margin: 5px;
-      border-radius: 4px;
+
+    #lvbtnPrice {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #walletAddress, #kycStatus, #tierInfo {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 { font-size: 22px; }
+      button, input[type="file"] {
+        width: 95%;
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
 
-<h1>LoveButton Volunteer Logger</h1>
-
-<button id="connectWalletBtn">Connect Phantom Wallet</button>
-<div id="walletAddress"></div>
-<div id="walletAddress"></div>
-<p id="walletStatus" style="font-weight: bold; color: green;"></p>
-<input type="file" id="beforePhoto" accept="image/*" disabled />
-<button id="startBtn" disabled>Start Volunteering</button>
-
-<input type="file" id="afterPhoto" accept="image/*" disabled />
-<button id="stopBtn" disabled>Stop Volunteering</button>
-
-<div id="summaryBox" style="display:none;"></div>
-<div id="afterPhotosBox"></div>
-<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-    authDomain: "lovebutton-heaven.firebaseapp.com",
-    projectId: "lovebutton-heaven",
-    storageBucket: "lovebutton-heaven.appspot.com"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const storage = firebase.storage();
-
-  let startTime, walletAddress = null;
-
-  async function checkWalletBlocklist(address) {
-    const response = await fetch("https://raw.githubusercontent.com/Volunteer-Coin-Project/lvbtn/main/legacy-unrecognized-LVBTN.md");
-    const text = await response.text();
-    return text.includes(address);
-  }
-
-  document.getElementById("connectWalletBtn").addEventListener("click", async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const resp = await window.solana.connect();
-        walletAddress = resp.publicKey.toString();
-
-        if (await checkWalletBlocklist(walletAddress)) {
-          alert("This wallet is blocked. You have 10 days to appeal to VCPF.");
-          return;
-        }
-
-        document.getElementById("walletAddress").innerText = `Wallet: ${walletAddress}`;
-        document.getElementById("beforePhoto").disabled = false;
-      } catch (err) {
-        alert("Wallet connection failed.");
-      }
-    } else {
-      alert("Phantom Wallet not found. Please install Phantom.");
-    }
-  });
-
-  document.getElementById("beforePhoto").addEventListener("change", () => {
-    document.getElementById("startBtn").disabled = false;
-  });
-
-  document.getElementById("startBtn").addEventListener("click", async () => {
-    const file = document.getElementById("beforePhoto").files[0];
-    if (!walletAddress || !file) return;
-
-    const geolocation = await new Promise(resolve =>
-      navigator.geolocation.getCurrentPosition(pos => resolve(pos.coords))
-    );
-    const timestamp = new Date().toISOString();
-    startTime = Date.now();
-
-    const storageRef = storage.ref(`beforePhotos/${walletAddress}_${timestamp}`);
-    await storageRef.put(file);
-    const beforePhotoURL = await storageRef.getDownloadURL();
-
-    await db.collection("volunteerSessions").add({
-      wallet: walletAddress,
-      type: "start",
-      timestamp,
-      lat: geolocation.latitude,
-      lon: geolocation.longitude,
-      beforePhotoURL
-    });
-
-    alert("Thank you for volunteering through Volunteer Coin Project Foundation!");
-    document.getElementById("beforePhoto").disabled = true;
-    document.getElementById("startBtn").disabled = true;
-    document.getElementById("afterPhoto").disabled = false;
-  });
-
-  document.getElementById("afterPhoto").addEventListener("change", () => {
-    document.getElementById("stopBtn").disabled = false;
-  });
-
-  document.getElementById("stopBtn").addEventListener("click", async () => {
-    const file = document.getElementById("afterPhoto").files[0];
-    if (!walletAddress || !file || !startTime) return;
-
-    const endTime = Date.now();
-    const sessionDurationHrs = (endTime - startTime) / (1000 * 60 * 60);
-    const tier = 1.25; // Adjust this per actual tier in DB later
-    const tokensEarned = (sessionDurationHrs * tier).toFixed(2);
-
-    const storageRef = storage.ref(`afterPhotos/${walletAddress}_${endTime}`);
-    await storageRef.put(file);
-    const afterPhotoURL = await storageRef.getDownloadURL();
-
-    await db.collection("volunteerSessions").add({
-      wallet: walletAddress,
-      type: "stop",
-      timestamp: new Date().toISOString(),
-      tokensEarned: parseFloat(tokensEarned),
-      afterPhotoURL
-    });
-
-    // Fetch existing tokens
-    let totalTokens = 0;
-    const snapshot = await db.collection("volunteerSessions").where("wallet", "==", walletAddress).get();
-    const afterPhotosBox = document.getElementById("afterPhotosBox");
-    afterPhotosBox.innerHTML = "<h3>Previous Accomplishments:</h3>";
-
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.tokensEarned) totalTokens += data.tokensEarned;
-      if (data.afterPhotoURL) {
-        const img = document.createElement("img");
-        img.src = data.afterPhotoURL;
-        img.className = "thumbnail";
-        afterPhotosBox.appendChild(img);
-      }
-    });
-
-    const livePrice = 2.50;
-    const usdValue = (totalTokens * livePrice).toFixed(2);
-    const sessionUSD = (tokensEarned * livePrice).toFixed(2);
-
-    document.getElementById("summaryBox").style.display = "block";
-    document.getElementById("summaryBox").innerHTML = `
-      <h2>Session Summary</h2>
-      <p><strong>Start Time:</strong> ${new Date(startTime).toLocaleString()}</p>
-      <p><strong>End Time:</strong> ${new Date(endTime).toLocaleString()}</p>
-      <p><strong>LVBTN Earned this Session:</strong> ${tokensEarned} (=$${sessionUSD})</p>
-      <p><strong>Total LVBTN:</strong> ${totalTokens.toFixed(2)}</p>
-      <p><strong>Total Value:</strong> $${usdValue}</p>
-    `;
-    updateProgressBar(totalTokens);
-    function updateProgressBar(totalTokens) {
-  const milestones = [25, 50, 100, 250, 500, 1000]; // You can adjust these
-  let maxMilestone = milestones.find(m => totalTokens <= m) || 1000;
-  let percent = Math.min((totalTokens / maxMilestone) * 100, 100).toFixed(2);
-
-  const progressBar = document.getElementById("progressBar");
-  const progressLabel = document.getElementById("progressLabel");
-
-  progressBar.style.width = `${percent}%`;
-  progressBar.innerText = `${percent}%`;
-  progressLabel.innerText = `You’ve earned ${totalTokens.toFixed(2)} LVBTN — next goal: ${maxMilestone} tokens!`;
-
-  document.getElementById("progressContainer").style.display = "block";
-}
-
-<div id="progressContainer" style="margin-top: 20px; display:none;"><h3>Your Progress</h3>
-  <div style="background: #ddd; border-radius: 20px; overflow: hidden; max-width: 400px; margin: 0 auto;">
-    <div id="progressBar" style="height: 25px; width: 0%; background: #e60073; color: white; text-align: center; line-height: 25px; transition: width 0.5s ease;"></div>
+  <h1>Log Your Volunteer Session</h1>
+  <div class="step">
+    <button id="connectWalletBtn">1️⃣ Connect Phantom Wallet</button>
+    <div id="walletAddress">Wallet: Not Connected</div>
+    <div id="kycStatus">KYC: Unknown</div>
+    <div id="tierInfo">Tier: Unknown</div>
   </div>
-  <p id="progressLabel" style="margin-top: 5px;"></p>
-</div>
-    document.getElementById("afterPhoto").disabled = true;
-    document.getElementById("stopBtn").disabled = true;
-  });
-  let connectedWalletAddress = null;
 
-document.getElementById("connectWalletBtn").addEventListener("click", async () => {
-  try {
-    const provider = window.solana;
+  <div class="step">
+    <label for="beforePhoto">2️⃣ Take Start Photo</label>
+    <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled>
+  </div>
 
-    if (!provider || !provider.isPhantom) {
-      alert("Phantom Wallet not found. Please install it.");
-      return;
-    }
+  <div class="step">
+    <label for="afterPhoto">3️⃣ Take Finish Photo</label>
+    <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled>
+  </div>
 
-    const resp = await provider.connect();
-    connectedWalletAddress = resp.publicKey.toString();
-    console.log("Wallet connected:", connectedWalletAddress);
+  <div id="summaryBox">
+    <h3>Session Summary</h3>
+    <p id="sessionTimes"></p>
+    <p id="tokensEarned"></p>
+    <p id="totalLVBTN"></p>
+    <p id="usdValue"></p>
+    <p id="lvbtnPrice">Fetching LVBTN price...</p>
+  </div>
 
-    // Enable other UI
-    document.getElementById("walletStatus").innerText = `Wallet connected: ${connectedWalletAddress}`;
-    document.getElementById("beforePhoto").disabled = false;
+  <div id="afterPhotosBox">
+    <h3>Past After-Photos</h3>
+    <div id="photoGallery"></div>
+  </div>
 
-    // Check for legacy ban
-    checkLegacyBan(connectedWalletAddress);
-  } catch (err) {
-    console.error("Wallet connection error:", err);
-  }
-});
-document.getElementById("connectWalletBtn").addEventListener("click", async () => {
-  try {
-    if (window.solana && window.solana.isPhantom) {
-      const response = await window.solana.connect();
-      const wallet = response.publicKey.toString();
-      document.getElementById("walletAddress").textContent = wallet;
-      document.getElementById("walletStatus").textContent = "✅ Wallet connected";
-      document.getElementById("walletStatus").style.color = "green";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
-      // Enable beforePhoto input now that wallet is connected
-      document.getElementById("beforePhoto").disabled = false;
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+      authDomain: "lovebutton-heaven.firebaseapp.com",
+      projectId: "lovebutton-heaven",
+      storageBucket: "lovebutton-heaven.appspot.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
-    } else {
-      document.getElementById("walletStatus").textContent = "❌ Phantom Wallet not found.";
-      document.getElementById("walletStatus").style.color = "red";
-    }
-  } catch (err) {
-    console.error("Wallet connection failed:", err);
-    document.getElementById("walletStatus").textContent = "❌ Failed to connect wallet.";
-    document.getElementById("walletStatus").style.color = "red";
-  }
-});
-</script>
+  <!-- Main Logic -->
+  <script src="loginLogic.js"></script>
 </body>
 </html>
+
