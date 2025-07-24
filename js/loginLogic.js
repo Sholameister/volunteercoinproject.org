@@ -149,6 +149,13 @@ afterInput.addEventListener('change', async () => {
 
   summaryBox.style.display = 'block';
   await loadAfterPhotos();
+  const hoursLink = document.createElement('a');
+hoursLink.href = 'volunteer-hours.html';
+hoursLink.innerText = '📋 View Full Volunteer History';
+hoursLink.style.display = 'block';
+hoursLink.style.marginTop = '10px';
+hoursLink.style.textAlign = 'center';
+summaryBox.appendChild(hoursLink);
 });
 
 async function getGeolocation() {
