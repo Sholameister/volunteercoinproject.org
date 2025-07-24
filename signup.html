@@ -95,88 +95,10 @@
   <div id="walletStatus" style="color: red; margin-top: 10px;">Wallet not connected</div>
   <p id="kycStatus" style="...">KYC check</p>
   <button id="connectWalletBtn">Connect Phantom Wallet</button>
-  
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const connectionWalletBtn = document.getById('connectWalletBtn');
-  const walletStatus = document.getById("walletStatus");
-  const kycStatus = document.getElementById("kycStatus");
-connectWalletBtn.addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const resp = await window.solana.connect();
-        const walletaddress = resp.publicKey.toString();
-        walletStatus.textContent = `✅ Connected: ${walletaddress}`;
-if (kycStatus) {
-   kycStatus.textContent = "KYC status: checking...";
- checkKYCStatus(walletAddress);
-} else {
-   console.error("kycStatus element not found.");
-  }
-    }
-      } catch (err) {
-        console.error("wallet Connection error", err);
-}
-          } else {
-      alert('Phantom wallet not found. Please install it.');
-    }
-  });                    
-
-    function checkKYCStatus(walletAddress) {
-      const kycStatus = document.getElementById("kycStatus");
-      if (!kycStatus) return;
-    }
-    });
-    </script>
-  
-  </div>
-  <script>
-    window.onload = () => {
-  const connectWalletBtn = document.getElementById('connectWalletBtn');
-  const walletStatus = document.getElementById('walletStatus');
-  const kycStatus = document.getElementById('kycStatus');
-   };
-  </script>
-  <script>
-  async function checkKYC(walletAddress) {
-    // Firestore check
-    const db = firebase.firestore();
-    const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
-
-    if (doc.exists) {
-      kycStatus.innerHTML = `✅ KYC Verified`;
-      kycStatus.style.color = 'green';
-    } else {
-      kycStatus.innerHTML = `❌ KYC Not Verified`;
-      kycStatus.style.color = 'red';
-    }
-  }
-</script>
-
-  
-  <div class="container">
-    <h2>Identity Verification (KYC)</h2>
-    <p>To unlock volunteer rewards, please complete the KYC process below.</p>
-    <p>The more verified you are, the more access and token rewards you'll earn.</p>
-
-    <ul>
-      <li>💗 LVBTN token earnings:</li>
-      <li>• Tier 1 – 1 LVBTN/hr</li>
-      <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
-      <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + hours)</li>
-    </ul>
- <img src="assets/LVBTN_logo.png" alt="LoveButton Token Logo" class="love-icon">
-    
-    <button class="btn" onclick="window.open('https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b', '_blank', 'noopener')">
-      Create Account
-    </button>
-    <button class="home-btn" onclick="window.location.href='index.html'">Back to Home</button>
-   
-<!-- Load Firebase Firestore SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 <script>
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
     authDomain: "lovebutton-heaven.firebaseapp.com",
@@ -185,37 +107,54 @@ if (kycStatus) {
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-async function checkKYCStatus() {
-  const wallet = localStorage.getItem("connectedWallet") || "demo_wallet";
-  const statusBox = document.getElementById("status");
+  document.addEventListener("DOMContentLoaded", () => {
+    const connectWalletBtn = document.getElementById("connectWalletBtn");
+    const walletStatus = document.getElementById("walletStatus");
+    const kycStatus = document.getElementById("kycStatus");
 
-  try {
-    const doc = await db.collection("verifiedKYC").doc(wallet).get();
-    if (doc.exists) {
-      const status = doc.data().status;
+    connectWalletBtn.addEventListener("click", async () => {
+      if (window.solana && window.solana.isPhantom) {
+        try {
+          const resp = await window.solana.connect();
+          const walletAddress = resp.publicKey.toString();
+          walletStatus.textContent = `✅ Connected: ${walletAddress}`;
+          localStorage.setItem("connectedWallet", walletAddress);
 
-      if (status === "approved") {
-        statusBox.textContent = "✅ KYC Approved! Redirecting to your signin page...";
-        statusBox.className = "success";
-        setTimeout(() => {
-          window.location.href = "login.html";  // this is your homepage
-        }, 3000);
+          if (kycStatus) {
+            kycStatus.textContent = "KYC status: checking...";
+            checkKYCStatus(walletAddress);
+          }
+        } catch (err) {
+          console.error("Wallet connection error:", err);
+        }
       } else {
-        statusBox.textContent = "🕐 Your KYC is still pending. Please check back soon.";
-        statusBox.className = "pending";
+        alert("Phantom wallet not found.");
       }
-    } else {
-      statusBox.textContent = "⚠️ No KYC submission found. Please create an account above.";
-      statusBox.className = "error";
+    });
+
+    async function checkKYCStatus(walletAddress) {
+      try {
+        const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
+        if (doc.exists) {
+          const status = doc.data().status || "approved";
+          if (status === "approved") {
+            kycStatus.textContent = "✅ KYC Approved";
+            kycStatus.style.color = "green";
+          } else {
+            kycStatus.textContent = "🕐 KYC Pending";
+            kycStatus.style.color = "orange";
+          }
+        } else {
+          kycStatus.textContent = "❌ KYC Not Found";
+          kycStatus.style.color = "red";
+        }
+      } catch (error) {
+        console.error("KYC Fetch Error:", error);
+        kycStatus.textContent = "❌ Error checking KYC";
+        kycStatus.style.color = "red";
+      }
     }
-
-  } catch (error) {
-    statusBox.textContent = "Error checking KYC status.";
-    statusBox.className = "error";
-    console.error("Firestore error:", error);
-  }
-}
+  });
 </script>
-
 </body>
 </html>
