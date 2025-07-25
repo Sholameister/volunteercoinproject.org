@@ -121,19 +121,22 @@ beforeInput.addEventListener('change', async () => {
   startPhotoUrl = await snap.ref.getDownloadURL();
 
   sessionStart = new Date();
-  beforeInput.disabled = true;
-  afterInput.disabled = false;
+
+  const position = await getGeolocation();
+
+  alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}\nLocation: ${position.latitude}, ${position.longitude}`);
+
+  beforeInput.disabled = false;
+  afterInput.disabled = true;
   document.getElementById('stopBtn').disabled = false;
   
-  const position = await getGeolocation();
-  alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}`);
-
+  
   await db.collection("volunteerSessions").doc(`${walletAddress}_${Date.now()}`).set({
     wallet: walletAddress,
+     tier: tierLevel,
     startTime: firebase.firestore.Timestamp.fromDate(sessionStart),
-    startPhoto: startPhotoUrl,
     startLocation: position,
-    tier: tierLevel
+    startPhoto: startPhotoUrl  
   });
 });
 
