@@ -1,7 +1,7 @@
 // Firebase
 const db = firebase.firestore();
 const storage = firebase.storage();
-console.log(Storage initialized:", storage);
+console.log("Storage initialized:", storage);
 
 
 let walletAddress = null;
