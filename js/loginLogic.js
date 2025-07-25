@@ -209,8 +209,7 @@ async function loadAfterPhotos() {
     }
   });
 }
-<!-- Wallet connect logic -->
-<script>
+// Wallet connect logic
   document.getElementById('connectWalletBtn').addEventListener('click', async () => {
     if (window.solana && window.solana.isPhantom) {
       try {
@@ -220,13 +219,7 @@ async function loadAfterPhotos() {
         document.getElementById('beforePhoto').disabled = false;
         document.getElementById('kycStatus').textContent = 'KYC: Loading...';
         document.getElementById('tierInfo').textContent = 'Tier: Loading...';
-      } catch (err) {
-        alert('Wallet connection failed: ' + err.message);
-      }
-    } else {
-      alert('Phantom Wallet not found. Please install it.');
-    }
-  });
+     
 
 // Fetch KYC and Tier from Firestore
 const db = firebase.firestore();
@@ -246,7 +239,13 @@ docRef.get().then((doc) => {
   document.getElementById('kycStatus').textContent = 'KYC: Error';
   document.getElementById('tierInfo').textContent = 'Tier: Error';
 });
-
+ } catch (err) {
+        alert('Wallet connection failed: ' + err.message);
+      }
+    } else {
+      alert('Phantom Wallet not found. Please install it.');
+    }
+  });
 // Enable "Stop Volunteering" (afterPhoto) after beforePhoto is selected
 document.getElementById('beforePhoto').addEventListener('change', function () {
   if (this.files.length > 0) {
