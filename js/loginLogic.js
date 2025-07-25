@@ -61,15 +61,72 @@ connectBtn.addEventListener('click', async () => {
     return;
   }
 
+ async function checkKYC(walletAddress) {
   try {
-    const resp = await window.solana.connect();
-    walletAddress = resp.publicKey.toString();
-    walletDisplay.innerText = `Wallet: ${walletAddress}`;
-    await checkKYC(walletAddress);
+    kycStatus.textContent = "Checking KYC status...";
+    kycStatus.className = "pending";
+
+    const docRef = db.collection("verifiedKYC").doc(walletAddress);
+    const docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      const data = docSnap.data();
+      const status = data?.status || "pending";
+      const tier = data?.tier || 1;
+
+      if (status === "approved") {
+        kycStatus.textContent = "✅ KYC Approved";
+        kycStatus.className = "approved";
+
+        tierStatus.textContent = `🎖️ Verified Tier: ${tier}`;
+        let tokensPerHour = 1;
+        let tierBadge = "🧡 Tier 1: Starter";
+
+        if (tier == 2) {
+          tokensPerHour = 1.25;
+          tierBadge = "🚗 Tier 2: Driver";
+        } else if (tier == 3) {
+          tokensPerHour = 1.5;
+          tierBadge = "⚡ Tier 3: Elite Volunteer";
+        }
+
+        tokenCalc.textContent = `💰 You earn ${tokensPerHour} LVBTN/hour`;
+        badge.textContent = `🏅 ${tierBadge}`;
+
+        await db.collection("sessionLogs").add({
+          wallet: walletAddress,
+          tier: tier,
+          timestamp: new Date()
+        });
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 3500);
+
+      } else {
+        kycStatus.textContent = "🕐 KYC Pending";
+        kycStatus.className = "pending";
+        tierStatus.textContent = "";
+        tokenCalc.textContent = "";
+        badge.textContent = "";
+      }
+    } else {
+      kycStatus.textContent = "❌ KYC Not Found";
+      kycStatus.className = "notfound";
+      tierStatus.textContent = "";
+      tokenCalc.textContent = "";
+      badge.textContent = "";
+    }
+
   } catch (err) {
-    console.error('Wallet connect error:', err);
+    console.error("❌ KYC Check Error:", err.message);
+    kycStatus.textContent = "❌ Error checking KYC";
+    kycStatus.className = "error";
+    tierStatus.textContent = "";
+    tokenCalc.textContent = "";
+    badge.textContent = "";
   }
-});
+}
 
 async function getGeolocation() {
   return new Promise((resolve, reject) => {
