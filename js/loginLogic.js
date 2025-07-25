@@ -42,22 +42,12 @@ connectBtn.addEventListener('click', async () => {
 
 async function checkKYC(wallet) {
   try {
-    const doc = await db.collection("users").doc(wallet).get();
-
-    if (!doc.exists || !doc.data().kycApproved) {
-      kycStatus.innerText = "❌ KYC not approved";
-      tierDisplay.innerText = "Tier: N/A";
-      alert("❌ You are not KYC approved yet. Please finish verification.");
-
-      // Optional: redirect back to signup page
-      setTimeout(() => {
-        window.location.href = "signup.html";
-      }, 2500);
-
-      return; // stop execution
-    }
-
-    const userData = doc.data();
+    const querySnapshot = await db.collection("users").where("wallet", "==", walletAddress).get();
+if (querySnapshot.empty) {
+  alert("❌ You are not KYC approved yet. Please finish verification.");
+  return;
+}
+const userData = querySnapshot.docs[0].data();
     tierLevel = userData.tier || 1;
 
     kycStatus.innerText = "✅ KYC Approved";
