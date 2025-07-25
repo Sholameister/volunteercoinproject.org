@@ -140,54 +140,6 @@
   };
   firebase.initializeApp(firebaseConfig);
 </script>
-
-<!-- Wallet connect logic -->
-<script>
-  document.getElementById('connectWalletBtn').addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const resp = await window.solana.connect();
-        const wallet = resp.publicKey.toString();
-        document.getElementById('walletAddress').textContent = 'Wallet: ' + wallet;
-        document.getElementById('beforePhoto').disabled = false;
-        document.getElementById('kycStatus').textContent = 'KYC: Loading...';
-        document.getElementById('tierInfo').textContent = 'Tier: Loading...';
-      } catch (err) {
-        alert('Wallet connection failed: ' + err.message);
-      }
-    } else {
-      alert('Phantom Wallet not found. Please install it.');
-    }
-  });
-
-// Fetch KYC and Tier from Firestore
-const db = firebase.firestore();
-const docRef = db.collection("volunteers").doc(wallet);
-
-docRef.get().then((doc) => {
-  if (doc.exists) {
-    const data = doc.data();
-    document.getElementById('kycStatus').textContent = 'KYC: ' + (data.kycStatus || 'Not Found');
-    document.getElementById('tierInfo').textContent = 'Tier: ' + (data.tierLevel || 'Not Found');
-  } else {
-    document.getElementById('kycStatus').textContent = 'KYC: Not Found';
-    document.getElementById('tierInfo').textContent = 'Tier: Not Found';
-  }
-}).catch((error) => {
-  console.error("Error fetching KYC/Tier:", error);
-  document.getElementById('kycStatus').textContent = 'KYC: Error';
-  document.getElementById('tierInfo').textContent = 'Tier: Error';
-});
-
-// Enable "Stop Volunteering" (afterPhoto) after beforePhoto is selected
-document.getElementById('beforePhoto').addEventListener('change', function () {
-  if (this.files.length > 0) {
-    document.getElementById('afterPhoto').disabled = false;
-    alert('Before photo uploaded. You can now upload your after photo when ready.');
-  }
-});
-</script>
-
   <script src="loginLogic.js"></script>
 </body>
 </html>
