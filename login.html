@@ -125,21 +125,6 @@
     <div id="photoGallery"></div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-      authDomain: "lovebutton-heaven.firebaseapp.com",
-      projectId: "lovebutton-heaven",
-      storageBucket: "lovebutton-heaven.appspot.com"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
-
   <!-- Firebase SDK scripts -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -174,8 +159,34 @@
       alert('Phantom Wallet not found. Please install it.');
     }
   });
-</script>
 
+// Fetch KYC and Tier from Firestore
+const db = firebase.firestore();
+const docRef = db.collection("volunteers").doc(wallet);
+
+docRef.get().then((doc) => {
+  if (doc.exists) {
+    const data = doc.data();
+    document.getElementById('kycStatus').textContent = 'KYC: ' + (data.kycStatus || 'Not Found');
+    document.getElementById('tierInfo').textContent = 'Tier: ' + (data.tierLevel || 'Not Found');
+  } else {
+    document.getElementById('kycStatus').textContent = 'KYC: Not Found';
+    document.getElementById('tierInfo').textContent = 'Tier: Not Found';
+  }
+}).catch((error) => {
+  console.error("Error fetching KYC/Tier:", error);
+  document.getElementById('kycStatus').textContent = 'KYC: Error';
+  document.getElementById('tierInfo').textContent = 'Tier: Error';
+});
+
+// Enable "Stop Volunteering" (afterPhoto) after beforePhoto is selected
+document.getElementById('beforePhoto').addEventListener('change', function () {
+  if (this.files.length > 0) {
+    document.getElementById('afterPhoto').disabled = false;
+    alert('Before photo uploaded. You can now upload your after photo when ready.');
+  }
+});
+</script>
 <!-- Your existing logic file -->
 <script src="loginLogic.js"></script>
 
