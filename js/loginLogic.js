@@ -40,14 +40,21 @@ connectBtn.addEventListener('click', async () => {
   }
 });
 
-// ---- 2. Check KYC & Tier ----
 async function checkKYC(wallet) {
   try {
     const doc = await db.collection("users").doc(wallet).get();
+
     if (!doc.exists || !doc.data().kycApproved) {
       kycStatus.innerText = "❌ KYC not approved";
       tierDisplay.innerText = "Tier: N/A";
-      return;
+      alert("❌ You are not KYC approved yet. Please finish verification.");
+
+      // Optional: redirect back to signup page
+      setTimeout(() => {
+        window.location.href = "signup.html";
+      }, 2500);
+
+      return; // stop execution
     }
 
     const userData = doc.data();
@@ -55,13 +62,18 @@ async function checkKYC(wallet) {
 
     kycStatus.innerText = "✅ KYC Approved";
     tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
-    logTier(wallet, tierLevel);
 
     beforeInput.disabled = false;
+
+    // Log access
+    await logTier(wallet, tierLevel);
+
   } catch (err) {
-    console.error("Error checking KYC:", err);
+    console.error("🔥 Error checking KYC:", err);
+    alert("Something went wrong while checking KYC. Try again.");
   }
 }
+
 
 function getTierName(tier) {
   switch (tier) {
