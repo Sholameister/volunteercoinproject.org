@@ -123,7 +123,8 @@ beforeInput.addEventListener('change', async () => {
   sessionStart = new Date();
   beforeInput.disabled = true;
   afterInput.disabled = false;
-
+  document.getElementById('stopBtn').disabled = false;
+  
   const position = await getGeolocation();
   alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}`);
 
