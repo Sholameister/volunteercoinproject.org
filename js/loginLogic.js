@@ -23,8 +23,8 @@ const priceDisplay = document.getElementById('lvbtnPrice');
 const photoGallery = document.getElementById('photoGallery');
 const afterPhotosBox = document.getElementById('afterPhotosBox');
 const founderWallets = [
-  "YourWalletAddressHere1",
-  "YourWalletAddressHere2"
+  "HwTjV2Bv1ftQXZENfR3S72T4AbA1EHnWAm8R1ViksTkq",
+  "5z4Q4mjxJ5W3wMGVxXQbPX79a89XJr5BVEfXA7djqFSF",
 ];
 // ---- 1. Connect Wallet ----
 connectBtn.addEventListener('click', async () => {
