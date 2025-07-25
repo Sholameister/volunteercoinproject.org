@@ -51,7 +51,7 @@ const userData = querySnapshot.docs[0].data();
     tierLevel = userData.tier || 1;
 
     kycStatus.innerText = "✅ KYC Approved";
-    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)}) - ${getTierMultiplier)tierLevel)} LVBTN/hr`;
+    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)}) - ${getTierMultiplier(tierLevel)} LVBTN/hr`;
 
     beforeInput.disabled = false;
 
