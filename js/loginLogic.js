@@ -25,6 +25,18 @@ const afterPhotosBox = document.getElementById('afterPhotosBox');
 const founderWallets = [
   "HwTjV2Bv1ftQXZENfR3S72T4AbA1EHnWAm8R1ViksTkq",
   "5z4Q4mjxJ5W3wMGVxXQbPX79a89XJr5BVEfXA7djqFSF",
+  "3mNLv5BpWy1hWSu63ojrUaJMoNSegQQxfAE3G6WZ6pQk",
+  "67zgjSeu8PKwry1m9w9vUcrNJ6ca3hxjxKuspVBvUkui",
+  "7Li42fFk94nnSsSZjqP4ZFrqoiVzsBb4frFLHP2SdCPR",
+  "2z12gYEncLue4YHsHMtit8fXKiWVEF9iotMtuvWmNSg5",
+  "yepqk5FdpQbYXkAUgBGe7g79a1X26yaogdXratjBFnU",
+  "9m3cPENmcDqYVew7V63zxEDFuydP5EDERpkDNmopNuFc",
+  "3zBg3uqPHuvmwrVvfkHvzcsHpV5kUfwMntLvdDLq2X8n",
+  "ADctJurWjaUnmQHMjtCr2ueb9jQHbdYzJFk51aphcBds",
+  "CpPfAz8qfHUghkFXAkqPLZHJZq5sut9V2fENy1hE54XD",
+  "BbQwsu2eRuMZnY836FQMCGepFPyAJe2bXGxPr5J5HLbf",
+  "GdqQ2tJY1ddqFpbge6vMzneXdHFacZgpsukRp2vTLf8w",
+  
 ];
 // ---- 1. Connect Wallet ----
 connectBtn.addEventListener('click', async () => {
