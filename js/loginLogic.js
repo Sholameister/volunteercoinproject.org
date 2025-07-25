@@ -61,7 +61,7 @@ async function checkKYC(wallet) {
     tierLevel = userData.tier || 1;
 
     kycStatus.innerText = "✅ KYC Approved";
-    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
+    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)}) - ${getTierMultiplier)tierLevel)} LVBTN/hr`;
 
     beforeInput.disabled = false;
 
