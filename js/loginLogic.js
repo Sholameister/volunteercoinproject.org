@@ -1,18 +1,13 @@
 // Firebase
 const db = firebase.firestore();
-const storage = firebase.app().storage('gs://lvbtn-bucket');
+const storage = firebase.storage();
 
 
 let walletAddress = null;
 let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
-let position;
-try {
-  position = await getGeolocation();
-} catch (error) {
-  console.error("Geolocation error:", error.message);
-  position = { latitude: null, longitude: null }; // fallback
+let position = {latitude: null, longitude: null };
 }
 
 // DOM Elements
@@ -263,4 +258,12 @@ async function loadAfterPhotos() {
       photoGallery.appendChild(img);
     }
   });
+  
+  (async () => {
+try {
+  position = await getGeolocation();
+} catch (error) {
+  console.error("Geolocation error:", error.message);
+  position = { latitude: null, longitude: null }; // fallback
+})();
 }
