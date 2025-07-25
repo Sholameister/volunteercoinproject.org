@@ -8,7 +8,7 @@ let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
 let position = {latitude: null, longitude: null };
-}
+
 
 // DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
