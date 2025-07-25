@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Volunteer Session Logger</title>
   <link rel="stylesheet" href="styles.css">
+
+<!-- Solana Wallet Adapter UMD (Phantom, Solflare, etc.) -->
+<script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-wallets@0.18.0/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-base@0.9.0/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
+  
   <style>
     body {
       background-color: #fdf2f8;
@@ -133,6 +139,45 @@
     };
     firebase.initializeApp(firebaseConfig);
   </script>
+
+  <!-- Firebase SDK scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
+<!-- Firebase init -->
+<script>
+  const firebaseConfig = {
+    apiKey: "...",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "..."
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<!-- Wallet connect logic -->
+<script>
+  document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const resp = await window.solana.connect();
+        const wallet = resp.publicKey.toString();
+        document.getElementById('walletAddress').textContent = 'Wallet: ' + wallet;
+        document.getElementById('beforePhoto').disabled = false;
+        document.getElementById('kycStatus').textContent = 'KYC: Loading...';
+        document.getElementById('tierInfo').textContent = 'Tier: Loading...';
+      } catch (err) {
+        alert('Wallet connection failed: ' + err.message);
+      }
+    } else {
+      alert('Phantom Wallet not found. Please install it.');
+    }
+  });
+</script>
+
+<!-- Your existing logic file -->
+<script src="loginLogic.js"></script>
 
   <!-- Main Logic -->
   <script src="loginLogic.js"></script>
