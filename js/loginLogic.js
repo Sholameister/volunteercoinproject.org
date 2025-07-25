@@ -6,6 +6,13 @@ let walletAddress = null;
 let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
+let position;
+try {
+  position = await getGeolocation();
+} catch (error) {
+  console.error("Geolocation error:", error.message);
+  position = { latitude: null, longitude: null }; // fallback
+}
 
 // DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
