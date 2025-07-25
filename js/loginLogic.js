@@ -1,7 +1,7 @@
 // Firebase
 const db = firebase.firestore();
 const storage = firebase.storage();
-console.log(Storage initialized:", storage;
+console.log(Storage initialized:", storage);
 
 
 let walletAddress = null;
@@ -209,15 +209,33 @@ async function logTier(wallet, tier) {
 beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file || !walletAddress) return;
+  
 try {
   const ref = storage.ref(`volunteerPhotos/${walletAddress}/before_${Date.now()}.jpg`);
   const snap = await ref.put(file);
   startPhotoUrl = await snap.ref.getDownloadURL();
-  { catch (err) {
-    console.error("Photo upload failed:", err);
-   alert("Error uploading photo.  Please try again.")
-   return;
-  }
+
+  sessionStart = new Date();
+  const position = await getGeolocation();
+
+  alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}\nLocation: ${position.latitude}, ${position.longitude}`);
+
+  beforeInput.disabled = false;
+  afterInput.disabled = true;
+  document.getElementById('stopBtn').disabled = false;
+
+  await db.collection("volunteerSessions").doc(`${walletAddress}_${Date.now()}`).set({
+    wallet: walletAddress,
+    tier: tierLevel,
+    startTime: firebase.firestore.Timestamp.fromDate(sessionStart),
+    startLocation: position,
+    startPhoto: startPhotoUrl
+  });
+} catch (err) {
+  console.error("Photo upload failed:", err);
+  alert("Error uploading photo.  Please try again.");
+  return;
+}
 
   sessionStart = new Date();
 
