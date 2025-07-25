@@ -1,7 +1,7 @@
 // Firebase
 const db = firebase.firestore();
 const storage = firebase.app().storage('gs://lvbtn-bucket');
-const db = firebase.firestore();
+
 
 let walletAddress = null;
 let tierLevel = null;
