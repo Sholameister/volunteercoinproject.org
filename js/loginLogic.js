@@ -22,7 +22,10 @@ const usdValue = document.getElementById('usdValue');
 const priceDisplay = document.getElementById('lvbtnPrice');
 const photoGallery = document.getElementById('photoGallery');
 const afterPhotosBox = document.getElementById('afterPhotosBox');
-
+const founderWallets = [
+  "YourWalletAddressHere1",
+  "YourWalletAddressHere2"
+];
 // ---- 1. Connect Wallet ----
 connectBtn.addEventListener('click', async () => {
   if (!window.solana || !window.solana.isPhantom) {
@@ -41,28 +44,33 @@ connectBtn.addEventListener('click', async () => {
 });
 
 async function checkKYC(wallet) {
-  try {
-    const querySnapshot = await db.collection("users").where("wallet", "==", walletAddress).get();
-if (querySnapshot.empty) {
-  alert("❌ You are not KYC approved yet. Please finish verification.");
-  return;
-}
-const userData = querySnapshot.docs[0].data();
-    tierLevel = userData.tier || 1;
-
-    kycStatus.innerText = "✅ KYC Approved";
-    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)}) - ${getTierMultiplier(tierLevel)} LVBTN/hr`;
-
+  if (founderWallets.includes(wallet)) {
+    kycStatus.innerText = "✅ Founder Access Granted";
+    tierLevel = 3;
+    tierDisplay.innerText = `Tier ${tierLevel} (Founder Override) – ${getTierMultiplier(tierLevel)} LVBTN/hr`;
     beforeInput.disabled = false;
+    return;
+  }
 
-    // Log access
-    await logTier(wallet, tierLevel);
+  try {
+    const doc = await db.collection("users").doc(wallet).get();
+    if (!doc.exists || !doc.data().kycApproved) {
+      kycStatus.innerText = "❌ KYC not approved";
+      tierDisplay.innerText = "Tier: N/A";
+      return;
+    }
 
+    const userData = doc.data();
+    tierLevel = userData.tier || 1;
+    kycStatus.innerText = "✅ KYC Approved";
+    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)}) – ${getTierMultiplier(tierLevel)} LVBTN/hr`;
+    logTier(wallet, tierLevel);
+    beforeInput.disabled = false;
   } catch (err) {
-    console.error("🔥 Error checking KYC:", err);
-    alert("Something went wrong while checking KYC. Try again.");
+    console.error("Error checking KYC:", err);
   }
 }
+
 
 
 function getTierName(tier) {
