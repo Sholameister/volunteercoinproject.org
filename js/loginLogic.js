@@ -42,6 +42,18 @@ const founderWallets = [
   "GdqQ2tJY1ddqFpbge6vMzneXdHFacZgpsukRp2vTLf8w",
   
 ];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const getPhantomBtn = document.getElementById('getPhantomBtn');
+
+  if (!window.solana || !window.solana.isPhantom) {
+    getPhantomBtn.style.display = 'block';
+    getPhantomBtn.addEventListener('click', () => {
+      window.open('https://phantom.app/', '_blank');
+    });
+  }
+});
+
 // ---- 1. Connect Wallet ----
 connectBtn.addEventListener('click', async () => {
   if (!window.solana || !window.solana.isPhantom) {
