@@ -1,6 +1,7 @@
 // Firebase
 const db = firebase.firestore();
 const storage = firebase.storage();
+console.log(Storage initialized:", storage;
 
 
 let walletAddress = null;
@@ -139,10 +140,15 @@ async function logTier(wallet, tier) {
 beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file || !walletAddress) return;
-
+try {
   const ref = storage.ref(`volunteerPhotos/${walletAddress}/before_${Date.now()}.jpg`);
   const snap = await ref.put(file);
   startPhotoUrl = await snap.ref.getDownloadURL();
+  { catch (err) {
+    console.error("Photo upload failed:", err);
+   alert("Error uploading photo.  Please try again.")
+   return;
+  }
 
   sessionStart = new Date();
 
@@ -173,11 +179,15 @@ afterInput.addEventListener('change', async () => {
   const durationHours = (sessionEnd - sessionStart) / (1000 * 60 * 60);
   const multiplier = getTierMultiplier(tierLevel);
   const tokensThisSession = parseFloat((durationHours * multiplier).toFixed(2));
-
+try {
   const ref = storage.ref(`volunteerPhotos/${walletAddress}/after_${Date.now()}.jpg`);
   const snap = await ref.put(file);
   const afterPhotoUrl = await snap.ref.getDownloadURL();
-
+} catch (err) {
+  console.error("Photo uploadfailed:", err);
+  alert("Error uploading photo.  Please try again.");
+  return;
+}
   const docId = `${walletAddress}_${sessionStart.getTime()}`;
   await db.collection("volunteerSessions").doc(docId).update({
     endTime: firebase.firestore.Timestamp.fromDate(sessionEnd),
