@@ -362,5 +362,4 @@ try {
 } catch (error) {
   console.error("Geolocation error:", error.message);
   position = { latitude: null, longitude: null }; // fallback
-}
 });
