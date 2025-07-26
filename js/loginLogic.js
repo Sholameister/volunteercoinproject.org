@@ -1,4 +1,4 @@
-import { db, storage } from './js/connectWallet.js';
+import { db, storage } from './connectWallet.js';
 
 // Connect Phantom wallet
 connectBtn.addEventListener('click', async () => {
