@@ -68,51 +68,39 @@ connectBtn.addEventListener('click', async () => {
 ];
 
 async function checkKYC(wallet) {
-  if (founderWhitelist.includes(wallet)) {
-    kycStatus.innerText = "👑 Founder Access Granted";
-    tierDisplay.innerText = "Tier: Founder";
-    beforeInput.disabled = false;
-    tierLevel = 3;
-    return;
-  }
+  tierDisplay.innerText = "Tier: N/A";
 
   try {
     const doc = await db.collection("users").doc(wallet).get();
-    if (!doc.exists || !doc.data().kycApproved) {
-      kycStatus.innerText = "❌ KYC not approved";
-      tierDisplay.innerText = "Tier: N/A";
-      return;
+    const status = doc.exists ? doc.data().kycStatus : null;
+
+    if (status === "approved") {
+      const userData = doc.data();
+      tierLevel = userData.tier || 1;
+      kycStatus.innerText = "✅ KYC Approved";
+      tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
+      logTier(wallet, tierLevel);
+      beforeInput.disabled = false;
+
+    } else if (status === "pending") {
+      kycStatus.textContent = "🕒 KYC Pending";
+      kycStatus.className = "pending";
+      tierStatus.textContent = "";
+      tokenCalc.textContent = "";
+      badge.textContent = "";
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 3500);
+
+    } else {
+      kycStatus.textContent = "❌ KYC Not Found";
+      kycStatus.className = "notfound";
+      tierStatus.textContent = "";
+      tokenCalc.textContent = "";
+      badge.textContent = "";
     }
 
-    const userData = doc.data();
-    tierLevel = userData.tier || 1;
-    kycStatus.innerText = "✅ KYC Approved";
-    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
-    logTier(wallet, tierLevel);
-    beforeInput.disabled = false;
   } catch (err) {
-    console.error("Error checking KYC:", err);
-  }
-}
-
-if (status === "pending") {
-  kycStatus.textContent = "🕐 KYC Pending";
-  kycStatus.className = "pending";
-  tierStatus.textContent = "";
-  tokenCalc.textContent = "";
-  badge.textContent = "";
-
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 3500);
-} else {
-  kycStatus.textContent = "❌ KYC Not Found";
-  kycStatus.className = "notfound";
-  tierStatus.textContent = "";
-  tokenCalc.textContent = "";
-  badge.textContent = "";
-}
-   catch (err) {
     console.error("❌ KYC Check Error:", err.message);
     kycStatus.textContent = "❌ Error checking KYC";
     kycStatus.className = "error";
@@ -120,7 +108,7 @@ if (status === "pending") {
     tokenCalc.textContent = "";
     badge.textContent = "";
   }
-
+}
 
 async function getGeolocation() {
   return new Promise((resolve, reject) => {
