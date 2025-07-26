@@ -15,8 +15,6 @@ firebase.initializingApp(firebaseConfig);
 export const db = firebase.firestore();
 export const storage = firebase.storage();
 
-import { db, storage } from './connectWallet.js';
-
 let walletAddress = null;
 let tierLevel = null;
 let sessionStart = null;
@@ -240,3 +238,4 @@ function updateProgressBar(totalTokens) {
   progressBar.style.width = `${percent}%`;
   progressBar.innerText = `${percent}% Progress`;
 }
+export { db, storage };
