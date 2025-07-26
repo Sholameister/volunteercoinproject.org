@@ -272,8 +272,8 @@ async function getTotalTokens(wallet) {
     const data = doc.data();
     total += data.tokensEarned || 0;
   });
-  return parseFloat(total.toFixed(2));
-}
+  return parseFloat(total.toFixed(2)};
+
 
 async function fetchLVBTNPrice() {
   try {
