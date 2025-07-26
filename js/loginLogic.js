@@ -105,7 +105,7 @@ if (status === "pending") {
   setTimeout(() => {
     window.location.href = "login.html";
   }, 3500);
-} else {
+ else {
   kycStatus.textContent = "❌ KYC Not Found";
   kycStatus.className = "notfound";
   tierStatus.textContent = "";
