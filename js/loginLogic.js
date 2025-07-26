@@ -1,3 +1,5 @@
+import { db, storage } from './firebaseConfig.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 
 const firebaseConfig = {
