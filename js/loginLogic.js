@@ -178,9 +178,9 @@ async function checkKYC(wallet) {
 
 function getTierName(tier) {
   switch (tier) {
-    case 1: return "Basic";
+    case 1: return "Starter";
     case 2: return "Driver";
-    case 3: return "Advanced";
+    case 3: return "Elite Volunteer";
     default: return "Unknown";
   }
 }
