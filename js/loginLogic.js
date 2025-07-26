@@ -1,23 +1,22 @@
-// Wrap everything in DOMContentLoaded so elements exist
 document.addEventListener('DOMContentLoaded', () => {
-  // Firebase setup
+  // Firebase references
   const db = firebase.firestore();
   const storage = firebase.storage();
 
-  // Declare global variables
+  // Declare variables
   let walletAddress = null;
   let tierLevel = null;
   let sessionStart = null;
   let startPhotoUrl = null;
   let position = { latitude: null, longitude: null };
 
-  // Get DOM elements safely
+  // Get DOM elements AFTER page is fully loaded
   const connectBtn = document.getElementById('connectWalletBtn');
-  const beforeInput = document.getElementById('beforePhoto');
-  const afterInput = document.getElementById('afterPhoto');
   const walletDisplay = document.getElementById('walletAddress');
   const kycStatus = document.getElementById('kycStatus');
   const tierDisplay = document.getElementById('tierInfo');
+  const beforeInput = document.getElementById('beforePhoto');
+  const afterInput = document.getElementById('afterPhoto');
   const summaryBox = document.getElementById('summaryBox');
   const sessionTimes = document.getElementById('sessionTimes');
   const tokensEarned = document.getElementById('tokensEarned');
@@ -26,31 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const priceDisplay = document.getElementById('lvbtnPrice');
   const photoGallery = document.getElementById('photoGallery');
 
-  if (!connectBtn) {
-    console.error("❌ connectWalletBtn not found in DOM.");
-    return;
-  }
-
-  // 👛 Connect Phantom Wallet logic
+  // ✅ Now all elements are defined — your logic can safely go here
   connectBtn.addEventListener('click', async () => {
     if (window.solana && window.solana.isPhantom) {
       try {
         const response = await window.solana.connect();
-        const walletAddress = response.publicKey.toString();
+        walletAddress = response.publicKey.toString();
         walletDisplay.innerText = `Wallet: ${walletAddress}`;
 
-        // ✅ Call KYC and enable beforeInput
-        await checkKYC(walletAddress); // Make sure this function is defined elsewhere
+        await checkKYC(walletAddress);
         beforeInput.disabled = false;
+
       } catch (err) {
         console.error("Wallet connection failed:", err);
       }
     } else {
-      alert("Phantom Wallet not detected. Please install Phantom.");
+      alert("Please install Phantom Wallet.");
     }
   });
 
-  // ... rest of your login logic goes here
+  // ...continue with the rest of your logic (photo upload, session start/stop, etc.)
 });
 
 // Handle Before Photo (start session)
