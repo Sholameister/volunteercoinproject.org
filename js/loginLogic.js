@@ -59,7 +59,7 @@ firebase.initializeApp(firebaseConfig);
   });
 
   // ⚠️ Put the rest of your logic (start/stop volunteering, uploads, etc.) inside this block as well
-});
+
 // Handle Before Photo (start session)
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
@@ -117,7 +117,7 @@ afterInput.addEventListener('change', async () => {
   await showPhotoGallery(walletAddress);
   afterInput.disabled = true;
 });
-
+});
 // Get total tokens from Firestore
 async function getTotalTokens(wallet) {
   const query = await db.collection("volunteerSessions").where("wallet", "==", wallet).get();
