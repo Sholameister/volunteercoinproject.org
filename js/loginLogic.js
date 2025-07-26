@@ -316,7 +316,7 @@ async function loadAfterPhotos() {
       photoGallery.appendChild(img);
     }
   });
-  
+}
   (async () => {
 try {
   position = await getGeolocation();
