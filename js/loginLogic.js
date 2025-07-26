@@ -1,16 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Firebase references
+  // Firebase
   const db = firebase.firestore();
   const storage = firebase.storage();
 
-  // Declare variables
-  let walletAddress = null;
-  let tierLevel = null;
-  let sessionStart = null;
-  let startPhotoUrl = null;
-  let position = { latitude: null, longitude: null };
-
-  // Get DOM elements AFTER page is fully loaded
+  // DOM Elements
   const connectBtn = document.getElementById('connectWalletBtn');
   const walletDisplay = document.getElementById('walletAddress');
   const kycStatus = document.getElementById('kycStatus');
@@ -25,7 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const priceDisplay = document.getElementById('lvbtnPrice');
   const photoGallery = document.getElementById('photoGallery');
 
-  // ✅ Now all elements are defined — your logic can safely go here
+  // Session variables
+  let walletAddress = null;
+  let tierLevel = null;
+  let sessionStart = null;
+  let startPhotoUrl = null;
+  let position = { latitude: null, longitude: null };
+
+  // Connect Wallet button logic
   connectBtn.addEventListener('click', async () => {
     if (window.solana && window.solana.isPhantom) {
       try {
@@ -44,9 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ...continue with the rest of your logic (photo upload, session start/stop, etc.)
+  // ⚠️ Put the rest of your logic (start/stop volunteering, uploads, etc.) inside this block as well
 });
-
 // Handle Before Photo (start session)
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
