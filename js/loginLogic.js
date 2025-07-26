@@ -105,14 +105,14 @@ if (status === "pending") {
   setTimeout(() => {
     window.location.href = "login.html";
   }, 3500);
- else {
+} else {
   kycStatus.textContent = "❌ KYC Not Found";
   kycStatus.className = "notfound";
   tierStatus.textContent = "";
   tokenCalc.textContent = "";
   badge.textContent = "";
 }
-  } catch (err) {
+   catch (err) {
     console.error("❌ KYC Check Error:", err.message);
     kycStatus.textContent = "❌ Error checking KYC";
     kycStatus.className = "error";
@@ -120,7 +120,7 @@ if (status === "pending") {
     tokenCalc.textContent = "";
     badge.textContent = "";
   }
-}
+
 
 async function getGeolocation() {
   return new Promise((resolve, reject) => {
