@@ -4,12 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Volunteer Session Logger</title>
-  <link rel="stylesheet" href="assets/styles.css">
-  
 
-<!-- Solana Wallet Adapter UMD (Phantom, Solflare, etc.) -->
-<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
-  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
+  <!-- Solana Wallet Adapter UMD -->
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
+
   <style>
     body {
       background-color: #fdf2f8;
@@ -18,16 +21,13 @@
       margin: 0;
       text-align: center;
     }
-
     h1 {
       color: #e60073;
       margin-bottom: 5px;
     }
-
     .step {
       margin: 25px 0;
     }
-
     button, input[type="file"] {
       display: block;
       margin: 12px auto;
@@ -38,23 +38,19 @@
       max-width: 400px;
       border: none;
     }
-
     button {
       background-color: #e60073;
       color: white;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #cc005f;
     }
-
     input[type="file"] {
       background-color: #fff;
       border: 2px dashed #ccc;
       padding: 18px;
     }
-
     #summaryBox, #afterPhotosBox {
       margin-top: 30px;
       padding: 20px;
@@ -63,50 +59,66 @@
       background-color: #fff;
       display: none;
     }
-
     .after-photo {
       width: 100px;
       height: auto;
       margin: 10px;
       border-radius: 8px;
     }
-
     #lvbtnPrice {
       margin-top: 15px;
       font-weight: bold;
     }
-
     #walletAddress, #kycStatus, #tierInfo {
       font-weight: bold;
       margin-top: 10px;
     }
-
-    @media screen and (max-width: 600px) {
-      h1 { font-size: 22px; }
-      button, input[type="file"] {
-        width: 95%;
-        font-size: 15px;
-      }
+    #progressContainer {
+      margin-top: 20px;
+    }
+    .progress-bar {
+      width: 90%;
+      max-width: 400px;
+      height: 20px;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px auto;
+    }
+    .progress-fill {
+      height: 100%;
+      text-align: right;
+      padding-right: 8px;
+      line-height: 20px;
+      color: white;
+      background-color: #e60073;
+      width: 0;
     }
   </style>
 </head>
 <body>
 
   <h1>Log Your Volunteer Session</h1>
+
   <div class="step">
-    <button id="connectWalletBtn">1️⃣ Connect Phantom Wallet</button>
+    <button id="connectWalletBtn">1️⃣ Connect Wallet (Phantom or Solflare)</button>
     <div id="walletAddress">Wallet: Not Connected</div>
     <div id="kycStatus">KYC: Unknown</div>
     <div id="tierInfo">Tier: Unknown</div>
   </div>
 
+  <div id="progressContainer">
+    <h4>Tier Progress</h4>
+    <div class="progress-bar"><div id="progressFill" class="progress-fill">0%</div></div>
+  </div>
+
   <div class="step">
-    <label for="beforePhoto">2️⃣ Take Start Photo to Start Time</label>
+    <label for="beforePhoto">2️⃣ Take Start Photo to Begin</label>
     <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled>
   </div>
 
   <div class="step">
-    <label for="afterPhoto">3️⃣ Take Finish Photo to End Time</label>
+    <label for="afterPhoto">3️⃣ Take Finish Photo to End</label>
     <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled>
   </div>
 
@@ -124,26 +136,22 @@
     <div id="photoGallery"></div>
   </div>
 
-  <!-- Firebase SDK scripts -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script>
+    // Firebase Init
+    const firebaseConfig = {
+      apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+      authDomain: "lovebutton-heaven.firebaseapp.com",
+      projectId: "lovebutton-heaven",
+      storageBucket: "lvbtn-bucket.appspot.com",
+      messagingSenderId: "1079456151721",
+      appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+      measurementId: "G-0261HYV08P"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 
-<!-- Firebase init -->
-<script>
- // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-  authDomain: "lovebutton-heaven.firebaseapp.com",
-  projectId: "lovebutton-heaven",
-  storageBucket: "lvbtn-bucket.appspot.com",
-  messagingSenderId: "1079456151721",
-  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-  measurementId: "G-0261HYV08P"
-};
-  firebase.initializeApp(firebaseConfig);
-</script>
   <script src="js/loginLogic.js"></script>
+
 </body>
 </html>
 
