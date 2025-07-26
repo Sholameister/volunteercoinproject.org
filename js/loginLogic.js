@@ -1,3 +1,5 @@
+import { db, storage } from './js/connectWallet.js';
+
 // Connect Phantom wallet
 connectBtn.addEventListener('click', async () => {
   if (window.solana && window.solana.isPhantom) {
