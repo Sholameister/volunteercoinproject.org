@@ -22,25 +22,28 @@ const usdValue = document.getElementById('usdValue');
 const priceDisplay = document.getElementById('lvbtnPrice');
 const photoGallery = document.getElementById('photoGallery');
 const afterPhotosBox = document.getElementById('afterPhotosBox');
+const progressBar = document.getElementById('progressBar');
 
-// ---- 1. Connect Wallet ----
-connectBtn.addEventListener('click', async () => {
-  if (!window.solana || !window.solana.isPhantom) {
-    alert('Phantom Wallet not found!');
-    return;
-  }
-
-  try {
+// Solana Wallet Adapter
+async function connectWallet() {
+  if (window.solana && window.solana.isPhantom) {
     const resp = await window.solana.connect();
     walletAddress = resp.publicKey.toString();
     walletDisplay.innerText = `Wallet: ${walletAddress}`;
     await checkKYC(walletAddress);
-  } catch (err) {
-    console.error('Wallet connect error:', err);
+  } else if (window.solflare) {
+    const resp = await window.solflare.connect();
+    walletAddress = resp.publicKey.toString();
+    walletDisplay.innerText = `Wallet: ${walletAddress}`;
+    await checkKYC(walletAddress);
+  } else {
+    alert("No supported wallet found (Phantom or Solflare).");
   }
-});
+}
 
-// ---- 2. Check KYC & Tier ----
+connectBtn.addEventListener('click', connectWallet);
+
+// ---- KYC ----
 async function checkKYC(wallet) {
   try {
     const doc = await db.collection("users").doc(wallet).get();
@@ -89,7 +92,7 @@ async function logTier(wallet, tier) {
   });
 }
 
-// ---- 3. Start Volunteering ----
+// ---- Start Volunteering ----
 beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file || !walletAddress) return;
@@ -114,7 +117,7 @@ beforeInput.addEventListener('change', async () => {
   });
 });
 
-// ---- 4. Stop Volunteering ----
+// ---- Stop Volunteering ----
 afterInput.addEventListener('change', async () => {
   const file = afterInput.files[0];
   if (!file || !walletAddress || !sessionStart) return;
@@ -136,7 +139,6 @@ afterInput.addEventListener('change', async () => {
     afterPhoto: afterPhotoUrl
   });
 
-  // Summary
   const totalTokens = await getTotalTokens(walletAddress);
   const livePrice = await fetchLVBTNPrice();
   const usd = (totalTokens * livePrice).toFixed(2);
@@ -146,6 +148,8 @@ afterInput.addEventListener('change', async () => {
   totalLVBTN.innerText = `Total LVBTN: ${totalTokens}`;
   usdValue.innerText = `USD Value: $${usd}`;
   priceDisplay.innerText = `Live LVBTN Price: $${livePrice}`;
+
+  updateProgressBar(totalTokens);
 
   summaryBox.style.display = 'block';
   await loadAfterPhotos();
@@ -184,7 +188,7 @@ async function fetchLVBTNPrice() {
   }
 }
 
-// ---- 5. Load Past After Photos ----
+// ---- Load Past After Photos ----
 async function loadAfterPhotos() {
   const query = await db.collection("volunteerSessions").where("wallet", "==", walletAddress).get();
   if (query.empty) return;
@@ -201,4 +205,23 @@ async function loadAfterPhotos() {
       photoGallery.appendChild(img);
     }
   });
+}
+
+// ---- Progress Bar ----
+function updateProgressBar(totalTokens) {
+  let percent = 0;
+  if (totalTokens >= 1000) {
+    percent = 100;
+  } else if (totalTokens >= 600) {
+    percent = 80;
+  } else if (totalTokens >= 300) {
+    percent = 60;
+  } else if (totalTokens >= 100) {
+    percent = 40;
+  } else if (totalTokens >= 25) {
+    percent = 20;
+  }
+
+  progressBar.style.width = `${percent}%`;
+  progressBar.innerText = `${percent}% Progress`;
 }
