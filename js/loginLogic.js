@@ -109,7 +109,7 @@ afterInput.addEventListener('change', async () => {
     geolocation: await getGeolocation(),
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
-
+});
   // Fetch total tokens and price
   const total = await getTotalTokens(walletAddress);
   const price = await fetchLVBTNPrice();
@@ -125,7 +125,7 @@ afterInput.addEventListener('change', async () => {
   await showPhotoGallery(walletAddress);
   afterInput.disabled = true;
 });
-});
+
 // Get total tokens from Firestore
 async function getTotalTokens(wallet) {
   const query = await db.collection("volunteerSessions").where("wallet", "==", wallet).get();
