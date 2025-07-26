@@ -1,7 +1,3 @@
-// Firebase setup
-const db = firebase.firestore();
-const storage = firebase.storage();
-
 // DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
