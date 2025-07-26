@@ -317,11 +317,14 @@ async function loadAfterPhotos() {
     }
   });
 }
-  (async () => {
-try {
-  position = await getGeolocation();
-} catch (error) {
-  console.error("Geolocation error:", error.message);
-  position = {latitude: null, longitude: null }; // fallback
+async function getGeolocation() {
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude
+      }),
+      () => resolve({ latitude: null, longitude: null })
+    );
+  });
 }
-  })();
