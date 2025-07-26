@@ -14,6 +14,8 @@ firebase.initializingApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
 
+export { db, storage };
+
 let walletAddress = null;
 let tierLevel = null;
 let sessionStart = null;
