@@ -311,7 +311,7 @@ async function getGeolocation() {
         latitude: pos.coords.latitude,
         longitude: pos.coords.longitude
       }),
-      () => resolve({ latitude: null, longitude: null })
+      () => resolve({ lat: null, lng: null })
     );
   });
 }
