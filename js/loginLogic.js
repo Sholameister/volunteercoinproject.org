@@ -26,7 +26,7 @@ const usdValue = document.getElementById('usdValue');
 const priceDisplay = document.getElementById('lvbtnPrice');
 const photoGallery = document.getElementById('photoGallery');
 const afterPhotosBox = document.getElementById('afterPhotosBox');
-const founderWallets = [
+const founderWhitelist = [
   "HwTjV2Bv1ftQXZENfR3S72T4AbA1EHnWAm8R1ViksTkq",
   "5z4Q4mjxJ5W3wMGVxXQbPX79a89XJr5BVEfXA7djqFSF",
   "3mNLv5BpWy1hWSu63ojrUaJMoNSegQQxfAE3G6WZ6pQk",
@@ -40,6 +40,7 @@ const founderWallets = [
   "CpPfAz8qfHUghkFXAkqPLZHJZq5sut9V2fENy1hE54XD",
   "BbQwsu2eRuMZnY836FQMCGepFPyAJe2bXGxPr5J5HLbf",
   "GdqQ2tJY1ddqFpbge6vMzneXdHFacZgpsukRp2vTLf8w",
+  "Ex4dRbZZuo6T4Wms1eaZkG6g88WpRCTRmMmz5ppEQgrz",
   
 ];
 
@@ -61,43 +62,39 @@ connectBtn.addEventListener('click', async () => {
     return;
   }
 
- async function checkKYC(walletAddress) {
+ const founderWhitelist = [
+  "YourWalletAddress1", // Founder
+  "YourWalletAddress2"  // Dev, if needed
+];
+
+async function checkKYC(wallet) {
+  if (founderWhitelist.includes(wallet)) {
+    kycStatus.innerText = "👑 Founder Access Granted";
+    tierDisplay.innerText = "Tier: Founder";
+    beforeInput.disabled = false;
+    tierLevel = 3;
+    return;
+  }
+
   try {
-    kycStatus.textContent = "Checking KYC status...";
-    kycStatus.className = "pending";
+    const doc = await db.collection("users").doc(wallet).get();
+    if (!doc.exists || !doc.data().kycApproved) {
+      kycStatus.innerText = "❌ KYC not approved";
+      tierDisplay.innerText = "Tier: N/A";
+      return;
+    }
 
-    const docRef = db.collection("verifiedKYC").doc(walletAddress);
-    const docSnap = await docRef.get();
+    const userData = doc.data();
+    tierLevel = userData.tier || 1;
+    kycStatus.innerText = "✅ KYC Approved";
+    tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
+    logTier(wallet, tierLevel);
+    beforeInput.disabled = false;
+  } catch (err) {
+    console.error("Error checking KYC:", err);
+  }
+}
 
-    if (docSnap.exists) {
-      const data = docSnap.data();
-      const status = data?.status || "pending";
-      const tier = data?.tier || 1;
-
-      if (status === "approved") {
-        kycStatus.textContent = "✅ KYC Approved";
-        kycStatus.className = "approved";
-
-        tierStatus.textContent = `🎖️ Verified Tier: ${tier}`;
-        let tokensPerHour = 1;
-        let tierBadge = "🧡 Tier 1: Starter";
-
-        if (tier == 2) {
-          tokensPerHour = 1.25;
-          tierBadge = "🚗 Tier 2: Driver";
-        } else if (tier == 3) {
-          tokensPerHour = 1.5;
-          tierBadge = "⚡ Tier 3: Elite Volunteer";
-        }
-
-        tokenCalc.textContent = `💰 You earn ${tokensPerHour} LVBTN/hour`;
-        badge.textContent = `🏅 ${tierBadge}`;
-
-        await db.collection("sessionLogs").add({
-          wallet: walletAddress,
-          tier: tier,
-          timestamp: new Date()
-        });
 
         setTimeout(() => {
           window.location.href = "login.html";
@@ -150,7 +147,7 @@ async function getGeolocation() {
 
 
 async function checkKYC(wallet) {
-  if (founderWallets.includes(wallet)) {
+  if (founderWhitelist.includes(wallet)) {
     kycStatus.innerText = "✅ Founder Access Granted";
     tierLevel = 3;
     tierDisplay.innerText = `Tier ${tierLevel} (Founder Override) – ${getTierMultiplier(tierLevel)} LVBTN/hr`;
