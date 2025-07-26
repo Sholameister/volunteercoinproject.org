@@ -1,26 +1,58 @@
-import { db, storage } from './connectWallet.js';
-
-// Connect Phantom wallet
+// Wrap everything in DOMContentLoaded so elements exist
 document.addEventListener('DOMContentLoaded', () => {
+  // Firebase setup
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // Declare global variables
+  let walletAddress = null;
+  let tierLevel = null;
+  let sessionStart = null;
+  let startPhotoUrl = null;
+  let position = { latitude: null, longitude: null };
+
+  // Get DOM elements safely
   const connectBtn = document.getElementById('connectWalletBtn');
-  const walletDisplay = document.getElementById('walletAddress');
   const beforeInput = document.getElementById('beforePhoto');
-connectBtn.addEventListener('click', async () => {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const response = await window.solana.connect();
-      walletAddress = response.publicKey.toString();
-      walletDisplay.innerText = `Wallet: ${walletAddress}`;
-      await checkKYC(walletAddress);
-      beforeInput.disabled = false;
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-    }
-  } else {
-    alert("Phantom Wallet not detected. Please install it.");
+  const afterInput = document.getElementById('afterPhoto');
+  const walletDisplay = document.getElementById('walletAddress');
+  const kycStatus = document.getElementById('kycStatus');
+  const tierDisplay = document.getElementById('tierInfo');
+  const summaryBox = document.getElementById('summaryBox');
+  const sessionTimes = document.getElementById('sessionTimes');
+  const tokensEarned = document.getElementById('tokensEarned');
+  const totalLVBTN = document.getElementById('totalLVBTN');
+  const usdValue = document.getElementById('usdValue');
+  const priceDisplay = document.getElementById('lvbtnPrice');
+  const photoGallery = document.getElementById('photoGallery');
+
+  if (!connectBtn) {
+    console.error("❌ connectWalletBtn not found in DOM.");
+    return;
   }
+
+  // 👛 Connect Phantom Wallet logic
+  connectBtn.addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const response = await window.solana.connect();
+        const walletAddress = response.publicKey.toString();
+        walletDisplay.innerText = `Wallet: ${walletAddress}`;
+
+        // ✅ Call KYC and enable beforeInput
+        await checkKYC(walletAddress); // Make sure this function is defined elsewhere
+        beforeInput.disabled = false;
+      } catch (err) {
+        console.error("Wallet connection failed:", err);
+      }
+    } else {
+      alert("Phantom Wallet not detected. Please install Phantom.");
+    }
+  });
+
+  // ... rest of your login logic goes here
 });
-});
+
 // Handle Before Photo (start session)
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
