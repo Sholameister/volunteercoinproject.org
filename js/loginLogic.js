@@ -265,19 +265,6 @@ hoursLink.style.marginTop = '10px';
 hoursLink.style.textAlign = 'center';
 summaryBox.appendChild(hoursLink);
 });
-
-async function getGeolocation() {
-  return new Promise((resolve) => {
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      }),
-      () => resolve({ lat: null, lng: null };
-  }
- })();  
-
-
 async function getTotalTokens(wallet) {
   const query = await db.collection("volunteerSessions").where("wallet", "==", wallet).get();
   let total = 0;
