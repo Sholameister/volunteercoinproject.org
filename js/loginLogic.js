@@ -1,64 +1,70 @@
+// loginLogic.js
+
 import { db, storage } from './firebaseConfig.js';
+import {
+  collection,
+  getDoc,
+  doc
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+// DOM Elements
+const connectBtn = document.getElementById('connectWalletBtn');
+const walletDisplay = document.getElementById('walletAddress');
+const kycStatus = document.getElementById('kycStatus');
+const tierDisplay = document.getElementById('tierInfo');
+const beforeInput = document.getElementById('beforePhoto');
+const afterInput = document.getElementById('afterPhoto');
+const summaryBox = document.getElementById('summaryBox');
+const sessionTimes = document.getElementById('sessionTimes');
+const tokensEarned = document.getElementById('tokensEarned');
+const totalLVBTN = document.getElementById('totalLVBTN');
+const usdValue = document.getElementById('usdValue');
+const priceDisplay = document.getElementById('lvbtnPrice');
+const photoGallery = document.getElementById('photoGallery');
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-  authDomain: "lovebutton-heaven.firebaseapp.com",
-  projectId: "lovebutton-heaven",
-  storageBucket: "lvbtn-bucket.appspot.com", // ✅ Corrected
-  messagingSenderId: "1079456151721",
-  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-  measurementId: "G-0261HYV08P"
-};
+// Session Variables
+let walletAddress = null;
+let tierLevel = null;
+let sessionStart = null;
+let startPhotoUrl = null;
+let position = { latitude: null, longitude: null };
 
-firebase.initializeApp(firebaseConfig);
-
-  
-  // Firebase
-  const db = firebase.firestore();
-  const storage = firebase.storage();
-
-  // DOM Elements
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const walletDisplay = document.getElementById('walletAddress');
-  const kycStatus = document.getElementById('kycStatus');
-  const tierDisplay = document.getElementById('tierInfo');
-  const beforeInput = document.getElementById('beforePhoto');
-  const afterInput = document.getElementById('afterPhoto');
-  const summaryBox = document.getElementById('summaryBox');
-  const sessionTimes = document.getElementById('sessionTimes');
-  const tokensEarned = document.getElementById('tokensEarned');
-  const totalLVBTN = document.getElementById('totalLVBTN');
-  const usdValue = document.getElementById('usdValue');
-  const priceDisplay = document.getElementById('lvbtnPrice');
-  const photoGallery = document.getElementById('photoGallery');
-
-  // Session variables
-  let walletAddress = null;
-  let tierLevel = null;
-  let sessionStart = null;
-  let startPhotoUrl = null;
-  let position = { latitude: null, longitude: null };
-
-  // Connect Wallet button logic
-  connectBtn.addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const response = await window.solana.connect();
-        walletAddress = response.publicKey.toString();
-        walletDisplay.innerText = `Wallet: ${walletAddress}`;
-
-        await checkKYC(walletAddress);
-        beforeInput.disabled = false;
-
-      } catch (err) {
-        console.error("Wallet connection failed:", err);
-      }
-    } else {
-      alert("Please install Phantom Wallet.");
+// Connect Wallet Logic (Phantom)
+connectBtn.addEventListener('click', async () => {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const response = await window.solana.connect();
+      walletAddress = response.publicKey.toString();
+      walletDisplay.innerText = `Wallet: ${walletAddress}`;
+      await checkKYC(walletAddress);
+    } catch (error) {
+      console.error('Phantom wallet connection error:', error);
     }
-  });
+  } else {
+    alert('Phantom wallet not found. Please install it.');
+  }
+});
+
+// ✅ Check KYC and Tier
+async function checkKYC(walletAddress) {
+  try {
+    const docRef = doc(db, "volunteers", walletAddress);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      tierLevel = data.tier || "Tier 1";
+      kycStatus.innerText = "✅ KYC Verified";
+      tierDisplay.innerText = `Access: ${tierLevel}`;
+    } else {
+      kycStatus.innerText = "❌ Not KYC Verified";
+      tierDisplay.innerText = `Access: Restricted`;
+    }
+  } catch (error) {
+    console.error("Wallet connection failed:", error);
+    kycStatus.innerText = "⚠️ Error during KYC check";
+  }
+}
 
   // ⚠️ Put the rest of your logic (start/stop volunteering, uploads, etc.) inside this block as well
 
