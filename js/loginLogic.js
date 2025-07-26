@@ -95,26 +95,23 @@ async function checkKYC(wallet) {
   }
 }
 
+if (status === "pending") {
+  kycStatus.textContent = "🕐 KYC Pending";
+  kycStatus.className = "pending";
+  tierStatus.textContent = "";
+  tokenCalc.textContent = "";
+  badge.textContent = "";
 
-        setTimeout(() => {
-          window.location.href = "login.html";
-        }, 3500);
-
-      } else {
-        kycStatus.textContent = "🕐 KYC Pending";
-        kycStatus.className = "pending";
-        tierStatus.textContent = "";
-        tokenCalc.textContent = "";
-        badge.textContent = "";
-      }
-    } else {
-      kycStatus.textContent = "❌ KYC Not Found";
-      kycStatus.className = "notfound";
-      tierStatus.textContent = "";
-      tokenCalc.textContent = "";
-      badge.textContent = "";
-    }
-
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 3500);
+} else {
+  kycStatus.textContent = "❌ KYC Not Found";
+  kycStatus.className = "notfound";
+  tierStatus.textContent = "";
+  tokenCalc.textContent = "";
+  badge.textContent = "";
+}
   } catch (err) {
     console.error("❌ KYC Check Error:", err.message);
     kycStatus.textContent = "❌ Error checking KYC";
