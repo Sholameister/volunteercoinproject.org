@@ -11,10 +11,11 @@ const firebaseConfig = {
 
 // Firebase
 firebase.initializingApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
 
-export { db, storage };
+export const db = firebase.firestore();
+export const storage = firebase.storage();
+
+import { db, storage } from './connectWallet.js';
 
 let walletAddress = null;
 let tierLevel = null;
