@@ -238,4 +238,4 @@ function updateProgressBar(totalTokens) {
   progressBar.style.width = `${percent}%`;
   progressBar.innerText = `${percent}% Progress`;
 }
-export { db, storage };
+
