@@ -1,6 +1,10 @@
 import { db, storage } from './connectWallet.js';
 
 // Connect Phantom wallet
+document.addEventListener('DOMContentLoaded', () => {
+  const connectBtn = document.getElementById('connectWalletBtn');
+  const walletDisplay = document.getElementById('walletAddress');
+  const beforeInput = document.getElementById('beforePhoto');
 connectBtn.addEventListener('click', async () => {
   if (window.solana && window.solana.isPhantom) {
     try {
@@ -16,7 +20,7 @@ connectBtn.addEventListener('click', async () => {
     alert("Phantom Wallet not detected. Please install it.");
   }
 });
-
+});
 // Handle Before Photo (start session)
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
