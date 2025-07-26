@@ -1,23 +1,3 @@
-// DOM Elements
-const connectBtn = document.getElementById('connectWalletBtn');
-const walletDisplay = document.getElementById('walletAddress');
-const kycStatus = document.getElementById('kycStatus');
-const tierDisplay = document.getElementById('tierInfo');
-const beforeInput = document.getElementById('beforePhoto');
-const afterInput = document.getElementById('afterPhoto');
-const summaryBox = document.getElementById('summaryBox');
-const sessionTimes = document.getElementById('sessionTimes');
-const tokensEarned = document.getElementById('tokensEarned');
-const totalLVBTN = document.getElementById('totalLVBTN');
-const usdValue = document.getElementById('usdValue');
-const photoGallery = document.getElementById('photoGallery');
-const priceEl = document.getElementById('lvbtnPrice');
-
-let walletAddress = null;
-let sessionStart = null;
-let startPhotoUrl = null;
-let tierMultiplier = 1;
-
 // Connect Phantom wallet
 connectBtn.addEventListener('click', async () => {
   if (window.solana && window.solana.isPhantom) {
