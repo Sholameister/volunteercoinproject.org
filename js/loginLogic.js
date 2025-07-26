@@ -110,27 +110,6 @@ async function checkKYC(wallet) {
   }
 }
 
-async function getGeolocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error("Geolocation not supported"));
-    } else {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-        },
-        error => {
-          reject(error);
-        }
-      );
-    }
-  });
-}
-
-
 async function checkKYC(wallet) {
   if (founderWhitelist.includes(wallet)) {
     kycStatus.innerText = "✅ Founder Access Granted";
@@ -294,10 +273,10 @@ async function getGeolocation() {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude
       }),
-      () => resolve({ lat: null, lng: null })
-    );
-  });
-}
+      () => resolve({ lat: null, lng: null };
+  }
+ })();  
+
 
 async function getTotalTokens(wallet) {
   const query = await db.collection("volunteerSessions").where("wallet", "==", wallet).get();
