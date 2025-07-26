@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+  authDomain: "lovebutton-heaven.firebaseapp.com",
+  projectId: "lovebutton-heaven",
+  storageBucket: "lvbtn-bucket.appspot.com", // ✅ Corrected
+  messagingSenderId: "1079456151721",
+  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+  measurementId: "G-0261HYV08P"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+  
   // Firebase
   const db = firebase.firestore();
   const storage = firebase.storage();
