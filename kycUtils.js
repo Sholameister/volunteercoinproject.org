@@ -67,12 +67,11 @@ async function logVolunteerSession(walletAddress, tierLevel) {
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
       console.log("🔁 Resuming previous session from localStorage...");
+       return true; // success
     }
-
-    return true; // success
+    return false;
   } catch (err) {
-    console.error("Wallet/KYC error:", err);
-    setKYCRejected("❌ Error checking KYC");
+    console.error("Resume error:", err);
     return false;
   }
 }
