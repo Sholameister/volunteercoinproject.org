@@ -1,18 +1,5 @@
 import { db, storage } from './firebase-app.js';
-
-// kycUtils.js
-
-// ✅ Load Firebase compat directly (assumes you include both scripts in HTML)
-const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-  authDomain: "lovebutton-heaven.firebaseapp.com",
-  projectId: "lovebutton-heaven"
-};
-
-if (!firebase.apps?.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // Globals (accessible in login.html)
 export let walletAddress = null;
@@ -35,14 +22,14 @@ export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenC
 
 export async function checkKYC(walletAddress) {
   try {
-    const docRef = window.db ? window.db.collection('kycStatus').doc(walletAddress) : null;
+    const docRef = doc(db, "kycStatus", walletAddress);
 
     if (!docRef) {
       console.error('Firestore is not initialized.');
       return null;
     }
 
-    const docSnap = await docRef.get();
+    const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const data = docSnap.data();
@@ -51,8 +38,7 @@ export async function checkKYC(walletAddress) {
         console.log("Session logged successfully!");
       }
       return data.tier || null;
-    }
-   else {
+    } else {
       return null;
     }
   } catch (error) {
