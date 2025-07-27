@@ -138,6 +138,38 @@
     <h3>Past After-Photos</h3>
     <div id="photoGallery"></div>
   </div>
+  <!-- Your existing HTML content above -->
+
+<!-- 👇 Insert this just before </body> -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const connectBtn = document.getElementById('connectWalletBtn');
+
+    connectBtn?.addEventListener('click', async () => {
+      const provider = window?.phantom?.solana;
+
+      if (!provider?.isPhantom) {
+        alert("Phantom Wallet not found. Please install it.");
+        return;
+      }
+
+      try {
+        const resp = await provider.connect();
+        const walletAddress = resp.publicKey.toString();
+
+        document.getElementById("walletAddress").innerText = walletAddress;
+        console.log("Connected to wallet:", walletAddress);
+      } catch (err) {
+        console.error("Wallet connection failed:", err);
+        alert("Wallet connection failed. Check console for details.");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
+
   <script type="module" src="js/loginLogic.js"></script>
 </body>
 </html>
