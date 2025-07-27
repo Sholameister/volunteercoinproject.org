@@ -52,7 +52,7 @@ export async function checkKYC(walletAddress) {
       }
       return data.tier || null;
     }
-    } else {
+   else {
       return null;
     }
   } catch (error) {
