@@ -58,9 +58,12 @@ function setKYCRejected(message) {
 }
 
 // Log session
-async function logVolunteerSession(walletAddress, tierLevel) {
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+async function logvolunteerSession(walletAddress, tierLevel) {
   try {
-    await db.collection("sessionLogs").add({
+    const sessionRef = collection(db, "sessionLogs");
+    await addDoc(sessionRef, {
       wallet: walletAddress,
       tier: tierLevel,
       timestamp: new Date()
