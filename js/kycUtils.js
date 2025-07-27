@@ -2,7 +2,7 @@
 
 // Firebase Compat (for consistency with signup.html)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js";
+import "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
@@ -11,7 +11,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = firebase.firestore();
 
 // Globals (accessible in login.html)
 export let walletAddress = null;
