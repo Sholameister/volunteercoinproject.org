@@ -45,24 +45,29 @@ connectBtn.addEventListener('click', async () => {
   }
 });
 
-// ✅ Check KYC and Tier
-async function checkKYC(walletAddress) {
-  try {
-    const docRef = doc(db, "volunteers", walletAddress);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      tierLevel = data.tier || "Tier 1";
-      kycStatus.innerText = "✅ KYC Verified";
-      tierDisplay.innerText = `Access: ${tierLevel}`;
-    } else {
-      kycStatus.innerText = "❌ Not KYC Verified";
-      tierDisplay.innerText = `Access: Restricted`;
+// KYC check
+async function checkKYC(wallet) {
+  const doc = await db.collection("kycRecords").doc(wallet).get();
+  if (doc.exists) {
+    const data = doc.data();
+    const tier = data.tier || "Tier 1";
+    tierDisplay.innerText = `Tier: ${tier}`;
+    kycStatus.innerText = `KYC: Verified`;
+    switch (tier) {
+      case "Tier 2":
+        tierMultiplier = 1.25;
+        break;
+      case "Tier 3":
+        tierMultiplier = 1.5;
+        break;
+      default:
+        tierMultiplier = 1;
     }
-  } catch (error) {
-    console.error("Wallet connection failed:", error);
-    kycStatus.innerText = "⚠️ Error during KYC check";
+  } else {
+    tierDisplay.innerText = "Tier: Unverified";
+    kycStatus.innerText = "KYC: Not Verified";
+    tierMultiplier = 0;
+    alert("KYC not found. Please complete verification first.");
   }
 }
 
@@ -108,6 +113,7 @@ afterInput.addEventListener('change', async () => {
     afterPhoto: afterPhotoUrl,
     geolocation: await getGeolocation(),
     timestamp: firebase.firestore.FieldValue.serverTimestamp();
+  });
   // Fetch total tokens and price
   const total = await getTotalTokens(walletAddress);
   const price = await fetchLVBTNPrice();
@@ -159,32 +165,6 @@ async function showPhotoGallery(wallet) {
     }
   });
   document.getElementById("afterPhotosBox").style.display = "block";
-}
-
-// KYC check
-async function checkKYC(wallet) {
-  const doc = await db.collection("kycRecords").doc(wallet).get();
-  if (doc.exists) {
-    const data = doc.data();
-    const tier = data.tier || "Tier 1";
-    tierDisplay.innerText = `Tier: ${tier}`;
-    kycStatus.innerText = `KYC: Verified`;
-    switch (tier) {
-      case "Tier 2":
-        tierMultiplier = 1.25;
-        break;
-      case "Tier 3":
-        tierMultiplier = 1.5;
-        break;
-      default:
-        tierMultiplier = 1;
-    }
-  } else {
-    tierDisplay.innerText = "Tier: Unverified";
-    kycStatus.innerText = "KYC: Not Verified";
-    tierMultiplier = 0;
-    alert("KYC not found. Please complete verification first.");
-  }
 }
 
 // Get geolocation
