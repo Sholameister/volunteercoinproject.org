@@ -1,3 +1,5 @@
+import { db, storage } from './firebase-app.js';
+
 // kycUtils.js
 
 // ✅ Load Firebase compat directly (assumes you include both scripts in HTML)
@@ -11,7 +13,6 @@ if (!firebase.apps?.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const db = firebase.firestore(); // ✅ Safe compat-style
 
 // Globals (accessible in login.html)
 export let walletAddress = null;
