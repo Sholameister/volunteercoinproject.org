@@ -1,5 +1,3 @@
-// loginLogic.js
-import { db, storage } from './firebaseConfig.js';
 
 let walletAddress = null;
 let tierLevel = "Tier 1";
