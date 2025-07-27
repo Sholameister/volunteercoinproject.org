@@ -2,9 +2,12 @@
 
 import { db, storage } from './firebaseConfig.js';
 import {
-  collection,
   getDoc,
-  doc
+  doc,
+  collection,
+  getDocs,
+  query,
+  where
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
 // DOM Elements
@@ -47,9 +50,10 @@ connectBtn.addEventListener('click', async () => {
 
 // KYC check
 async function checkKYC(wallet) {
-  const doc = await db.collection("kycRecords").doc(wallet).get();
-  if (doc.exists) {
-    const data = doc.data();
+ const docRef = doc(db, "kycRecords", wallet);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
     const tier = data.tier || "Tier 1";
     tierDisplay.innerText = `Tier: ${tier}`;
     kycStatus.innerText = `KYC: Verified`;
