@@ -1,7 +1,7 @@
 // Firebase imports (compat version)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
 
 // Your Firebase config object
 const firebaseConfig = {
