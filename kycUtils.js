@@ -97,5 +97,6 @@ async function resumeVolunteerSession() {
 export { checkKYC, logVolunteerSession, setKycDomElements  };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
-window.checkKYC = checkKYC;
+window.checkKYC = verifiedKYC;
 window.resumeVolunteerSession = resumeVolunteerSession;
+window.logVolunteerSession = logVolunteerSession;
