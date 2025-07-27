@@ -63,7 +63,7 @@ async function logVolunteerSession(walletAddress, tierLevel) {
    
   }
 // ✅ Smart session resume function
-export async function resumeVolunteerSession() {
+async function resumeVolunteerSession() {
   try {
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
