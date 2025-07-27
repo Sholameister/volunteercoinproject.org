@@ -62,14 +62,16 @@ async function logVolunteerSession(walletAddress, tierLevel) {
     console.error("Error logging session:", error);
    
   }
-}
-    // ✅ Smart session resume (check localStorage)
+// ✅ Smart session resume function
+export async function resumeVolunteerSession() {
+  try {
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
-      console.log("🔁 Resuming previous session from localStorage...");
-       return true; // success
+      console.log("📘 Resuming previous session from localStorage...");
+      return true; // success
+    } else {
+      return false;
     }
-    return false;
   } catch (err) {
     console.error("Resume error:", err);
     return false;
