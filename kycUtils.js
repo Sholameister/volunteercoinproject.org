@@ -1,7 +1,12 @@
 import { db, storage } from './firebase-app.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import {
+  doc,
+  getDoc,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-// Globals (accessible in login.html)
+// Globals
 export let walletAddress = null;
 export let tierLevel = null;
 export let tierMultiplier = 1;
@@ -9,7 +14,6 @@ export let tierMultiplier = 1;
 // DOM element bindings (optional override)
 let walletDisplayEl, kycStatusEl, tierStatusEl, tokenCalcEl, badgeEl;
 
-// Setup DOM bindings from host page
 export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
   walletDisplayEl = walletDisplay;
   kycStatusEl = kycStatus;
@@ -18,16 +22,9 @@ export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenC
   badgeEl = badge;
 }
 
-// kycUtils.js (MODULAR, compatible with loginLogic.js)
-
 export async function checkKYC(walletAddress) {
   try {
     const docRef = doc(db, "kycStatus", walletAddress);
-    if (!docRef) {
-      console.error("Firestore is not initialized.");
-      return null;
-    }
-
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -48,11 +45,10 @@ export async function checkKYC(walletAddress) {
   }
 }
 
-
 async function logVolunteerSession(walletAddress, tierLevel) {
   try {
-    // 🔐 Log session connection
-    await db.collection("sessionLogs").add({
+    const sessionRef = collection(db, "sessionLogs");
+    await addDoc(sessionRef, {
       wallet: walletAddress,
       tier: tierLevel,
       timestamp: new Date()
@@ -60,35 +56,21 @@ async function logVolunteerSession(walletAddress, tierLevel) {
     return true;
   } catch (error) {
     console.error("Error logging session:", error);
-   
-  }
-// ✅ Smart session resume function
-async function resumeVolunteerSession() {
-  try {
-    const resume = localStorage.getItem("sessionStart");
-    if (resume) {
-      console.log("📘 Resuming previous session from localStorage...");
-      return true; // success
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.error("Resume error:", err);
     return false;
   }
 }
 
-       
-      } else {
-        setKYCRejected("🕐 KYC Pending");
-      }
-    } else {
-      setKYCRejected("❌ KYC Not Found");
-    
-
+export async function resumeVolunteerSession() {
+  try {
+    const resume = localStorage.getItem("sessionStart");
+    if (resume) {
+      console.log("📘 Resuming previous session from localStorage...");
+      return true;
+    }
+    return false;
   } catch (err) {
-    console.error("Wallet/KYC error:", err);
-    setKYCRejected("❌ Error checking KYC");
+    console.error("Resume error:", err);
+    return false;
   }
 }
 
