@@ -43,7 +43,7 @@ connectBtn.addEventListener('click', async () => {
 
 // KYC Check with Fallback
 async function checkKYC(wallet) {
-  const ref = firebase.firestore().collection("verifiedKYC").doc(wallet);
+  const ref = db.collection("verifiedKYC").doc(wallet);
   const doc = await ref.get();
 
   if (doc.exists && doc.data().approved) {
