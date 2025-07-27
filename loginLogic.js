@@ -56,36 +56,6 @@ connectBtn.addEventListener('click', async () => {
   }
 });
 
-// KYC Check with Fallback
-async function checkKYC(wallet) {
-  const ref = db.collection("verifiedKYC").doc(wallet);
-  const doc = await ref.get();
-
-  if (doc.exists && doc.data().approved) {
-    tierLevel = doc.data().tier || "Tier 1";
-    kycStatus.innerText = "KYC: Verified";
-  } else {
-    tierLevel = "Tier 1";
-    kycStatus.innerText = "KYC: Not Verified";
-    alert("KYC not approved yet. Tier 1 applied.");
-  }
-
-  switch (tierLevel) {
-    case "Tier 2":
-      tierMultiplier = 1.25;
-      break;
-    case "Tier 3":
-      tierMultiplier = 1.5;
-      break;
-    default:
-      tierMultiplier = 1;
-      tierLevel = "Tier 1";
-  }
-
-  tierDisplay.innerText = `Tier: ${tierLevel}`;
-  beforeInput.disabled = false;
-}
-
 // Start Volunteering
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
