@@ -1,17 +1,17 @@
 // kycUtils.js
 
-// Firebase Compat (for consistency with signup.html)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
-import "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js";
-
+// ✅ Load Firebase compat directly (assumes you include both scripts in HTML)
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = firebase.firestore();
+if (!firebase.apps?.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.firestore(); // ✅ Safe compat-style
 
 // Globals (accessible in login.html)
 export let walletAddress = null;
