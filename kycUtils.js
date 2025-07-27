@@ -2,7 +2,6 @@ import { db, storage } from './firebase-app.js';
 import { collection, addDoc,
   doc,
   getDoc,
-  resumeVolunteerSession,
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // Globals
@@ -84,9 +83,8 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
   }
 }
 
-export { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession  };
+export { checkKYC, logVolunteerSession, setKycDomElements };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
 window.checkKYC = checkKYC;
-window.resumeVolunteerSession = resumeVolunteerSession;
 
