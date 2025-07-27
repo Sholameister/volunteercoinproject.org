@@ -1,6 +1,9 @@
 // loginLogic.js
 import { db, storage } from './firebaseConfig.js';
 
+const db = firebase.firestore();
+const storage = firebase.storage();
+
 let walletAddress = null;
 let tierLevel = "Tier 1";
 let tierMultiplier = 1;
@@ -103,7 +106,7 @@ afterInput.addEventListener('change', async () => {
 
   const file = afterInput.files[0];
   const ref = storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
-  await ref.put(file);
+  await ref.put(afterPhotoFile);
   const afterPhotoUrl = await ref.getDownloadURL();
 
   await firebase.firestore().collection("volunteerSessions").add({
