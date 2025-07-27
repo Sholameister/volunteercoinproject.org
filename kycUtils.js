@@ -25,7 +25,7 @@ async function checkKYC(walletAddressInput) {
   walletAddress = walletAddressInput;
 
   try {
-    const docRef = doc(db, "kycStatus", walletAddress);
+    const docRef = doc(db, "verifiedKYC", walletAddress);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
