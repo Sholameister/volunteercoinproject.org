@@ -1,4 +1,4 @@
-import { resumeVolunteerSession } from './kycUtils.js';
+kKYC, resumeVolunteerSession, setKycDomElements } from './kycUtils.js';
 
 const resumed = await resumeVolunteerSession();
 if (resumed) {
