@@ -50,42 +50,50 @@ export async function connectAndCheckKYC() {
     }
 
     const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
+
     if (doc.exists) {
       const data = doc.data();
-      const status = data.status || "pending";
-      const tier = data.tier || 1;
 
-      tierLevel = tier;
-      tierMultiplier = tier === 3 ? 1.5 : tier === 2 ? 1.25 : 1;
+      // ✅ Flexible format parsing
+      const approved = data.approved === true || data.status === "approved";
+      const rawTier = data.tier;
+      const parsedTier = typeof rawTier === "string" ? parseInt(rawTier.replace(/\D/g, '')) : rawTier;
+      tierLevel = parsedTier || 1;
+      tierMultiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
 
-      if (status === "approved") {
+      if (approved) {
         if (kycStatusEl) {
           kycStatusEl.textContent = "✅ KYC Approved";
           kycStatusEl.className = "approved";
         }
 
-        if (tierStatusEl) tierStatusEl.textContent = `🎖️ Verified Tier: ${tier}`;
+        if (tierStatusEl) tierStatusEl.textContent = `🎖️ Verified Tier: ${tierLevel}`;
         if (tokenCalcEl) tokenCalcEl.textContent = `💰 You earn ${tierMultiplier} LVBTN/hour`;
 
         if (badgeEl) {
-          badgeEl.textContent = tier === 3 ? "⚡ Tier 3: Elite Volunteer"
-            : tier === 2 ? "🚗 Tier 2: Driver"
+          badgeEl.textContent =
+            tierLevel === 3 ? "⚡ Tier 3: Elite Volunteer"
+            : tierLevel === 2 ? "🚗 Tier 2: Driver"
             : "🧡 Tier 1: Starter";
         }
 
-        // Log to sessionLogs
+        // 🔐 Log session connection
         await db.collection("sessionLogs").add({
           wallet: walletAddress,
-          tier,
+          tier: tierLevel,
           timestamp: new Date()
         });
 
-        return true; // ✅ success
+        // ✅ Smart session resume (check localStorage)
+        const resume = localStorage.getItem("sessionStart");
+        if (resume) {
+          console.log("🔄 Resuming previous session from localStorage...");
+        }
 
+        return true; // success
       } else {
         setKYCRejected("🕐 KYC Pending");
       }
-
     } else {
       setKYCRejected("❌ KYC Not Found");
     }
@@ -105,3 +113,4 @@ function setKYCRejected(message) {
   if (tokenCalcEl) tokenCalcEl.textContent = "";
   if (badgeEl) badgeEl.textContent = "";
 }
+
