@@ -83,7 +83,7 @@ async function resumevolunteerSession() {
     return false;
   }
 }
-
+export { checkKYC, logvolunteerSession };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
 window.checkKYC = checkKYC;
