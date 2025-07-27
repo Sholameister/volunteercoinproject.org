@@ -69,7 +69,12 @@ async function logVolunteerSession(walletAddress, tierLevel) {
       tier: tierLevel,
       timestamp: new Date()
     });
-
+    return true;
+  } catch (error) {
+    console.error("Error logging session:", error);
+    return false;
+  }
+}
     // ✅ Smart session resume (check localStorage)
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
