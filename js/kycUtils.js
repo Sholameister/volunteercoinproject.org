@@ -30,42 +30,31 @@ export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenC
   badgeEl = badge;
 }
 
-// Connect Phantom and check KYC
-export async function connectAndCheckKYC() {
-  if (!window.solana || !window.solana.isPhantom) {
-    alert("Phantom Wallet not found. Please install it.");
-    return;
-  }
+// kycUtils.js (MODULAR, compatible with loginLogic.js)
 
+export async function checkKYC(walletAddress) {
   try {
-    const resp = await window.solana.connect();
-    walletAddress = resp.publicKey.toString();
+    const docRef = window.db ? window.db.collection('kycStatus').doc(walletAddress) : null;
 
-    if (walletDisplayEl) walletDisplayEl.textContent = `✅ Connected: ${walletAddress}`;
-    localStorage.setItem("connectedWallet", walletAddress);
-
-    if (kycStatusEl) {
-      kycStatusEl.textContent = "Checking KYC status...";
-      kycStatusEl.className = "pending";
+    if (!docRef) {
+      console.error('Firestore is not initialized.');
+      return null;
     }
 
-    const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
+    const docSnap = await docRef.get();
 
-    if (doc.exists) {
-      const data = doc.data();
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return data.tier || null;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error checking KYC:", error);
+    return null;
+  }
+}
 
-      // ✅ Flexible format parsing
-      const approved = data.approved === true || data.status === "approved";
-      const rawTier = data.tier;
-      const parsedTier = typeof rawTier === "string" ? parseInt(rawTier.replace(/\D/g, '')) : rawTier;
-      tierLevel = parsedTier || 1;
-      tierMultiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
-
-      if (approved) {
-        if (kycStatusEl) {
-          kycStatusEl.textContent = "✅ KYC Approved";
-          kycStatusEl.className = "approved";
-        }
 
         if (tierStatusEl) tierStatusEl.textContent = `🎖️ Verified Tier: ${tierLevel}`;
         if (tokenCalcEl) tokenCalcEl.textContent = `💰 You earn ${tierMultiplier} LVBTN/hour`;
