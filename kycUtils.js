@@ -21,31 +21,6 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
   badgeEl = badge;
 }
 
-// ✅ FIXED: defined before use
-async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location) {
-  try {
-    const duration = (endTime - startTime) / (1000 * 60 * 60); // hours
-    const multiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
-    const tokensEarned = duration * multiplier;
-
-    await db.collection("volunteerSessions").add({
-      walletAddress,
-      tierLevel,
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
-      startPhotoUrl,
-      endPhotoUrl,
-      location,
-      tokensEarned,
-      usdValue: tokensEarned * 2.5,
-      timestamp: serverTimestamp()
-    });
-
-    console.log("✅ Volunteer session logged.");
-  } catch (err) {
-    console.error("❌ Error logging session:", err);
-  }
-}
 
 async function checkKYC(walletAddress) {
   walletAddress = walletAddress;
@@ -80,6 +55,33 @@ function setKYCRejected(message) {
   if (tierStatusEl) tierStatusEl.textContent = "";
   if (tokenCalcEl) tokenCalcEl.textContent = "";
   if (badgeEl) badgeEl.textContent = "";
+}
+
+
+// ✅ FIXED: defined before use
+async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location) {
+  try {
+    const duration = (endTime - startTime) / (1000 * 60 * 60); // hours
+    const multiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
+    const tokensEarned = duration * multiplier;
+
+    await db.collection("volunteerSessions").add({
+      walletAddress,
+      tierLevel,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
+      startPhotoUrl,
+      endPhotoUrl,
+      location,
+      tokensEarned,
+      usdValue: tokensEarned * 2.5,
+      timestamp: serverTimestamp()
+    });
+
+    console.log("✅ Volunteer session logged.");
+  } catch (err) {
+    console.error("❌ Error logging session:", err);
+  }
 }
 
 export { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession  };
