@@ -1,6 +1,14 @@
 // loginLogic.js
-
 import { db, storage } from './firebaseConfig.js';
+
+import {
+  setKycDomElements,
+  connectAndCheckKYC,
+  walletAddress,
+  tierLevel,
+  tierMultiplier
+} from './kycUtils.js';
+
 import {
   getDoc,
   doc,
@@ -9,6 +17,7 @@ import {
   query,
   where
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
 
 // DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
