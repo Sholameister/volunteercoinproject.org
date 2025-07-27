@@ -21,19 +21,31 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
 }
 
 // ✅ FIXED: defined before use
-async function logvolunteerSession(walletAddress, tierLevel) {
+async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location) {
   try {
-    await addDoc(collection(db, "sessionLogs"), {
-      wallet: walletAddress,
-      tier: tierLevel,
-      timestamp: new Date()
+    const duration = (endTime - startTime) / (1000 * 60 * 60); // hours
+    const multiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
+    const tokensEarned = duration * multiplier;
+
+    await db.collection("volunteerSessions").add({
+      walletAddress,
+      tierLevel,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
+      startPhotoUrl,
+      endPhotoUrl,
+      location,
+      tokensEarned,
+      usdValue: tokensEarned * 2.5,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
-    return true;
-  } catch (error) {
-    console.error("❌ Error logging session:", error);
-    return false;
+
+    console.log("✅ Volunteer session logged.");
+  } catch (err) {
+    console.error("❌ Error logging session:", err);
   }
 }
+
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 async function checkKYC(walletAddress) {
   walletAddress = walletAddress;
