@@ -1,3 +1,5 @@
+// kycUtils.js
+
 import { db, storage } from './firebase-app.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
@@ -9,6 +11,7 @@ let tierMultiplier = 1;
 // DOM elements
 let walletDisplayEl, kycStatusEl, tierStatusEl, tokenCalcEl, badgeEl;
 
+// Attach DOM elements
 function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
   walletDisplayEl = walletDisplay;
   kycStatusEl = kycStatus;
@@ -17,6 +20,7 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
   badgeEl = badge;
 }
 
+// KYC check
 async function checkKYC(walletAddressInput) {
   walletAddress = walletAddressInput;
 
@@ -42,6 +46,7 @@ async function checkKYC(walletAddressInput) {
   }
 }
 
+// Set UI if rejected
 function setKYCRejected(message) {
   if (kycStatusEl) {
     kycStatusEl.textContent = message;
@@ -52,6 +57,7 @@ function setKYCRejected(message) {
   if (badgeEl) badgeEl.textContent = "";
 }
 
+// Log session
 async function logVolunteerSession(walletAddress, tierLevel) {
   try {
     await db.collection("sessionLogs").add({
@@ -66,6 +72,7 @@ async function logVolunteerSession(walletAddress, tierLevel) {
   }
 }
 
+// Resume from local storage
 async function resumeVolunteerSession() {
   try {
     const resume = localStorage.getItem("sessionStart");
@@ -80,7 +87,5 @@ async function resumeVolunteerSession() {
   }
 }
 
-// Attach to window for HTML scripts
-window.setKycDomElements = setKycDomElements;
-window.checkKYC = checkKYC;
-window.resumeVolunteerSession = resumeVolunteerSession;
+// ✅ FINAL EXPORTS
+export { setKycDomElements, checkKYC, resumeVolunteerSession };
