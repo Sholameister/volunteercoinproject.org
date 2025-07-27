@@ -82,20 +82,6 @@ function setKYCRejected(message) {
   if (badgeEl) badgeEl.textContent = "";
 }
 
-export async function resumeVolunteerSession() {
-  try {
-    const resume = localStorage.getItem("sessionStart");
-    if (resume) {
-      console.log("📘 Resuming previous session from localStorage...");
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error("Resume error:", err);
-    return false;
-  }
-}
-
 export { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession  };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
