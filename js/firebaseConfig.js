@@ -9,12 +9,8 @@ const firebaseConfig = {
   projectId: "lovebutton-heaven",
   storageBucket: "lvbtn-bucket.appspot.com"
 };
-
-let app;
 if (!firebase.apps.length) {
-  app = firebase.initializeApp(firebaseConfig);
-} else {
-  app = firebase.app(); // 👈 use existing
+  firebase.initializeApp(firebaseConfig);
 }
 
 const db = firebase.firestore();
