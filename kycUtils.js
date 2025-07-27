@@ -94,15 +94,7 @@ async function resumeVolunteerSession() {
     return false;
   }
 }
-async function logVolunteerSession(sessionData) {
-  try {
-    const db = firebase.firestore();
-    await db.collection("volunteerSessions").add(sessionData);
-    console.log("✅ Volunteer session logged:", sessionData);
-  } catch (err) {
-    console.error("❌ Error logging session:", err);
-  }
-}
+
 export { checkKYC, logVolunteerSession, setKycDomElements  };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
