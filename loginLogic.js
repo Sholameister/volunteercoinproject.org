@@ -1,6 +1,6 @@
-import { checkKYC, resumevolunteerSessions, setKycDomElements } from './kycUtils.js';
+import { checkKYC, resumeVolunteerSessions, setKycDomElements } from './kycUtils.js';
 
-const resumed = await resumevolunteerSessions();
+const resumed = await resumeVolunteerSessions();
 if (resumed) {
   console.log("✅ Session successfully resumed!");
 }
@@ -100,7 +100,7 @@ afterInput.addEventListener('change', async () => {
     beforePhoto: startPhotoUrl,
     afterPhoto: afterPhotoUrl,
     geolocation: position,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    timestamp: serverTimestamp,
   });
 
   const total = await getTotalTokens(walletAddress);
