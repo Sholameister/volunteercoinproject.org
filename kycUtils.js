@@ -1,20 +1,15 @@
 import { db, storage } from './firebase-app.js';
-import {
-  doc,
-  getDoc,
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // Globals
-export let walletAddress = null;
-export let tierLevel = null;
-export let tierMultiplier = 1;
+let walletAddress = null;
+let tierLevel = null;
+let tierMultiplier = 1;
 
-// DOM element bindings (optional override)
+// DOM elements
 let walletDisplayEl, kycStatusEl, tierStatusEl, tokenCalcEl, badgeEl;
 
-export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
+function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
   walletDisplayEl = walletDisplay;
   kycStatusEl = kycStatus;
   tierStatusEl = tierStatus;
@@ -22,33 +17,19 @@ export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenC
   badgeEl = badge;
 }
 
-export async function checkKYC(walletAddress) {
-  try {
-    const docRef = doc(db, "kycStatus", walletAddress);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      const sessionLogged = await logVolunteerSession(walletAddress, data.tier);
-      if (sessionLogged) {
-        console.log("✅ Session logged successfully!");
-      }
-      return data.tier || null;
-    } else {
-      setKYCRejected("⚠️ KYC Not Found");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error checking KYC:", error);
-    setKYCRejected("❌ Error checking KYC");
-    return null;
+function setKYCRejected(message) {
+  if (kycStatusEl) {
+    kycStatusEl.textContent = message;
+    kycStatusEl.className = "error";
   }
+  if (tierStatusEl) tierStatusEl.textContent = "";
+  if (tokenCalcEl) tokenCalcEl.textContent = "";
+  if (badgeEl) badgeEl.textContent = "";
 }
 
 async function logVolunteerSession(walletAddress, tierLevel) {
   try {
-    const sessionRef = collection(db, "sessionLogs");
-    await addDoc(sessionRef, {
+    await db.collection("sessionLogs").add({
       wallet: walletAddress,
       tier: tierLevel,
       timestamp: new Date()
@@ -60,7 +41,7 @@ async function logVolunteerSession(walletAddress, tierLevel) {
   }
 }
 
-export async function resumeVolunteerSession() {
+async function resumeVolunteerSession() {
   try {
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
@@ -74,12 +55,32 @@ export async function resumeVolunteerSession() {
   }
 }
 
-function setKYCRejected(message) {
-  if (kycStatusEl) {
-    kycStatusEl.textContent = message;
-    kycStatusEl.className = "error";
+async function checkKYC(walletAddressInput) {
+  walletAddress = walletAddressInput;
+
+  try {
+    const docRef = doc(db, "kycStatus", walletAddress);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      tierLevel = data.tier || null;
+
+      const sessionLogged = await logVolunteerSession(walletAddress, tierLevel);
+      if (sessionLogged) console.log("✅ Session logged successfully!");
+      return tierLevel;
+    } else {
+      setKYCRejected("⚠️ KYC Not Found");
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error checking KYC:", error);
+    setKYCRejected("❌ Error checking KYC");
+    return null;
   }
-  if (tierStatusEl) tierStatusEl.textContent = "";
-  if (tokenCalcEl) tokenCalcEl.textContent = "";
-  if (badgeEl) badgeEl.textContent = "";
 }
+
+// Attach to window for HTML scripts
+window.setKycDomElements = setKycDomElements;
+window.checkKYC = checkKYC;
+window.resumeVolunteerSession = resumeVolunteerSession;
