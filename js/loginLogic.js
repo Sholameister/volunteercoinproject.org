@@ -35,12 +35,10 @@ const priceDisplay = document.getElementById('lvbtnPrice');
 const photoGallery = document.getElementById('photoGallery');
 
 // Session Variables
-let walletAddress = null;
-let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
 let position = { latitude: null, longitude: null };
-let tierMultiplier = 1;
+
 // Connect Wallet Logic (Phantom)
 connectBtn.addEventListener('click', async () => {
   if (window.solana && window.solana.isPhantom) {
