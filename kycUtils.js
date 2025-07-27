@@ -22,32 +22,32 @@ export function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenC
 
 export async function checkKYC(walletAddress) {
   try {
-    // Reference to Firestore document
     const docRef = doc(db, "kycStatus", walletAddress);
+    if (!docRef) {
+      console.error("Firestore is not initialized.");
+      return null;
+    }
+
     const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists()) {
-      setKYCRejected("❌ KYC Not Found");
-      return false;
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const sessionLogged = await logVolunteerSession(walletAddress, data.tier);
+      if (sessionLogged) {
+        console.log("✅ Session logged successfully!");
+      }
+      return data.tier || null;
+    } else {
+      setKYCRejected("⚠️ KYC Not Found");
+      return null;
     }
-
-    const data = docSnap.data();
-    tierLevel = data.tier || null;
-    tierMultiplier = data.multiplier || 1;
-
-    const sessionLogged = await logVolunteerSession(walletAddress, tierLevel);
-    if (sessionLogged) {
-      console.log("Session logged successfully!");
-    }
-
-    return true;
-
-  } catch (err) {
-    console.error("❌ Wallet/KYC error:", err);
+  } catch (error) {
+    console.error("Error checking KYC:", error);
     setKYCRejected("❌ Error checking KYC");
-    return false;
+    return null;
   }
 }
+
 
 async function logVolunteerSession(walletAddress, tierLevel) {
   try {
