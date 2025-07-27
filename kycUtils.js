@@ -36,7 +36,7 @@ async function logVolunteerSession(walletAddress, tierLevel) {
     return false;
   }
 }
-
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 async function checkKYC(walletAddressInput) {
   walletAddress = walletAddressInput;
 
