@@ -103,7 +103,7 @@ afterInput.addEventListener('change', async () => {
 
   const file = afterInput.files[0];
   const ref = storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
-  await ref.put(afterPhotoFile);
+  await ref.put(file);
   const afterPhotoUrl = await ref.getDownloadURL();
 
   await firebase.firestore().collection("volunteerSessions").add({
