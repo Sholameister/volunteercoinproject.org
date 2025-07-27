@@ -63,7 +63,7 @@ beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   const ref = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
   await ref.put(file);
-  startPhotoUrl = await ref.getDownloadURL();
+  const startPhotoUrl = await ref.getDownloadURL();
 
   sessionStart = Date.now();
   position = await getGeolocation();
