@@ -1,3 +1,26 @@
+// Firebase imports (compat version)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js";
+
+// Your Firebase config object
+const firebaseConfig = {
+  apiKey: "AIzaSyCLLrOx4JWJ1PN8xFFxNhIryx3NshADKVY",
+  authDomain: "lovebutton-heaven.firebaseapp.com",
+  projectId: "lovebutton-heaven",
+  storageBucket: "lvbtn-bucket.appspot.com",
+  messagingSenderId: "1079456151721",
+  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+  measurementId: "G-0261HYV08P"
+};
+
+// Initialize Firebase app (if not already)
+const app = initializeApp(firebaseConfig);
+
+// Get Firestore and Storage instances
+const db = getFirestore(app);
+const storage = getStorage(app);
+
 
 let walletAddress = null;
 let tierLevel = "Tier 1";
