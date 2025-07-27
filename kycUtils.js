@@ -1,5 +1,5 @@
 import { db, storage } from './firebase-app.js';
-import {
+import { collection, addDoc,
   doc,
   getDoc,
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
@@ -27,7 +27,7 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
     const multiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
     const tokensEarned = duration * multiplier;
 
-    await db.collection("volunteerSessions").add({
+    await db.collection("VolunteerSessions").add({
       walletAddress,
       tierLevel,
       startTime: new Date(startTime),
@@ -46,7 +46,6 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
   }
 }
 
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 async function checkKYC(walletAddress) {
   walletAddress = walletAddress;
 
