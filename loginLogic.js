@@ -1,4 +1,9 @@
-import { db, storage } from './firebase-app.js';
+import { resumeVolunteerSession } from './kycUtils.js';
+
+const resumed = await resumeVolunteerSession();
+if (resumed) {
+  console.log("✅ Session successfully resumed!");
+}
 
 // Your Firebase config object
 const firebaseConfig = {
