@@ -1,4 +1,4 @@
-import { db, storage } from './firebase-app.js'/;
+import { db, storage } from './firebase-app.js';
 
 // Your Firebase config object
 const firebaseConfig = {
