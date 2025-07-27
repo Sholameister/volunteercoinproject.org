@@ -46,8 +46,8 @@ async function checkKYC(walletAddressInput) {
       const data = docSnap.data();
       tierLevel = data.tier || null;
 
-      const sessionLogged = await logVolunteerSession(walletAddress, tierLevel);
-      if (sessionLogged) console.log("✅ Session logged successfully!");
+      const sessionLogs = await logvolunteerSession(walletAddress, tierLevel);
+      if (sessionLogs) console.log("✅ Session logged successfully!");
       return tierLevel;
     } else {
       setKYCRejected("⚠️ KYC Not Found");
@@ -70,7 +70,7 @@ function setKYCRejected(message) {
   if (badgeEl) badgeEl.textContent = "";
 }
 
-async function resumeVolunteerSession() {
+async function resumevolunteerSession() {
   try {
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
@@ -87,4 +87,4 @@ async function resumeVolunteerSession() {
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
 window.checkKYC = checkKYC;
-window.resumeVolunteerSession = resumeVolunteerSession;
+window.resumevolunteerSession = resumevolunteerSession;
