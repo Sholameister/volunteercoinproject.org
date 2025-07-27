@@ -43,12 +43,12 @@ async function connectWallet() {
     const resp = await window.solana.connect();
     walletAddress = resp.publicKey.toString();
     walletDisplay.innerText = `Wallet: ${walletAddress}`;
-    await checkKYC(walletAddress);
+    await checkKYC(verifiedKYC);
   } else if (window.solflare) {
     const resp = await window.solflare.connect();
     walletAddress = resp.publicKey.toString();
     walletDisplay.innerText = `Wallet: ${walletAddress}`;
-    await checkKYC(walletAddress);
+    await checkKYC(verifiedKYC);
   } else {
     alert("No supported wallet found (Phantom or Solflare).");
   }
@@ -59,7 +59,7 @@ connectBtn.addEventListener('click', connectWallet);
 // ---- KYC ----
 async function checkKYC(wallet) {
   try {
-    const doc = await db.collection("users").doc(wallet).get();
+    const doc = await db.collection("volunteerSessions").doc(wallet).get();
     if (!doc.exists || !doc.data().kycApproved) {
       kycStatus.innerText = "❌ KYC not approved";
       tierDisplay.innerText = "Tier: N/A";
