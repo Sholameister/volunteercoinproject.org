@@ -1,9 +1,6 @@
 // loginLogic.js
 import { db, storage } from './firebaseConfig.js';
 
-const db = firebase.firestore();
-const storage = firebase.storage();
-
 let walletAddress = null;
 let tierLevel = "Tier 1";
 let tierMultiplier = 1;
