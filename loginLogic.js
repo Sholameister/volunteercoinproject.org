@@ -45,6 +45,7 @@ connectBtn.addEventListener('click', async () => {
       const res = await window.solana.connect();
       walletAddress = res.publicKey.toString();
       walletDisplay.innerText = `Wallet: ${walletAddress}`;
+      console.log("Connected to wallet:", walletAddress);
       await checkKYC(walletAddress);
       checkSessionResume();
     } catch (err) {
