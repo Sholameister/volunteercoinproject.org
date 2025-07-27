@@ -1,7 +1,10 @@
-// kycUtils.js
-
 import { db, storage } from './firebase-app.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import {
+  doc,
+  getDoc,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 // Globals
 let walletAddress = null;
@@ -11,7 +14,6 @@ let tierMultiplier = 1;
 // DOM elements
 let walletDisplayEl, kycStatusEl, tierStatusEl, tokenCalcEl, badgeEl;
 
-// Attach DOM elements
 function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
   walletDisplayEl = walletDisplay;
   kycStatusEl = kycStatus;
@@ -20,7 +22,21 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
   badgeEl = badge;
 }
 
-// KYC check
+// ✅ FIXED: defined before use
+async function logVolunteerSession(walletAddress, tierLevel) {
+  try {
+    await addDoc(collection(db, "sessionLogs"), {
+      wallet: walletAddress,
+      tier: tierLevel,
+      timestamp: new Date()
+    });
+    return true;
+  } catch (error) {
+    console.error("❌ Error logging session:", error);
+    return false;
+  }
+}
+
 async function checkKYC(walletAddressInput) {
   walletAddress = walletAddressInput;
 
@@ -46,7 +62,6 @@ async function checkKYC(walletAddressInput) {
   }
 }
 
-// Set UI if rejected
 function setKYCRejected(message) {
   if (kycStatusEl) {
     kycStatusEl.textContent = message;
@@ -57,25 +72,6 @@ function setKYCRejected(message) {
   if (badgeEl) badgeEl.textContent = "";
 }
 
-// Log session
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-async function logvolunteerSession(walletAddress, tierLevel) {
-  try {
-    const sessionRef = collection(db, "sessionLogs");
-    await addDoc(sessionRef, {
-      wallet: walletAddress,
-      tier: tierLevel,
-      timestamp: new Date()
-    });
-    return true;
-  } catch (error) {
-    console.error("Error logging session:", error);
-    return false;
-  }
-}
-
-// Resume from local storage
 async function resumeVolunteerSession() {
   try {
     const resume = localStorage.getItem("sessionStart");
@@ -90,5 +86,7 @@ async function resumeVolunteerSession() {
   }
 }
 
-// ✅ FINAL EXPORTS
-export { setKycDomElements, checkKYC, resumeVolunteerSession };
+// Attach to window for HTML access
+window.setKycDomElements = setKycDomElements;
+window.checkKYC = checkKYC;
+window.resumeVolunteerSession = resumeVolunteerSession;
