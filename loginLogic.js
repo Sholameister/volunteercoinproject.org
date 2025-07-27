@@ -1,6 +1,6 @@
-import { checkKYC, resumeVolunteerSessions, setKycDomElements } from './kycUtils.js';
+import { checkKYC, resumeVolunteerSession, setKycDomElements } from './kycUtils.js';
 
-const resumed = await resumeVolunteerSessions();
+const resumed = await resumeVolunteerSession();
 if (resumed) {
   console.log("✅ Session successfully resumed!");
 }
@@ -146,11 +146,11 @@ async function showPhotoGallery(wallet) {
   photoGallery.innerHTML = "";
 
   snapshot.forEach(doc => {
-    const url = doc.data().afterPhoto;
+    const url = doc.data().afterPhotoUrl;
     if (url) {
       const img = document.createElement("img");
       img.src = url;
-      img.className = "after-photo";
+      img.className = "after-Photo";
       photoGallery.appendChild(img);
     }
   });
