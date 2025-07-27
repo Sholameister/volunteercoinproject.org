@@ -21,7 +21,7 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
 }
 
 // ✅ FIXED: defined before use
-async function logVolunteerSession(walletAddress, tierLevel) {
+async function logvolunteerSession(walletAddress, tierLevel) {
   try {
     await addDoc(collection(db, "sessionLogs"), {
       wallet: walletAddress,
