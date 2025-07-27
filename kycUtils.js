@@ -56,31 +56,30 @@ export async function checkKYC(walletAddress) {
   }
 }
 
+async function logVolunteerSession(walletAddress, tierLevel) {
+  try {
+    // 🔐 Log session connection
+    await db.collection("sessionLogs").add({
+      wallet: walletAddress,
+      tier: tierLevel,
+      timestamp: new Date()
+    });
 
-        if (tierStatusEl) tierStatusEl.textContent = `🎖️ Verified Tier: ${tierLevel}`;
-        if (tokenCalcEl) tokenCalcEl.textContent = `💰 You earn ${tierMultiplier} LVBTN/hour`;
+    // ✅ Smart session resume (check localStorage)
+    const resume = localStorage.getItem("sessionStart");
+    if (resume) {
+      console.log("🔁 Resuming previous session from localStorage...");
+    }
 
-        if (badgeEl) {
-          badgeEl.textContent =
-            tierLevel === 3 ? "⚡ Tier 3: Elite Volunteer"
-            : tierLevel === 2 ? "🚗 Tier 2: Driver"
-            : "🧡 Tier 1: Starter";
-        }
+    return true; // success
+  } catch (err) {
+    console.error("Wallet/KYC error:", err);
+    setKYCRejected("❌ Error checking KYC");
+    return false;
+  }
+}
 
-        // 🔐 Log session connection
-        await db.collection("sessionLogs").add({
-          wallet: walletAddress,
-          tier: tierLevel,
-          timestamp: new Date()
-        });
-
-        // ✅ Smart session resume (check localStorage)
-        const resume = localStorage.getItem("sessionStart");
-        if (resume) {
-          console.log("🔄 Resuming previous session from localStorage...");
-        }
-
-        return true; // success
+       
       } else {
         setKYCRejected("🕐 KYC Pending");
       }
