@@ -1,20 +1,23 @@
 // firebaseConfig.js
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { getStorage } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js';
+import firebase from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js";
+import "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js";
+import "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
-  storageBucket: "lvbtn-bucket.appspot.com",
-  messagingSenderId: "1079456151721",
-  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-  measurementId: "G-0261HYV08P"
+  storageBucket: "lvbtn-bucket.appspot.com"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.getFirestore(app);
-const storage = firebase.getStorage(app);
+let app;
+if (!firebase.apps.length) {
+  app = firebase.initializeApp(firebaseConfig);
+} else {
+  app = firebase.app(); // 👈 use existing
+}
+
+const db = firebase.firestore();
+const storage = firebase.storage();
 
 export { db, storage };
