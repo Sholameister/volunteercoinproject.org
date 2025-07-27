@@ -17,6 +17,31 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
   badgeEl = badge;
 }
 
+async function checkKYC(walletAddressInput) {
+  walletAddress = walletAddressInput;
+
+  try {
+    const docRef = doc(db, "kycStatus", walletAddress);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      tierLevel = data.tier || null;
+
+      const sessionLogged = await logVolunteerSession(walletAddress, tierLevel);
+      if (sessionLogged) console.log("✅ Session logged successfully!");
+      return tierLevel;
+    } else {
+      setKYCRejected("⚠️ KYC Not Found");
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error checking KYC:", error);
+    setKYCRejected("❌ Error checking KYC");
+    return null;
+  }
+}
+
 function setKYCRejected(message) {
   if (kycStatusEl) {
     kycStatusEl.textContent = message;
@@ -52,31 +77,6 @@ async function resumeVolunteerSession() {
   } catch (err) {
     console.error("Resume error:", err);
     return false;
-  }
-}
-
-async function checkKYC(walletAddressInput) {
-  walletAddress = walletAddressInput;
-
-  try {
-    const docRef = doc(db, "kycStatus", walletAddress);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      tierLevel = data.tier || null;
-
-      const sessionLogged = await logVolunteerSession(walletAddress, tierLevel);
-      if (sessionLogged) console.log("✅ Session logged successfully!");
-      return tierLevel;
-    } else {
-      setKYCRejected("⚠️ KYC Not Found");
-      return null;
-    }
-  } catch (error) {
-    console.error("❌ Error checking KYC:", error);
-    setKYCRejected("❌ Error checking KYC");
-    return null;
   }
 }
 
