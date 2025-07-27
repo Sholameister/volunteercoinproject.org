@@ -37,7 +37,7 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
       location,
       tokensEarned,
       usdValue: tokensEarned * 2.5,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      timestamp: serverTimestamp()
     });
 
     console.log("✅ Volunteer session logged.");
@@ -57,7 +57,7 @@ async function checkKYC(walletAddress) {
       const data = docSnap.data();
       tierLevel = data.tier || null;
 
-      const sessionLogs = await logvolunteerSession(walletAddress, tierLevel);
+      const sessionLogs = await logVolunteerSession(walletAddress, tierLevel);
       if (sessionLogs) console.log("✅ Session logged successfully!");
       return tierLevel;
     } else {
@@ -98,6 +98,6 @@ async function resumeVolunteerSession() {
 export { checkKYC, logVolunteerSession, setKycDomElements  };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
-window.checkKYC = verifiedKYC;
+window.checkKYC = checkKYC;
 window.resumeVolunteerSession = resumeVolunteerSession;
 
