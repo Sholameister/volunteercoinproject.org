@@ -82,7 +82,7 @@ function setKYCRejected(message) {
   if (badgeEl) badgeEl.textContent = "";
 }
 
-async function resumevolunteerSession() {
+async function resumeVolunteerSession() {
   try {
     const resume = localStorage.getItem("sessionStart");
     if (resume) {
@@ -95,8 +95,8 @@ async function resumevolunteerSession() {
     return false;
   }
 }
-export { checkKYC, logvolunteerSession, setKycDomElements  };
+export { checkKYC, logVolunteerSession, setKycDomElements  };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
 window.checkKYC = checkKYC;
-window.resumevolunteerSession = resumevolunteerSession;
+window.resumeVolunteerSession = resumeVolunteerSession;
