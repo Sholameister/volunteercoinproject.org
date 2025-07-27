@@ -1,7 +1,4 @@
-// Firebase imports (compat version)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+import { db, storage } from './firebase-app.js'/;
 
 // Your Firebase config object
 const firebaseConfig = {
@@ -13,14 +10,6 @@ const firebaseConfig = {
   appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
   measurementId: "G-0261HYV08P"
 };
-
-// Initialize Firebase app (if not already)
-const app = initializeApp(firebaseConfig);
-
-// Get Firestore and Storage instances
-const db = getFirestore(app);
-const storage = getStorage(app);
-
 
 let walletAddress = null;
 let tierLevel = "Tier 1";
