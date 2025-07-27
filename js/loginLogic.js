@@ -112,7 +112,7 @@ afterInput.addEventListener('change', async () => {
     beforePhoto: startPhotoUrl,
     afterPhoto: afterPhotoUrl,
     geolocation: await getGeolocation(),
-    timestamp: firebase.firestore.FieldValue.serverTimestamp();
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
   // Fetch total tokens and price
   const total = await getTotalTokens(walletAddress);
