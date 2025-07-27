@@ -46,7 +46,12 @@ export async function checkKYC(walletAddress) {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
+      const sessionLogged = await logVolunteerSession(walletAddress, data.tier);
+      if (sessionLogged) {
+        console.log("Session logged successfully!");
+      }
       return data.tier || null;
+    }
     } else {
       return null;
     }
