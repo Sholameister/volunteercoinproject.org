@@ -124,7 +124,7 @@ afterInput.addEventListener('change', async () => {
 
   await showPhotoGallery(walletAddress);
   afterInput.disabled = true;
-});
+
 
 // Get total tokens from Firestore
 async function getTotalTokens(wallet) {
