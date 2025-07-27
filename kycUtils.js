@@ -60,7 +60,7 @@ async function logVolunteerSession(walletAddress, tierLevel) {
     return true;
   } catch (error) {
     console.error("Error logging session:", error);
-    return false;
+   
   }
 }
     // ✅ Smart session resume (check localStorage)
