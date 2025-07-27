@@ -35,8 +35,8 @@ async function logvolunteerSession(walletAddress, tierLevel) {
   }
 }
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-async function checkKYC(walletAddressInput) {
-  walletAddress = walletAddressInput;
+async function checkKYC(walletAddress) {
+  walletAddress = walletAddress;
 
   try {
     const docRef = doc(db, "verifiedKYC", walletAddress);
