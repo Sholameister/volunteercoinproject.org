@@ -50,7 +50,7 @@ connectBtn.addEventListener('click', async () => {
 
 // KYC check
 async function checkKYC(wallet) {
- const docRef = doc(db, "kycRecords", wallet);
+ const docRef = doc(db, "verifiedKYC", wallet);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     const data = docSnap.data();
