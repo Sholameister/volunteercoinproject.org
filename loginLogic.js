@@ -1,4 +1,4 @@
-kKYC, resumeVolunteerSession, setKycDomElements } from './kycUtils.js';
+KYC, resumeVolunteerSession, setKycDomElements } from './kycUtils.js';
 
 const resumed = await resumeVolunteerSession();
 if (resumed) {
