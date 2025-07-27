@@ -1,6 +1,6 @@
-import { checkKYC, resumeVolunteerSession, setKycDomElements } from './kycUtils.js';
+import { checkKYC, resumevolunteerSessions, setKycDomElements } from './kycUtils.js';
 
-const resumed = await resumeVolunteerSession();
+const resumed = await resumevolunteerSessions();
 if (resumed) {
   console.log("✅ Session successfully resumed!");
 }
@@ -26,12 +26,12 @@ let position = { latitude: null, longitude: null };
 // DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
-const kycStatus = document.getElementById('kycStatus');
+const kycStatus = document.getElementById('verifiedKYC');
 const tierDisplay = document.getElementById('tierInfo');
 const beforeInput = document.getElementById('beforePhoto');
 const afterInput = document.getElementById('afterPhoto');
 const summaryBox = document.getElementById('summaryBox');
-const sessionTimes = document.getElementById('sessionTimes');
+const sessionTimes = document.getElementById('sessionLogs');
 const tokensEarned = document.getElementById('tokensEarned');
 const totalLVBTN = document.getElementById('totalLVBTN');
 const usdValue = document.getElementById('usdValue');
