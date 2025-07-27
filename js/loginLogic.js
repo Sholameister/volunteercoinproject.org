@@ -28,7 +28,7 @@ let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
 let position = { latitude: null, longitude: null };
-
+let tierMultiplier = 1;
 // Connect Wallet Logic (Phantom)
 connectBtn.addEventListener('click', async () => {
   if (window.solana && window.solana.isPhantom) {
