@@ -192,20 +192,25 @@
         }
       });
     });
-    <script src="./firebase-app.js"></script>
-  <script src="./loginLogic.js"></script>
+<!-- Load Firebase config -->
+<script type="module" src="./firebase-app.js"></script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
+<!-- Load login logic and KYC utilities -->
+<script type="module" src="./loginLogic.js"></script>
+<script type="module">
+  import { setKycDomElements } from './kycUtils.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
     setKycDomElements({
       walletDisplay: document.getElementById('walletAddress'),
-      kycStatus: document.getElementById('verifiedKYC'),
+      kycStatus: document.getElementById('kycStatus'),
       tierStatus: document.getElementById('tierInfo'),
       tokenCalc: document.getElementById('tokensEarned'),
       badge: document.getElementById('badgeEl')
     });
   });
 </script>
+
       
   
   </script>
