@@ -42,8 +42,8 @@ connectBtn.addEventListener('click', async () => {
       setKycDomElements({
       walletDisplay: document.getElementById('walletAddress'),
         kycStatus: document.getElementById('verifiedKYC'),
-        tierStatus: document.getElementById(tierInfo'),
-        tokenCalc: documentById(tokenEarned'),
+        tierStatus: document.getElementById('tierInfo'),
+        tokenCalc: documentById('tokenEarned'),
         badge: documentById('badgeEl')
       });
       await checkKYC(walletAddress);
