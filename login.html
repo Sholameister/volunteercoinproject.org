@@ -95,7 +95,7 @@
 
   <!-- Firebase logic modules -->
   <script type="module">
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.10/firebaseConfig.js";
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
   import {
     getFirestore,
     serverTimestamp
@@ -165,6 +165,8 @@
     <h3>Past After-Photos</h3>
     <div id="photoGallery"></div>
   </div>
+  <script type="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./loginLogic.js"></script>
 </body>
 </html>
 
