@@ -1,5 +1,5 @@
 // ---- Firebase Modular Import Setup ----
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebaseConfig.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import {
   getFirestore, collection, doc, getDoc, setDoc, updateDoc,
   serverTimestamp, query, where, getDocs
