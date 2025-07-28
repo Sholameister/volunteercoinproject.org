@@ -44,7 +44,7 @@ connectBtn.addEventListener('click', async () => {
         kycStatus: document.getElementById('verifiedKYC'),
         tierStatus: document.getElementById(tierInfo'),
         tokenCalc: documentById(tokenEarned'),
-        badge: documentById('badgeE1')
+        badge: documentById('badgeEl')
       });
       await checkKYC(walletAddress);
     });
