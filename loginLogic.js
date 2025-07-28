@@ -39,10 +39,15 @@ connectBtn.addEventListener('click', async () => {
     try {
       const res = await window.solana.connect();
       walletAddress = res.publicKey.toString();
-      walletDisplay.innerText = `Wallet: ${walletAddress}`;
-      console.log("Connected to wallet:", walletAddress);
+      setKycDomElements({
+      walletDisplay: document.getElementById('walletAddress'),
+        kycStatus: document.getElementById('verifiedKYC'),
+        tierStatus: document.getElementById(tierInfo'),
+        tokenCalc: documentById(tokenEarned'),
+        badge: documentById('badgeE1')
+      });
       await checkKYC(walletAddress);
-     
+    });
     } catch (err) {
       alert('Wallet connection failed.');
       console.error(err);
