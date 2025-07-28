@@ -1,4 +1,4 @@
-import { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession } from './kycUtils.js';
+import { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession, serverTimestamp } from './kycUtils.js';
 
 // Your Firebase config object
 const firebaseConfig = {
@@ -59,7 +59,7 @@ beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   const ref = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
   await ref.put(file);
-  const startPhotoUrl = await ref.getDownloadURL();
+  startPhotoUrl = await ref.getDownloadURL();
 
   sessionStart = Date.now();
   position = await getGeolocation();
