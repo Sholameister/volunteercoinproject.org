@@ -1,6 +1,6 @@
 // firebaseConfig.js
 
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.10/firebaseConfig.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import {
   getFirestore,
   serverTimestamp
