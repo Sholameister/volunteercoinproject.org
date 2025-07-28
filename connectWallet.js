@@ -1,7 +1,8 @@
 // ---- Firebase Modular Import Setup ----
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import {
-  getFirestore, collection, doc, getDoc, setDoc, updateDoc, serverTimestamp, query, where, getDocs
+  getFirestore, collection, doc, getDoc, setDoc, updateDoc,
+  serverTimestamp, query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 import {
   getStorage, ref as storageRef, uploadBytes, getDownloadURL
@@ -138,7 +139,7 @@ beforeInput?.addEventListener('change', async () => {
   const position = await getGeolocation();
   alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}`);
 
-  const sessionId = `${walletAddress}_${Date.now()}`;
+  const sessionId = `${walletAddress}_${sessionStart.getTime()}`;
   await setDoc(doc(db, "volunteerSessions", sessionId), {
     wallet: walletAddress,
     startTime: sessionStart,
@@ -164,7 +165,7 @@ afterInput?.addEventListener('change', async () => {
   const afterPhotoUrl = await getDownloadURL(snap.ref);
 
   const sessionId = `${walletAddress}_${sessionStart.getTime()}`;
-  await updateDoc(doc(db, "sessionLogs", sessionId), {
+  await updateDoc(doc(db, "volunteerSessions", sessionId), {
     endTime: sessionEnd,
     duration: durationHours,
     tokensEarned: tokensThisSession,
@@ -247,87 +248,12 @@ function updateProgressBar(totalTokens) {
   progressBar.style.width = `${percent}%`;
   progressBar.innerText = `${percent}% Progress`;
 }
-// DOMContentLoaded wrapper to safely bind buttons after page is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const beforeInput = document.getElementById('beforePhoto');
-  const afterInput = document.getElementById('afterPhoto');
 
+// ---- Event Binding ----
+document.addEventListener('DOMContentLoaded', () => {
   if (connectBtn) {
     connectBtn.addEventListener('click', connectWallet);
   } else {
     console.warn("connectWalletBtn not found.");
-  }
-
-  if (beforeInput) {
-    beforeInput.addEventListener('change', async () => {
-      const file = beforeInput.files[0];
-      if (!file || !walletAddress) return;
-
-      const storagePath = `volunteerPhotos/${walletAddress}/before_${Date.now()}.jpg`;
-      const fileRef = storageRef(storage, storagePath);
-      const snap = await uploadBytes(fileRef, file);
-      startPhotoUrl = await getDownloadURL(snap.ref);
-
-      sessionStart = new Date();
-      beforeInput.disabled = true;
-      afterInput.disabled = false;
-
-      const position = await getGeolocation();
-      alert(`Thank you for volunteering!\nStart: ${sessionStart.toLocaleString()}`);
-
-      const sessionId = `${walletAddress}_${Date.now()}`;
-      await setDoc(doc(db, "volunteerSessions", sessionId), {
-        wallet: walletAddress,
-        startTime: sessionStart,
-        startPhoto: startPhotoUrl,
-        startLocation: position,
-        tier: tierLevel
-      });
-    });
-  } else {
-    console.warn("beforePhoto input not found.");
-  }
-
-  if (afterInput) {
-    afterInput.addEventListener('change', async () => {
-      const file = afterInput.files[0];
-      if (!file || !walletAddress || !sessionStart) return;
-
-      const sessionEnd = new Date();
-      const durationHours = (sessionEnd - sessionStart) / (1000 * 60 * 60);
-      const multiplier = getTierMultiplier(tierLevel);
-      const tokensThisSession = parseFloat((durationHours * multiplier).toFixed(2));
-
-      const storagePath = `volunteerPhotos/${walletAddress}/after_${Date.now()}.jpg`;
-      const fileRef = storageRef(storage, storagePath);
-      const snap = await uploadBytes(fileRef, file);
-      const afterPhotoUrl = await getDownloadURL(snap.ref);
-
-      const sessionId = `${walletAddress}_${sessionStart.getTime()}`;
-      await updateDoc(doc(db, "volunteerSessions", sessionId), {
-        endTime: sessionEnd,
-        duration: durationHours,
-        tokensEarned: tokensThisSession,
-        afterPhoto: afterPhotoUrl
-      });
-
-      const totalTokens = await getTotalTokens(walletAddress);
-      const livePrice = await fetchLVBTNPrice();
-      const usd = (totalTokens * livePrice).toFixed(2);
-
-      sessionTimes.innerText = `Started: ${sessionStart.toLocaleString()} | Ended: ${sessionEnd.toLocaleString()}`;
-      tokensEarned.innerText = `Session Tokens: ${tokensThisSession}`;
-      totalLVBTN.innerText = `Total LVBTN: ${totalTokens}`;
-      usdValue.innerText = `USD Value: $${usd}`;
-      priceDisplay.innerText = `Live LVBTN Price: $${livePrice}`;
-
-      updateProgressBar(totalTokens);
-      summaryBox.style.display = 'block';
-
-      await loadAfterPhotos();
-    });
-  } else {
-    console.warn("afterPhoto input not found.");
   }
 });
