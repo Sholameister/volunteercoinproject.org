@@ -82,6 +82,22 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
     console.error("❌ Error logging session:", err);
   }
 }
+async function resumeVolunteerSession(walletAddress) {
+  try {
+    const q = query(collection(db, "volunteerSessions"), where("wallet", "==", walletAddress));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log("✅ Previous session:", data);
+      // Optional: You can display past session data here (or set state/UI if needed)
+    });
+
+  } catch (error) {
+    console.error("❌ Error resuming session:", error);
+  }
+}
 
 export { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession };
 
