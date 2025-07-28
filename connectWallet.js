@@ -89,7 +89,7 @@ async function checkKYC(wallet) {
     kycStatus.innerText = "✅ KYC Approved";
     tierDisplay.innerText = `Tier ${tierLevel} (${getTierName(tierLevel)})`;
 
-    await setDoc(doc(db, "sessionTracking", wallet), {
+    await setDoc(doc(db, "sessionLogs", wallet), {
       wallet,
       tier: tierLevel,
       timestamp: serverTimestamp()
@@ -164,7 +164,7 @@ afterInput?.addEventListener('change', async () => {
   const afterPhotoUrl = await getDownloadURL(snap.ref);
 
   const sessionId = `${walletAddress}_${sessionStart.getTime()}`;
-  await updateDoc(doc(db, "volunteerSessions", sessionId), {
+  await updateDoc(doc(db, "sessionLogs", sessionId), {
     endTime: sessionEnd,
     duration: durationHours,
     tokensEarned: tokensThisSession,
