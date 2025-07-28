@@ -42,7 +42,7 @@ connectBtn.addEventListener('click', async () => {
       walletDisplay.innerText = `Wallet: ${walletAddress}`;
       console.log("Connected to wallet:", walletAddress);
       await checkKYC(walletAddress);
-      checkSessionResume();
+     
     } catch (err) {
       alert('Wallet connection failed.');
       console.error(err);
@@ -116,24 +116,6 @@ afterInput.addEventListener('change', async () => {
   localStorage.removeItem("startPhotoUrl");
   localStorage.removeItem("position");
 });
-
-// Resume Volunteering if browser refreshed mid-session
-function checkSessionResume() {
-  const start = localStorage.getItem("sessionStart");
-  const url = localStorage.getItem("startPhotoUrl");
-  const pos = localStorage.getItem("position");
-
-  if (start && url && pos) {
-    sessionStart = parseInt(start);
-    startPhotoUrl = url;
-    position = JSON.parse(pos);
-
-    beforeInput.disabled = true;
-    afterInput.disabled = false;
-
-    alert("Volunteer session resumed! Please upload your after-photo to finish.");
-  }
-}
 
 // Show Gallery (Thumbnails)
 async function showPhotoGallery(wallet) {
