@@ -192,6 +192,22 @@
         }
       });
     });
+    <script src="./firebase-app.js"></script>
+  <script src="./loginLogic.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    setKycDomElements({
+      walletDisplay: document.getElementById('walletAddress'),
+      kycStatus: document.getElementById('verifiedKYC'),
+      tierStatus: document.getElementById('tierInfo'),
+      tokenCalc: document.getElementById('tokensEarned'),
+      badge: document.getElementById('badgeEl')
+    });
+  });
+</script>
+      
+  
   </script>
 </body>
 </html>
