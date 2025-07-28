@@ -13,11 +13,11 @@ let tierMultiplier = 1;
 let walletDisplayEl, kycStatusEl, tierStatusEl, tokenCalcEl, badgeEl;
 
 function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
-  walletDisplayEl = walletDisplay;
-  kycStatusEl = kycStatus;
-  tierStatusEl = tierStatus;
-  tokenCalcEl = tokenCalc;
-  badgeEl = badge;
+  walletDisplayEl = walletDisplay || null;
+  kycStatusEl = kycStatus || null;
+  tierStatusEl = tierStatus || null;
+  tokenCalcEl = tokenCalc || null;
+  badgeEl = badge || null;
 }
 
 
@@ -30,13 +30,18 @@ async function checkKYC(walletAddress) {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      tierLevel = data.tier || null;
+      tierLevel = data.tier || "Tier 1";
+
+      if (kycStatusE1) kycStatusE1.textContent = "Verified";
+      if (tierStatusE1) tierStatusE1.textContent = `Tier: ${TierLevel}`;
+      if (badgeE1) badgeE1.textContent = tierLevel === "Tier 3" ? "Emergency Access" : "";
 
       const sessionLogs = await logVolunteerSession(walletAddress, tierLevel);
       if (sessionLogs) console.log("✅ Session logged successfully!");
       return tierLevel;
     } else {
-      setKYCRejected("⚠️ KYC Not Found");
+      if (kycStatusE1) kycStatusE1.textContent = "Not Found";
+      if (tierStatusE1) tierStatusE1.textContent = "Tier: Unverified";
       return null;
     }
   } catch (error) {
