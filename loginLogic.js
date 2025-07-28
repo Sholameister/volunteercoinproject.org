@@ -1,9 +1,4 @@
-import { checkKYC, resumeVolunteerSession, setKycDomElements } from './kycUtils.js';
-
-const resumed = await resumeVolunteerSession();
-if (resumed) {
-  console.log("✅ Session successfully resumed!");
-}
+import { checkKYC, setKycDomElements } from './kycUtils.js';
 
 // Your Firebase config object
 const firebaseConfig = {
