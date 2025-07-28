@@ -1,4 +1,4 @@
-import { checkKYC, setKycDomElements } from './kycUtils.js';
+import { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession } from './kycUtils.js';
 
 // Your Firebase config object
 const firebaseConfig = {
