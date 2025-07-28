@@ -60,7 +60,11 @@
   <link rel="icon" type="image/png" href="https://volunteercoinproject.org/images/logo.png" />
 </head>
 <body>
-
+<p id="walletAddress"></p>
+<p id="verifiedKYC"></p>
+<p id="tierInfo"></p>
+<p id="tokensEarned"></p>
+<p id="badgeEl"></p>
   <h2>Identity Verification (KYC)</h2>
   <p>To unlock volunteer rewards, please complete the KYC process below.  
   The more verified you are, the more access and token rewards you'll earn.</p>
@@ -105,9 +109,9 @@
       const connectWalletBtn = document.getElementById("connectWalletBtn");
       const walletStatus = document.getElementById("walletStatus");
       const kycStatus = document.getElementById("verifiedKYC");
-      const tierStatus = document.getElementById("tierStatus");
-      const tokenCalc = document.getElementById("tokenCalc");
-      const badge = document.getElementById("badge");
+      const tierStatus = document.getElementById("tierInfo");
+      const tokenCalc = document.getElementById("tokensEarned");
+      const badge = document.getElementById("badgeE1");
 
       connectWalletBtn.addEventListener("click", async () => {
         if (!window.solana || !window.solana.isPhantom) {
