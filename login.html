@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>Volunteer Session Logger</title>
- 
+
   <!-- Solana Wallet Adapter UMD -->
   <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
 
+  <!-- Style -->
   <style>
     body {
       background-color: #fdf2f8;
@@ -56,7 +57,7 @@
       display: none;
     }
     .after-photo {
-      max width: 100px;
+      max-width: 100px;
       margin: 5px;
       border-radius: 6px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
@@ -91,20 +92,21 @@
       width: 0;
     }
   </style>
-   <script type="module" src="./loginLogic.js"></script>
-  <script type="module" src="./kycUtils.js"></script>
-</head>
-  
-<body>
 
+  <!-- Firebase logic modules -->
+  <script type="module" src="./firebase-app.js"></script>
+  <script type="module" src="./kycUtils.js"></script>
+  <script type="module" src="./loginLogic.js"></script>
+</head>
+
+<body>
   <h1>Log Your Volunteer Session</h1>
 
   <div class="step">
     <button id="connectWalletBtn">1️⃣ Connect Wallet (Phantom or Solflare)</button>
-    <p id="walletAddress"></p>
-    <div id="walletAddress">Wallet: Not Connected</div>
-    <div id="kycStatus">KYC: Unknown</div>
-    <div id="tierInfo">Tier: Unknown</div>
+    <p id="walletAddress">Wallet: Not Connected</p>
+    <p id="kycStatus">KYC: Unknown</p>
+    <p id="tierInfo">Tier: Unknown</p>
   </div>
 
   <div id="progressContainer">
@@ -135,35 +137,6 @@
     <h3>Past After-Photos</h3>
     <div id="photoGallery"></div>
   </div>
-  <!-- Your existing HTML content above -->
-
-<!-- 👇 Insert this just before </body> -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const connectBtn = document.getElementById('connectWalletBtn');
-
-    connectBtn?.addEventListener('click', async () => {
-      const provider = window?.phantom?.solana;
-
-      if (!provider?.isPhantom) {
-        alert("Phantom Wallet not found. Please install it.");
-        return;
-      }
-
-      try {
-        const resp = await provider.connect();
-        const walletAddress = resp.publicKey.toString();
-
-        document.getElementById("walletAddress").innerText = walletAddress;
-        console.log("Connected to wallet:", walletAddress);
-      } catch (err) {
-        console.error("Wallet connection failed:", err);
-        alert("Wallet connection failed. Check console for details.");
-      }
-    });
-  });
-</script>
-
 </body>
 </html>
 
