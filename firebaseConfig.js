@@ -1,9 +1,20 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
+// firebaseConfig.js
 
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import {
+  getFirestore,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+
+// Your Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4JWJ1PN8xFFxNhIryx3NshADKVY",
+  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
   storageBucket: "lvbtn-bucket.appspot.com",
@@ -12,13 +23,15 @@ const firebaseConfig = {
   measurementId: "G-0261HYV08P"
 };
 
-// ✅ Prevent duplicate Firebase init
-let app;
-if (!getApps().length) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
-}
+// Prevent duplicate Firebase initialization
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-const db = getFirestore(app);
-const storage = getStorage(app);
+// Export Firestore, Storage, Timestamp, and utils
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const serverTime = serverTimestamp;
+export { ref, uploadBytes, getDownloadURL };
+
+// Optional: expose globally (remove if not needed)
+window.db = db;
+window.storage = storage;
