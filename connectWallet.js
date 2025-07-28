@@ -7,7 +7,7 @@ import {
   getStorage, ref as storageRef, uploadBytes, getDownloadURL
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
 
-// Firebase Config
+// ---- Firebase Config ----
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
@@ -47,22 +47,31 @@ const progressBar = document.getElementById('progressBar');
 
 // ---- Wallet Connection ----
 async function connectWallet() {
-  if (window.solana && window.solana.isPhantom) {
-    const resp = await window.solana.connect();
-    walletAddress = resp.publicKey.toString();
+  try {
+    let provider = null;
+    if (window.solana && window.solana.isPhantom) {
+      provider = window.solana;
+    } else if (window.solflare) {
+      provider = window.solflare;
+    }
+
+    if (!provider) {
+      alert("No supported wallet found (Phantom or Solflare).");
+      return;
+    }
+
+    const res = await provider.connect();
+    walletAddress = res.publicKey.toString();
     walletDisplay.innerText = `Wallet: ${walletAddress}`;
+    console.log("Connected to wallet:", walletAddress);
     await checkKYC(walletAddress);
-  } else if (window.solflare) {
-    const resp = await window.solflare.connect();
-    walletAddress = resp.publicKey.toString();
-    walletDisplay.innerText = `Wallet: ${walletAddress}`;
-    await checkKYC(walletAddress);
-  } else {
-    alert("No supported wallet found (Phantom or Solflare).");
+  } catch (err) {
+    console.error("Wallet connection failed:", err);
+    alert("Wallet connection failed.");
   }
 }
 
-connectBtn.addEventListener('click', connectWallet);
+connectBtn?.addEventListener('click', connectWallet);
 
 // ---- KYC Check ----
 async function checkKYC(wallet) {
@@ -115,7 +124,7 @@ function getTierMultiplier(tier) {
 }
 
 // ---- Start Volunteering ----
-beforeInput.addEventListener('change', async () => {
+beforeInput?.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file || !walletAddress) return;
 
@@ -142,7 +151,7 @@ beforeInput.addEventListener('change', async () => {
 });
 
 // ---- Stop Volunteering ----
-afterInput.addEventListener('change', async () => {
+afterInput?.addEventListener('change', async () => {
   const file = afterInput.files[0];
   if (!file || !walletAddress || !sessionStart) return;
 
