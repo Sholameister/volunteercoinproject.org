@@ -71,8 +71,6 @@ async function connectWallet() {
   }
 }
 
-connectBtn?.addEventListener('click', connectWallet);
-
 // ---- KYC Check ----
 async function checkKYC(wallet) {
   try {
