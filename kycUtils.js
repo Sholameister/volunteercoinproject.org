@@ -83,8 +83,9 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
   }
 }
 
-export { checkKYC, logVolunteerSession, setKycDomElements };
+export { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession };
 // Attach to window for HTML access
 window.setKycDomElements = setKycDomElements;
 window.checkKYC = checkKYC;
-
+window.logVolunteerSession = logVolunteerSession;
+window.resumeVolunteerSession = resumeVolunteerSession;
