@@ -19,7 +19,7 @@ const stopBtn = document.getElementById('stopBtn');
 const summaryBox = document.getElementById('summaryBox');
 const sessionTimes = document.getElementById('sessionTimes');
 if (sessionTimes) {
-  sessionTimes.textContent = `Started at: ${readableTimestamp}`;
+  sessionTimes.textContent = `Started at: ${startTime}`;
 } else {
   console.warn("sessionTimes element not found in DOM.");
 }
