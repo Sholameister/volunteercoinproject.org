@@ -13,6 +13,32 @@ let position = { latitude: null, longitude: null };
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connectWalletBtn');
 
+   const walletDisplay = document.getElementById('walletAddress');
+
+  const kycStatus = document.getElementById('kycStatus');
+
+  const tierDisplay = document.getElementById('tierStatus');
+
+  const beforeInput = document.getElementById('beforePhoto');
+
+  const afterInput = document.getElementById('afterPhoto');
+
+  const summaryBox = document.getElementById('summaryBox');
+
+  const sessionTimes = document.getElementById('sessionTimes');
+
+  const tokensEarned = document.getElementById('tokensEarned');
+
+  const totalLVBTN = document.getElementById('totalLVBTN');
+
+  const usdValue = document.getElementById('usdValue');
+
+  const priceDisplay = document.getElementById('lvbtnPrice');
+
+  const photoGallery = document.getElementById('photoGallery');
+
+
+  
   if (!connectBtn) {
     console.warn('connectWalletBtn not found.');
     return;
