@@ -1,6 +1,6 @@
 // loginLogic.js
 
-import { connectWallet, fetchLiveLVBTNPrice } from './walletUtils.js';
+import { connectWallet, fetchLiveLVBTNPrice } from './connectWallet.js';
 import { db, storage, ref, uploadBytes, getDownloadURL } from './firebaseConfig.js';
 import { checkKYC, logVolunteerSession } from './kycUtils.js';
 
