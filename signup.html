@@ -65,10 +65,14 @@
   
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./setupKycDom.js"></script>
+  
   <script type="module">
     import { checkKYC } from './kycUtils.js';
+    import { connectWallet } from './connectWallet.js';
+    
     document.getElementById('connectWalletBtn').addEventListener('click', async () => {
-      const wallet = await window.connectWallet();
+      const wallet = await connectWallet();
+      
       if (wallet) {
         document.getElementById('walletAddress').textContent = wallet;
         await checkKYC(wallet);
