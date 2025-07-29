@@ -10,20 +10,31 @@ let sessionStart = null;
 let startPhotoUrl = null;
 let position = { latitude: null, longitude: null };
 
-// DOM Elements
-const connectBtn = document.getElementById('connectWalletBtn');
-const walletDisplay = document.getElementById('walletAddress');
-const kycStatus = document.getElementById('verifiedKYC');
-const tierDisplay = document.getElementById('tierInfo');
-const beforeInput = document.getElementById('beforePhoto');
-const afterInput = document.getElementById('afterPhoto');
-const summaryBox = document.getElementById('summaryBox');
-const sessionTimes = document.getElementById('sessionLogs');
-const tokensEarned = document.getElementById('tokensEarned');
-const totalLVBTN = document.getElementById('totalLVBTN');
-const usdValue = document.getElementById('usdValue');
-const priceDisplay = document.getElementById('lvbtnPrice');
-const photoGallery = document.getElementById('photoGallery');
+document.addEventListener('DOMContentLoaded', () => {
+  const connectBtn = document.getElementById('connectWalletBtn');
+
+  if (!connectBtn) {
+    console.warn('connectWalletBtn not found.');
+    return;
+  }
+
+  connectBtn.addEventListener('click', async () => {
+    if (window.solana && window.solana.isPhantom) {
+      try {
+        const res = await window.solana.connect();
+        walletAddress = res.publicKey.toString();
+        setKycDomElements(walletAddress, kycStatus, tierDisplay);
+        walletDisplay.textContent = walletAddress;
+        walletStatus.textContent = 'Wallet connected!';
+      } catch (err) {
+        console.error('Wallet connection failed:', err);
+      }
+    } else {
+      walletStatus.textContent = 'Phantom wallet not found';
+    }
+  });
+});
+
 
 // Wait until DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
