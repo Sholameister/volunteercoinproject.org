@@ -61,13 +61,14 @@
   </ul>
 
   <button onclick="window.location.href='login.html'">Go to Login</button>
-
+  <button onclick="window.location.href='index.html'">Go to Home</button>
+  
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./setupKycDom.js"></script>
   <script type="module">
     import { checkKYC } from './kycUtils.js';
     document.getElementById('connectWalletBtn').addEventListener('click', async () => {
-      const wallet = await window.connectWalletBtn();
+      const wallet = await window.connectWallet();
       if (wallet) {
         document.getElementById('walletAddress').textContent = wallet;
         await checkKYC(wallet);
