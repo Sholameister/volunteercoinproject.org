@@ -58,17 +58,19 @@
       height: 80px;
       margin-top: 20px;
     }
+    
   </style>
   <script type="module">
   import { connectWallet } from './connectWallet.js';
-    
-  document.addEventListener("DOMContentLoaded", function () {
-    const connectBtn = document.getElementById("connectWalletBtn");
-    if (connectBtn) {
-      connectBtn.addEventListener("click", connectWallet);
-   
-    }
-  });
+
+    window.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('connectWalletBtn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      // your connect logic
+    });
+  }
+});
 </head>
 <body>
 <p id="walletAddress"></p>
