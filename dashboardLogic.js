@@ -41,9 +41,9 @@ async function loadSessionHistory(wallet) {
 
   snapshot.forEach(doc => {
     const data = doc.data();
+    const hours = parseFloat(data.durationHours || 0);
     const tokens = parseFloat(data.tokensEarned || 0);
     const usd = parseFloat(data.usdValue || 0);
-    const hours = parseFloat(data.durationHours || 0);
 
     totalTokens += tokens;
     totalUSD += usd;
