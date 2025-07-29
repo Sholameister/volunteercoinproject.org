@@ -114,84 +114,24 @@
       const tierStatus = document.getElementById("tierInfo");
       const tokenCalc = document.getElementById("tokensEarned");
       const badge = document.getElementById("badgeE1");
-
+<script>
+      async function connectPhantomWallet() {
       connectWalletBtn.addEventListener("click", async () => {
-        if (!window.solana || !window.solana.isPhantom) {
-          alert("Phantom Wallet not found. Please install it.");
-          return;
-        }
-
+        if (window.solana && window.solana.isPhantom) {
         try {
           const resp = await window.solana.connect();
           const walletAddress = resp.publicKey.toString();
-          walletStatus.textContent = `✅ Connected: ${walletAddress}`;
-          localStorage.setItem("connectedWallet", walletAddress);
-
-          kycStatus.textContent = "Checking KYC status...";
-          kycStatus.className = "pending";
-
-          const doc = await db.collection("verifiedKYC").doc(walletAddress).get();
-          if (doc.exists) {
-            const data = doc.data();
-            const status = data.status || "pending";
-            const tier = data.tier || 1;
-
-            if (status === "approved") {
-              kycStatus.textContent = "✅ KYC Approved";
-              kycStatus.className = "approved";
-
-              // Display Tier
-              tierStatus.textContent = `🎖️ Verified Tier: ${tier}`;
-              let tokensPerHour = 1;
-              let tierBadge = "🧡 Tier 1: Starter";
-              if (tier == 2) {
-                tokensPerHour = 1.25;
-                tierBadge = "🚗 Tier 2: Driver";
-              }
-              if (tier == 3) {
-                tokensPerHour = 1.5;
-                tierBadge = "⚡ Tier 3: Elite Volunteer";
-              }
-
-              tokenCalc.textContent = `💰 You earn ${tokensPerHour} LVBTN/hour`;
-              badge.textContent = `🏅 ${tierBadge}`;
-
-              // 🔒 Log wallet + tier to Firestore
-              await db.collection("sessionLogs").add({
-                wallet: walletAddress,
-                tier: tier,
-                timestamp: new Date()
-              });
-
-              // 🔁 Auto-redirect to dashboard
-              setTimeout(() => {
-                window.location.href = "login.html";
-              }, 3500);
-
-            } else {
-              kycStatus.textContent = "🕐 KYC Pending";
-              kycStatus.className = "pending";
-              tierStatus.textContent = "";
-              tokenCalc.textContent = "";
-              badge.textContent = "";
-            }
-
-          } else {
-            kycStatus.textContent = "❌ KYC Not Found";
-            kycStatus.className = "notfound";
-            tierStatus.textContent = "";
-            tokenCalc.textContent = "";
-            badge.textContent = "";
-          }
-
-        } catch (err) {
-          console.error("Wallet/KYC error:", err);
-          kycStatus.textContent = "❌ Error checking KYC";
-          kycStatus.className = "error";
-          tierStatus.textContent = "";
-          tokenCalc.textContent = "";
-          badge.textContent = "";
+          console.log("Connected:", address);
+          document.getElementById("walletAddress").innertext = `Wallet: ${address}`;
+           } catch (err) {
+          console.error("Connection Failed", err);
         }
+        } else {
+          alert("Please install Phantom Wallet!");
+        }
+      }
+        document.getElementById("connectWalletBtn").addEventListener("c;ick", connectPhantomWallet);
+      </script>
       });
     });
 
