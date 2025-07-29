@@ -2,16 +2,17 @@
 import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
 import { db, storage, ref, uploadBytes, getDownloadURL } from './firebaseConfig.js';
 import { checkKYC, logVolunteerSession } from './kycUtils.js';
+import { serverTimeStamp } from "firebase/firestore";
 
 // DOM Elements
-function readableTimestamp(timestamp) {
+function readabletimestamp(timestamp) {
   const date = new Date(timestamp);
   return date.toLocaleString(); // Returns something like: "7/29/2025, 2:34:56 PM"
 }
 
 let walletAddress = null;
 let tierLevel = null;
-let startTime = null;
+let startTime = new Date(startTime);
 let startPhotoUrl = null;
 let location = null;
 
