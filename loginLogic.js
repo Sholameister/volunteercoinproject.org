@@ -83,7 +83,7 @@ afterInput.addEventListener('change', async () => {
     const photoRef = ref(storage, `afterPhotos/${walletAddress}_${endTime}`);
     await uploadBytes(photoRef, file);
     const endPhotoUrl = await getDownloadURL(photoRef);
-
+    
     await logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location);
 
     renderSessionSummary(startTime, endTime, tierLevel, endPhotoUrl);
