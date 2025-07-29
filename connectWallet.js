@@ -56,31 +56,21 @@ const afterPhotosBox = document.getElementById('afterPhotosBox');
 const progressBar = document.getElementById('progressBar');
 
 // ---- Wallet Connection ----
-async function connectWallet() {
+export async function connectWallet() {
+  if (window.solana && window.solana.isPhantom) {
   try {
-    let provider = null;
-    if (window.solana && window.solana.isPhantom) {
-      provider = window.solana;
-    } else if (window.solflare) {
-      provider = window.solflare;
-    }
-
-    if (!provider) {
-      alert("No supported wallet found (Phantom or Solflare).");
-      return;
-    }
-
-    const res = await provider.connect();
-    walletAddress = res.publicKey.toString();
-    walletDisplay.innerText = `Wallet: ${walletAddress}`;
-    console.log("Connected to wallet:", walletAddress);
-    await checkKYC(walletAddress);
+     const resp =  await window.solana.connect();
+     const walletAddress = resp.publicKey.toString();
+     console.log("Connected to wallet:", "walletAddress");
+    document.getElementById("walletAddress").innertext = `Wallet: ${address}`;
+    return address;
   } catch (err) {
-    console.error("Wallet connection failed:", err);
-    alert("Wallet connection failed.");
+     console.error("Wallet connection failed:", err);
+  }
+  } else {
+    alert("Wallet connection failed.  Please install from https://phantom.app.");
   }
 }
-
 // ---- KYC Check ----
 async function checkKYC(wallet) {
   try {
