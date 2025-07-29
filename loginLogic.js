@@ -12,10 +12,44 @@ let position = { latitude: null, longitude: null };
 
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connectWalletBtn');
+   const walletStatus = document.getElementById('walletStatus');
+  
+ connectBtn.addEventListener('click', async () => {
+   try {
+      if (!window.solana || !window.solana.isPhantom) {
+        walletStatus.tectContent = 'Phantom Wallet not Found!';
+        return;
+      }
+     const response = await window.solana.connect();
+     const address = response.publicKey.toString();
+     walletAddress = address;
 
-   const walletDisplay = document.getElementById('walletAddress');
-
-  const kycStatus = document.getElementById('kycStatus');
+     const now = new Date();
+     const timestamp = now.toLocaleString();
+     walletStatus.textContent = `Wallet: ${address} |Connected:${timeStamp}`;
+ if (navigator.geolocation) {
+ navigator.geolocation.getCurrentPosition(
+ (positionData) => {
+position.latitude = positionData.coords.latitude;
+position.longitude = positionData.coords.longitude;
+walletStatus.textContent += ` | 📍 Lat: ${position.latitude.toFixed(4)}, Long: ${position.longitude.toFixed(4)}`; 
+   },
+(error) => {
+ console.warn("Geolocation failed:", error.message);
+ walletStatus.textContent += ` | Location: unavailable`;
+}
+);
+ } else {
+        walletStatus.textContent = 'Wallet connected!';
+      }
+        
+      } catch (err) {
+        console.error('Wallet connection failed:', err);
+      walletStatus.textContent = 'Phantom wallet not found';
+    }
+  });
+});   
+  const kycStatus = document.getElementById('verifiedKYC');
 
   const tierDisplay = document.getElementById('tierStatus');
 
@@ -36,58 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const priceDisplay = document.getElementById('lvbtnPrice');
 
   const photoGallery = document.getElementById('photoGallery');
-
-
-  
-  if (!connectBtn) {
-    console.warn('connectWalletBtn not found.');
-    return;
-  }
-
-  connectBtn.addEventListener('click', async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const res = await window.solana.connect();
-        walletAddress = res.publicKey.toString();
-        setKycDomElements(walletAddress, kycStatus, tierDisplay);
-        walletDisplay.textContent = walletAddress;
-        walletStatus.textContent = 'Wallet connected!';
-      } catch (err) {
-        console.error('Wallet connection failed:', err);
-      }
-    } else {
-      walletStatus.textContent = 'Phantom wallet not found';
-    }
-  });
-});
-
-
-// Wait until DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectWalletBtn');
-  if (connectBtn) {
-    connectBtn.addEventListener('click', async () => {
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const res = await window.solana.connect();
-          walletAddress = res.publicKey.toString();
-          setKycDomElements(walletAddress, kycStatus, tierDisplay);
-          walletDisplay.innerText = walletAddress;
-        } catch (err) {
-          console.error("Wallet connection failed:", err);
-        }
-      } else {
-        alert("Phantom Wallet not found.");
-      }
-    });
-  } else {
-    console.warn('connectWalletBtn not found.');
-  }
-});
-
-});
-} else {
-  console.warn('connectWalletBtn not Found.');
 }
 });
 // Start Volunteering
