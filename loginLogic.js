@@ -70,7 +70,7 @@ walletStatus.textContent += ` | 📍 Lat: ${position.latitude.toFixed(4)}, Long:
   const priceDisplay = document.getElementById('lvbtnPrice');
 
   const photoGallery = document.getElementById('photoGallery');
-}
+
 });
 // Start Volunteering
 beforeInput.addEventListener('change', async () => {
