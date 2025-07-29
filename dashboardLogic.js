@@ -36,26 +36,36 @@ async function loadSessionHistory(wallet) {
   const snapshot = await getDocs(collection(db, "volunteerSessions", wallet, "sessionLogs"));
 
   let totalTokens = 0;
+  let totalUSD = 0;
+  let totalHours = 0;
 
   snapshot.forEach(doc => {
     const data = doc.data();
-    totalTokens += parseFloat(data.tokensEarned || 0);
+    const tokens = parseFloat(data.tokensEarned || 0);
+    const usd = parseFloat(data.usdValue || 0);
+    const hours = parseFloat(data.durationHours || 0);
+
+    totalTokens += tokens;
+    totalUSD += usd;
+    totalHours += hours;
 
     const card = document.createElement("div");
     card.className = "sessionCard";
     card.innerHTML = `
       <p><strong>Date:</strong> ${new Date(data.startTime).toLocaleString()}</p>
-      <p><strong>Tier:</strong> ${data.tierLevel}</p>
-      <p><strong>Duration:</strong> ${data.durationHours} hours</p>
-      <p><strong>LVBTN Earned:</strong> ${data.tokensEarned}</p>
-      <p><strong>USD Value:</strong> $${data.usdValue}</p>
-      <p><strong>Start Photo:</strong><br><img src="${data.startPhotoUrl}" /></p>
-      <p><strong>After Photo:</strong><br><img src="${data.endPhotoUrl}" /></p>
+      <p><strong>Tier:</strong> ${data.tierLevel || "N/A"}</p>
+      <p><strong>Duration:</strong> ${hours.toFixed(2)} hours</p>
+      <p><strong>LVBTN Earned:</strong> ${tokens.toFixed(2)}</p>
+      <p><strong>USD Value:</strong> $${usd.toFixed(2)}</p>
+      <p><strong>Start Photo:</strong><br><img src="${data.startPhotoUrl || ''}" /></p>
+      <p><strong>After Photo:</strong><br><img src="${data.endPhotoUrl || ''}" /></p>
     `;
     sessionList.appendChild(card);
   });
 
   document.getElementById("totalTokens").innerText = `Total LVBTN Earned: ${totalTokens.toFixed(2)}`;
+  document.getElementById("usdTotalValue").innerText = `Total USD Value: $${totalUSD.toFixed(2)}`;
+  document.getElementById("totalHours").innerText = `Total Hours Volunteered: ${totalHours.toFixed(1)}`;
 }
 
 // Auto-connect if Phantom installed
