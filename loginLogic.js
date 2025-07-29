@@ -154,15 +154,6 @@ async function saveSessionToFirestore(endTime, endPhotoUrl) {
   if (tierLevel === "Tier 2") multiplier = 1.25;
   else if (tierLevel === "Tier 3") multiplier = 1.5;
 
-  // Calculate session duration in hours
-const durationMs = new Date(endTime) - new Date(startTime);
-const durationHours = durationMs / (1000 * 60 * 60);
-
-// Token reward based on tier multiplier
-let multiplier = 1;
-if (tierLevel === "Tier 2") multiplier = 1.25;
-if (tierLevel === "Tier 3") multiplier = 1.5;
-
 const earnedTokens = (durationHours * multiplier).toFixed(2);
 const usd = (earnedTokens * 2.5).toFixed(2);
 
