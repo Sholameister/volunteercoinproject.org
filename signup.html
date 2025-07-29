@@ -3,150 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LoveButton – KYC Sign Up</title>
-  
-  <style>
-    body {
-      background-color: #fdf2f8;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 30px;
-      color: #333;
-    }
-    h2 {
-      color: #e60073;
-      margin-top: 20px;
-    }
-   input, button {
-     display: block;
-     margin: 10px auto;
-     padding: 12px;
-     width: 80%;
-     max-width: 400px;
-     border-radius: 6px;
-     font-size: 16px;
-   }
- 
-    p {
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
-    button {
-      background-color: #e60073;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 6px;
-      margin: 10px;
-    }
-    button:hover {
-      background-color: #cc005f;
-    }
-    #walletStatus, #kycStatus, #tierStatus, #tokenCalc, #badge {
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    #walletStatus { color: green; }
-    #kycStatus.pending { color: orange; }
-    #kycStatus.approved { color: green; }
-    #kycStatus.notfound, #kycStatus.error { color: red; }
-    ul {
-      list-style: none;
-      padding: 0;
-      text-align: left;
-      max-width: 500px;
-      margin: 0 auto 20px;
-    }
-    ul li {
-      margin: 8px 0;
-      font-size: 15px;
-    }
-    .love-icon {
-      height: 80px;
-      margin-top: 20px;
-    }
-    </style>
-    </head>
+  <title>LVBTN Signup & KYC</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Sign Up & Verify to Volunteer</h1>
+    <p>Step 1: Connect Wallet | Step 2: Submit KYC | Step 3: Start Volunteering</p>
+  </header>
 
+  <main style="max-width: 600px; margin: auto; text-align: center;">
+    <button id="connectWalletBtn">🔗 Connect Wallet</button>
+    <p id="walletAddress" style="margin: 10px 0; font-weight: bold;"></p>
+
+    <div id="kycStatus" style="margin: 10px 0;"></div>
+    <div id="tierInfo" style="margin-bottom: 20px;"></div>
+
+    <a href="https://verify.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank">
+      <button style="padding: 10px 20px;">Start KYC Verification</button>
+    </a>
+
+    <div id="tierExplanation" class="section highlight" style="text-align: left; margin-top: 30px; background: #fff3f3; border: 1px solid #ccc; border-radius: 8px; padding: 15px;">
+      <h3>🔒 Tier System Overview</h3>
+      <ul>
+        <li><strong>Tier 1:</strong> Basic Access — 1 LVBTN/hour</li>
+        <li><strong>Tier 2 (Drivers):</strong> Requires valid ID & KYC — 1.25 LVBTN/hour</li>
+        <li><strong>Tier 3 (Emergency Access):</strong> Full KYC + 2 references + approval — 1.5 LVBTN/hour</li>
+      </ul>
+    </div>
+
+    <p style="margin-top: 30px;">💡 Once approved, you'll be redirected to the <strong>Login</strong> page automatically.</p>
+  </main>
+
+  <footer style="margin-top: 50px; text-align: center;">
+    <p>&copy; 2025 Volunteer Coin Project Foundation | LoveButton Token</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="./connectWallet.js"></script>
+  <script type="module" src="./setupKycDom.js"></script>
   <script type="module">
-  import { connectWallet } from './connectWallet.js';
+    import { checkKYC } from './kycUtils.js';
 
-    window.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('connectWalletBtn');
-  if (btn) {
-    btn.addEventListener('click', () => {
-      // your connect logic
-
-    }
-});
-  <body>
-<p id="walletAddress"></p>
-<p id="verifiedKYC"></p>
-<p id="tierInfo"></p>
-<p id="tokensEarned"></p>
-<p id="badgeEl"></p>
-  <h2>Identity Verification (KYC)</h2>
-  <p>To unlock volunteer rewards, please complete the KYC process below.  
-  The more verified you are, the more access and token rewards you'll earn.</p>
-
-  <ul>
-    <li>💗 LVBTN Token Earnings:</li>
-    <li>• Tier 1 – 1 LVBTN/hr (basic signup)</li>
-    <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
-    <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + 25+ hours)</li>
-  </ul>
-
-  <img src="./assets/LVBTN_logo.png" alt="LoveButton Token Logo" class="love-icon" />
-   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/assets/LVBTN_logo.png" />
-  <div>
-    <button id="connectWalletBtn">Connect Phantom Wallet</button>
-    <div id="walletStatus">Wallet not connected</div>
-    <div id="kycStatus" class="pending">KYC status: not checked</div>
-    <div id="tierStatus"></div>
-    <div id="tokenCalc"></div>
-    <div id="badge"></div>
-    <button id="getPhantomBtn" style="display: none; background-color: #555; color: white;">
-  🪙 Get Phantom Wallet
-</button>
-  </script>
-  </div>
- <div>
-    <button class="btn" onclick="window.open('https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b', '_blank')">Create Account via Blockpass</button>
-  </div>
-  <button class="btn" onclick="window.location.href='index.html'">Back to Home</button>
-  <script>
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const connectBtn = document.getElementById("connectWalletBtn");
-      const walletStatus = document.getElementById("walletStatus");
-      const kycStatus = document.getElementById("verifiedKYC");
-      const tierStatus = document.getElementById("tierInfo");
-      const tokenCalc = document.getElementById("tokensEarned");
-      const badge = document.getElementById("badgeE1");
-
-      async function connectPhantomWallet() {
-      connectWalletBtn.addEventListener("click", async () => {
-        if (window.solana && window.solana.isPhantom) {
-        try {
-          const resp = await window.solana.connect();
-          const walletAddress = resp.publicKey.toString();
-          console.log("Connected:", address);
-          document.getElementById("walletAddress").innertext = `Wallet: ${address}`;
-           } catch (err) {
-          console.error("Connection Failed", err);
+    document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+      const wallet = await window.connectWallet();  // Provided by connectWallet.js
+      if (wallet) {
+        document.getElementById('walletAddress').textContent = wallet;
+        const tier = await checkKYC(wallet);
+        if (tier && tier !== "Unverified") {
+          setTimeout(() => window.location.href = "login.html", 3000); // Auto redirect after 3s
         }
-        } else {
-          alert("Please install Phantom Wallet!");
-        }
-      })
-        document.getElementById("connectWalletBtn").addEventListener("click", connectPhantomWallet);
-      };
+      }
     });
-  </script>
-<script type="module" src="./loginLogic.js"></script>
-<script type="module" src="./firebaseConfig.js"></script>
   </script>
 </body>
 </html>
