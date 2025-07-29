@@ -44,7 +44,7 @@ walletStatus.textContent += ` | 📍 Lat: ${position.latitude.toFixed(4)}, Long:
       }
         
       } catch (err) {
-        console.error('Wallet connection failed:', err);
+        console.error("Wallet connection failed:", err);
       walletStatus.textContent = 'Phantom wallet not found';
     }
   });
