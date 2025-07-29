@@ -12,7 +12,7 @@ function readabletimestamp(timestamp) {
 
 let walletAddress = null;
 let tierLevel = null;
-let startTime = new Date(startTime);
+let startTime = null;
 let startPhotoUrl = null;
 let location = null;
 
