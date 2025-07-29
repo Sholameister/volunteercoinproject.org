@@ -4,55 +4,70 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LVBTN Signup & KYC</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: #fdf2f8;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      background-color: #e60073;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #cc005f;
+    }
+    #walletAddress, #kycStatus, #tierInfo {
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    ul {
+      list-style: none;
+      text-align: left;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    ul li {
+      margin: 6px 0;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Sign Up & Verify to Volunteer</h1>
-    <p>Step 1: Connect Wallet | Step 2: Submit KYC | Step 3: Start Volunteering</p>
-  </header>
+  <h2>Sign Up & KYC Verification</h2>
+  <button id="connectWalletBtn">Connect Wallet</button>
+  <p id="walletAddress"></p>
+  <p id="kycStatus"></p>
+  <p id="tierInfo"></p>
 
-  <main style="max-width: 600px; margin: auto; text-align: center;">
-    <button id="connectWalletBtn">🔗 Connect Wallet</button>
-    <p id="walletAddress" style="margin: 10px 0; font-weight: bold;"></p>
+  <a href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank">
+    <button>Start KYC</button>
+  </a>
 
-    <div id="kycStatus" style="margin: 10px 0;"></div>
-    <div id="tierInfo" style="margin-bottom: 20px;"></div>
+  <ul>
+    <li>💗 LVBTN Token Earnings:</li>
+    <li>• Tier 1 – 1 LVBTN/hr (basic signup)</li>
+    <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
+    <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + 25+ hours)</li>
+  </ul>
 
-    <a href="https://verify.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank">
-      <button style="padding: 10px 20px;">Start KYC Verification</button>
-    </a>
+  <button onclick="window.location.href='login.html'">Go to Login</button>
 
-    <div id="tierExplanation" class="section highlight" style="text-align: left; margin-top: 30px; background: #fff3f3; border: 1px solid #ccc; border-radius: 8px; padding: 15px;">
-      <h3>🔒 Tier System Overview</h3>
-      <ul>
-        <li><strong>Tier 1:</strong> Basic Access — 1 LVBTN/hour</li>
-        <li><strong>Tier 2 (Drivers):</strong> Requires valid ID & KYC — 1.25 LVBTN/hour</li>
-        <li><strong>Tier 3 (Emergency Access):</strong> Full KYC + 2 references + approval — 1.5 LVBTN/hour</li>
-      </ul>
-    </div>
-
-    <p style="margin-top: 30px;">💡 Once approved, you'll be redirected to the <strong>Login</strong> page automatically.</p>
-  </main>
-
-  <footer style="margin-top: 50px; text-align: center;">
-    <p>&copy; 2025 Volunteer Coin Project Foundation | LoveButton Token</p>
-  </footer>
-
-  <!-- Scripts -->
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./setupKycDom.js"></script>
   <script type="module">
     import { checkKYC } from './kycUtils.js';
-
     document.getElementById('connectWalletBtn').addEventListener('click', async () => {
-      const wallet = await window.connectWallet();  // Provided by connectWallet.js
+      const wallet = await window.connectWallet();
       if (wallet) {
         document.getElementById('walletAddress').textContent = wallet;
-        const tier = await checkKYC(wallet);
-        if (tier && tier !== "Unverified") {
-          setTimeout(() => window.location.href = "login.html", 3000); // Auto redirect after 3s
-        }
+        await checkKYC(wallet);
       }
     });
   </script>
