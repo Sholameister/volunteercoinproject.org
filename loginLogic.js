@@ -86,8 +86,6 @@ afterInput.addEventListener('change', async () => {
     
     await logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location);
 
-    renderSessionSummary(startTime, endTime, tierLevel, endPhotoUrl);
-
     afterInput.disabled = true;
     startBtn.disabled = true;
     stopBtn.disabled = true;
