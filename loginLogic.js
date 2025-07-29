@@ -74,7 +74,7 @@ beforeInput.addEventListener('change', async () => {
 });
 
 // ----- Stop Volunteering -----
-afterInput.addEventListener('change', async () => {
+afterInput.addEventListener('change', async ()) => {
   const endTime = new Date.().toISOString();
   const file = afterInput.files[0];
   if (!file) return;
