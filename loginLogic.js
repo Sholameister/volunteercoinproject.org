@@ -53,7 +53,7 @@ beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file) return;
 
-  startTime = Date.now();
+  startTime: new Date.(startTime);
   const sessionTimes = new Date(startTime).toLocaleString();
   location = await getGeolocation();
 
@@ -74,7 +74,7 @@ beforeInput.addEventListener('change', async () => {
 
 // ----- Stop Volunteering -----
 afterInput.addEventListener('change', async () => {
-  const endTime = Date.now();
+  const endTime: new Date.(endTime);
   const file = afterInput.files[0];
   if (!file) return;
 
