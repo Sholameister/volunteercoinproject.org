@@ -25,29 +25,34 @@ const usdValue = document.getElementById('usdValue');
 const priceDisplay = document.getElementById('lvbtnPrice');
 const photoGallery = document.getElementById('photoGallery');
 
-// Wallet Connection
-connectBtn.addEventListener('click', async () => {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const res = await window.solana.connect();
-      walletAddress = res.publicKey.toString();
-      setKycDomElements({
-        walletDisplay,
-        kycStatus,
-        tierStatus: tierDisplay,
-        tokenCalc: tokensEarned,
-        badge: document.getElementById('badgeEl')
-      });
-      await checkKYC(walletAddress);
-    } catch (err) {
-      console.error("❌ Wallet connection error:", err);
-      alert("Wallet connection failed.");
-    }
+// Wait until DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const connectBtn = document.getElementById('connectWalletBtn');
+  if (connectBtn) {
+    connectBtn.addEventListener('click', async () => {
+      if (window.solana && window.solana.isPhantom) {
+        try {
+          const res = await window.solana.connect();
+          walletAddress = res.publicKey.toString();
+          setKycDomElements(walletAddress, kycStatus, tierDisplay);
+          walletDisplay.innerText = walletAddress;
+        } catch (err) {
+          console.error("Wallet connection failed:", err);
+        }
+      } else {
+        alert("Phantom Wallet not found.");
+      }
+    });
   } else {
-    alert("Phantom wallet not found. Please install it.");
+    console.warn('connectWalletBtn not found.');
   }
 });
 
+});
+} else {
+  console.warn('connectWalletBtn not Found.');
+}
+});
 // Start Volunteering
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
