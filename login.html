@@ -2,138 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <title>Volunteer Session Logger</title>
-
-  <!-- Solana Wallet Adapter UMD -->
-  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.3/lib/index.iife.min.js"></script>
-  <script type="module" src="./connectWallet.js"></script>
-  <!-- Style -->
-  <style>
-    body {
-      background-color: #fdf2f8;
-      font-family: 'Arial', sans-serif;
-      padding: 20px;
-      margin: 0;
-      text-align: center;
-    }
-    h1 {
-      color: #e60073;
-      margin-bottom: 5px;
-    }
-    .step {
-      margin: 25px 0;
-    }
-    button, input[type="file"] {
-      display: block;
-      margin: 12px auto;
-      padding: 14px;
-      border-radius: 8px;
-      font-size: 16px;
-      width: 90%;
-      max-width: 400px;
-      border: none;
-    }
-    button {
-      background-color: #e60073;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #cc005f;
-    }
-    input[type="file"] {
-      background-color: #fff;
-      border: 2px dashed #ccc;
-      padding: 18px;
-    }
-    #summaryBox, #afterPhotosBox {
-      margin-top: 30px;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background-color: #fff;
-      display: none;
-    }
-    .after-photo {
-      max-width: 100px;
-      margin: 5px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    #lvbtnPrice {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    #walletAddress, #kycStatus, #tierInfo {
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    #progressContainer {
-      margin-top: 20px;
-    }
-    .progress-bar {
-      width: 90%;
-      max-width: 400px;
-      height: 20px;
-      background-color: #ddd;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 10px auto;
-    }
-    .progress-fill {
-      height: 100%;
-      text-align: right;
-      padding-right: 8px;
-      line-height: 20px;
-      color: white;
-      background-color: #e60073;
-      width: 0;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LoveButton Volunteer Logger</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <h1>Log Your Volunteer Session</h1>
+  <header>
+    <h1>Welcome, Volunteer!</h1>
+    <p>Track your hours, earn LVBTN tokens, and make an impact 💗</p>
+  </header>
 
-  <div class="step">
-    <button id="connectWalletBtn">1️⃣ Connect Wallet (Phantom or Solflare)</button>
-    <p id="walletAddress">Wallet: Not Connected</p>
-    <p id="kycStatus">KYC: Unknown</p>
-    <p id="tierInfo">Tier: Unknown</p>
-  </div>
+  <main style="max-width: 600px; margin: auto; text-align: center;">
+    <button id="connectWalletBtn">🔗 Connect Phantom Wallet</button>
+    <p id="walletAddress" class="highlight" style="font-weight: bold;"></p>
 
-  <div id="progressContainer">
-    <h4>Tier Progress</h4>
-    <div class="progress-bar"><div id="progressFill" class="progress-fill">0%</div></div>
-  </div>
+    <div id="kycStatus"></div>
+    <div id="tierInfo"></div>
+    <div id="lvbtnPrice" style="margin-bottom: 10px;">Current LVBTN Price: $2.50</div>
 
-  <div class="step">
-    <label for="beforePhoto">2️⃣ Take Start Photo to Begin</label>
-    <input type="file" id="beforePhoto" accept="image/*" capture="environment" />
-  </div>
+    <!-- Step 1: Upload Before Photo -->
+    <h3>📸 Before Volunteering</h3>
+    <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
+    <button id="startVolunteeringBtn" disabled>Start Volunteering</button>
 
-  <div class="step">
-    <label for="afterPhoto">3️⃣ Take Finish Photo to End</label>
-    <input type="file" id="afterPhoto" accept="image/*" capture="environment" />
-  </div>
+    <!-- Step 2: Upload After Photo -->
+    <h3>📸 After Volunteering</h3>
+    <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
+    <button id="stopVolunteeringBtn" disabled>Stop Volunteering</button>
 
-  <div id="summaryBox">
-    <h3>Session Summary</h3>
-    <p id="sessionTimes"></p>
-    <p id="tokensEarned"></p>
-    <p id="totalLVBTN"></p>
-    <p id="usdValue"></p>
-    <p id="lvbtnPrice"></p>
-  </div>
+    <!-- Summary -->
+    <div id="summaryBox" class="section" style="margin-top: 30px; display: none;">
+      <h3>✅ Session Summary</h3>
+      <p id="sessionTimes"></p>
+      <p id="tokensEarned"></p>
+      <p id="totalLVBTN"></p>
+      <p id="usdValue"></p>
+    </div>
 
-  <div id="afterPhotosBox">
-    <h3>Past After-Photos</h3>
-    <div id="photoGallery"></div>
-  </div>
-  <script type="module" src="./firebaseConfig.js"></script>
+    <!-- Gallery -->
+    <div id="afterPhotosBox" class="section" style="margin-top: 30px;">
+      <h3>📷 Your Volunteering Gallery</h3>
+      <div id="photoGallery" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;"></div>
+    </div>
+  </main>
+
+  <footer style="margin-top: 50px; text-align: center;">
+    <p>&copy; 2025 Volunteer Coin Project Foundation | LoveButton Token</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
+  <script type="module" src="./setupKycDom.js"></script>
 </body>
 </html>
 
