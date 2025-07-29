@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LoveButton Volunteer Logger</title>
+  <title>Volunteer Logger</title>
   <style>
     body {
       background: #fffdfd;
@@ -63,18 +63,18 @@
   <button id="stopVolunteeringBtn" disabled>Stop Volunteering</button>
 
   <div id="summaryBox">
-    <h3>Session Summary</h3>
+    <h3>Volunteer Summary</h3>
     <p id="sessionTimes"></p>
     <p id="tokensEarned"></p>
     <p id="totalLVBTN"></p>
     <p id="usdValue"></p>
+    <p id="walletSummary"></p>
   </div>
 
-  <div id="afterPhotosBox">
-    <h3>Past Volunteering Experiences!</h3>
-    <div id="photoGallery"></div>
+    <h4>Past Volunteering Experiences!</h4>
+    <div id="afterPhotosBox" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
   </div>
-  
+</div>
   <button onclick="window.location.href='signup.html'">Go to Signup</button>
   <button onclick="window.location.href='index.html'">Go to Home</button>
   
