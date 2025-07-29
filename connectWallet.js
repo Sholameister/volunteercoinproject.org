@@ -29,8 +29,17 @@ let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
 
+// ---- Event Binding ----
+document.addEventListener('DOMContentLoaded', () => {
 // ---- DOM Elements ----
 const connectBtn = document.getElementById('connectWalletBtn');
+
+if (connectBtn) {
+    connectBtn.addEventListener('click', connectWallet);
+  } else {
+    console.warn("connectWalletBtn not found.");
+  }
+  
 const walletDisplay = document.getElementById('walletAddress');
 const kycStatus = document.getElementById('kycStatus');
 const tierDisplay = document.getElementById('tierInfo');
@@ -248,12 +257,3 @@ function updateProgressBar(totalTokens) {
   progressBar.style.width = `${percent}%`;
   progressBar.innerText = `${percent}% Progress`;
 }
-
-// ---- Event Binding ----
-document.addEventListener('DOMContentLoaded', () => {
-  if (connectBtn) {
-    connectBtn.addEventListener('click', connectWallet);
-  } else {
-    console.warn("connectWalletBtn not found.");
-  }
-});
