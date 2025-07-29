@@ -4,9 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LoveButton – KYC Sign Up</title>
+
+ <!-- Firebase + Wallet Script -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script src="https://unpkg.com/@solana/wallet-adapter-base@0.9.16/lib/index.umd.min.js"></script>
+  <script src="https://unpkg.com/@solana/wallet-adapter-wallets@0.9.16/lib/index.umd.min.js"></script>
+  
   <style>
-    body
-    {
+    body {
       background-color: #fdf2f8;
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
@@ -17,13 +24,21 @@
       color: #e60073;
       margin-top: 20px;
     }
-   
+   input, button {
+     display: block;
+     margin: 10px auto;
+     padding: 12px;
+     width: 80%;
+     max-width: 400px;
+     border-radius: 6px;
+     font-size: 16px;
+   }
  
     p {
       margin-bottom: 20px;
       font-size: 16px;
     }
-    .btn {
+    button {
       background-color: #e60073;
       color: white;
       padding: 12px 24px;
@@ -33,7 +48,7 @@
       border-radius: 6px;
       margin: 10px;
     }
-    .btn:hover {
+    button:hover {
       background-color: #cc005f;
     }
     #walletStatus, #kycStatus, #tierStatus, #tokenCalc, #badge {
@@ -59,8 +74,9 @@
       height: 80px;
       margin-top: 20px;
     }
+    </style>
     </head>
-  </style>
+
   <script type="module">
   import { connectWallet } from './connectWallet.js';
 
@@ -107,12 +123,6 @@
     <button class="btn" onclick="window.open('https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b', '_blank')">Create Account via Blockpass</button>
   </div>
   <button class="btn" onclick="window.location.href='index.html'">Back to Home</button>
-
-  
-  <!-- Firebase + Wallet Script -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
