@@ -10,6 +10,10 @@ let startPhotoUrl = null;
 let location = null;
 
 // DOM Elements
+function readableTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  return date.toLocaleString(); // Returns something like: "7/29/2025, 2:34:56 PM"
+}
 const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
 const beforeInput = document.getElementById('beforePhoto');
