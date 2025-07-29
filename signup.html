@@ -56,10 +56,19 @@
       height: 80px;
       margin-top: 20px;
     }
-   
-  <script src="https://unpkg.com/@solana/wallet-adapter-base@latest/lib/cdn.js"></script> 
-    <script src="https://unpkg.com/@solana/wallet-adapter-wallets@latest/lib/cdn.js"></script>
   </style>
+  <script type="module">
+  import { connectWallet } from './connectWallet.js';
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const connectBtn = document.getElementById("connectWalletBtn");
+    if (connectBtn) {
+      connectBtn.addEventListener("click", connectWallet);
+    }
+  });
+    <script src="https://unpkg.com/@solana/wallet-adapter-base@latest/lib/cdn.js"></script> 
+    <script src="https://unpkg.com/@solana/wallet-adapter-wallets@latest/lib/cdn.js"></script> 
+</script>
 </head>
 <body>
 <p id="walletAddress"></p>
