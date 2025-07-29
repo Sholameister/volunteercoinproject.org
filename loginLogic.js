@@ -55,8 +55,8 @@ beforeInput.addEventListener('change', async () => {
   if (!file) return;
 
   startTime = new Date().toISOString();
-  const sessionTimes = new Date(startTime).toLocaleString();
-  location = await getGeolocation();
+  const startTime = new Date().toLocaleString();
+  const location = await getGeolocation();
   
   try {
     const photoRef = ref(storage, `beforePhotos/${walletAddress}_${startTime}`);
