@@ -4,56 +4,77 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LoveButton Volunteer Logger</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: #fffdfd;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    button, input[type="file"] {
+      display: block;
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 6px;
+      width: 90%;
+      max-width: 400px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #e60073;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #cc005f;
+    }
+    #summaryBox {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fafafa;
+      display: none;
+    }
+    #photoGallery img {
+      max-width: 100px;
+      margin: 5px;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Welcome, Volunteer!</h1>
-    <p>Track your hours, earn LVBTN tokens, and make an impact 💗</p>
-  </header>
+  <h1>Volunteer Session Logger</h1>
+  <button id="connectWalletBtn">Connect Phantom Wallet</button>
+  <p id="walletAddress">Wallet: Not Connected</p>
+  <p id="kycStatus">KYC: Unknown</p>
+  <p id="tierInfo">Tier: --</p>
+  <p id="lvbtnPrice">LVBTN Price: $2.50</p>
 
-  <main style="max-width: 600px; margin: auto; text-align: center;">
-    <button id="connectWalletBtn">🔗 Connect Phantom Wallet</button>
-    <p id="walletAddress" class="highlight" style="font-weight: bold;"></p>
+  <h3>Before Volunteering</h3>
+  <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
+  <button id="startVolunteeringBtn" disabled>Start Volunteering</button>
 
-    <div id="kycStatus"></div>
-    <div id="tierInfo"></div>
-    <div id="lvbtnPrice" style="margin-bottom: 10px;">Current LVBTN Price: $2.50</div>
+  <h3>After Volunteering</h3>
+  <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
+  <button id="stopVolunteeringBtn" disabled>Stop Volunteering</button>
 
-    <!-- Step 1: Upload Before Photo -->
-    <h3>📸 Before Volunteering</h3>
-    <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
-    <button id="startVolunteeringBtn" disabled>Start Volunteering</button>
+  <div id="summaryBox">
+    <h3>Session Summary</h3>
+    <p id="sessionTimes"></p>
+    <p id="tokensEarned"></p>
+    <p id="totalLVBTN"></p>
+    <p id="usdValue"></p>
+  </div>
 
-    <!-- Step 2: Upload After Photo -->
-    <h3>📸 After Volunteering</h3>
-    <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
-    <button id="stopVolunteeringBtn" disabled>Stop Volunteering</button>
+  <div id="afterPhotosBox">
+    <h3>Past After-Photos</h3>
+    <div id="photoGallery"></div>
+  </div>
 
-    <!-- Summary -->
-    <div id="summaryBox" class="section" style="margin-top: 30px; display: none;">
-      <h3>✅ Session Summary</h3>
-      <p id="sessionTimes"></p>
-      <p id="tokensEarned"></p>
-      <p id="totalLVBTN"></p>
-      <p id="usdValue"></p>
-    </div>
-
-    <!-- Gallery -->
-    <div id="afterPhotosBox" class="section" style="margin-top: 30px;">
-      <h3>📷 Your Volunteering Gallery</h3>
-      <div id="photoGallery" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;"></div>
-    </div>
-  </main>
-
-  <footer style="margin-top: 50px; text-align: center;">
-    <p>&copy; 2025 Volunteer Coin Project Foundation | LoveButton Token</p>
-  </footer>
-
-  <!-- Scripts -->
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
   <script type="module" src="./setupKycDom.js"></script>
 </body>
 </html>
-
