@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const connectBtn = document.getElementById('connectWalletBtn');
 
 if (connectBtn) {
-    connectBtn.addEventListener('click', connectWallet);
+    connectBtn.addEventListener('click', connectWalletBtn);
   } else {
     console.warn("connectWalletBtn not found.");
   }
