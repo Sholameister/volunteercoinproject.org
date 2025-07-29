@@ -56,7 +56,7 @@ const afterPhotosBox = document.getElementById('afterPhotosBox');
 const progressBar = document.getElementById('progressBar');
 
 // ---- Wallet Connection ----
-export async function connectWallet() {
+async function connectWallet() {
   if (window.solana && window.solana.isPhantom) {
   try {
      const resp =  await window.solana.connect();
