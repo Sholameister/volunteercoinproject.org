@@ -136,3 +136,48 @@ function showThankYouPopup(startTime, location) {
   const msg = `You have begun volunteering for the Volunteer Coin Project Foundation!\nTime: ${new Date(startTime).toLocaleTimeString()}\nLocation: ${location.latitude}, ${location.longitude}`;
   alert(msg);
 }
+async function saveSessionToFirestore(endTime, endPhotoUrl) {
+  if (!walletAddress || !startTime || !tierLevel || !startPhotoUrl || !endTime) {
+    console.error("Missing session data.");
+    return;
+  }
+
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const durationMs = end - start;
+  const durationMinutes = Math.floor(durationMs / 60000);
+  const durationHours = (durationMinutes / 60).toFixed(2);
+
+  let multiplier = 1;
+  if (tierLevel === "Tier 2") multiplier = 1.25;
+  else if (tierLevel === "Tier 3") multiplier = 1.5;
+
+  const tokensEarned = parseFloat(durationHours * multiplier).toFixed(2);
+  const usd = (tokensEarned * 2.5).toFixed(2);
+
+  const sessionData = {
+    walletAddress,
+    tierLevel,
+    startTime,
+    endTime,
+    durationMinutes,
+    durationHours,
+    tokensEarned,
+    usdValue: usd,
+    startPhotoUrl,
+    endPhotoUrl,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    await db
+      .collection("volunteerSessions")
+      .doc(walletAddress)
+      .collection("sessionLogs")
+      .add(sessionData);
+
+    console.log("✅ Session saved to Firestore.");
+  } catch (err) {
+    console.error("❌ Failed to save session:", err);
+  }
+}
