@@ -54,10 +54,10 @@ beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file) return;
 
-  startTime: startTime.toISOString(), {
+  startTime = new Date().toISOString();
   const sessionTimes = new Date(startTime).toLocaleString();
   location = await getGeolocation();
-}
+  
   try {
     const photoRef = ref(storage, `beforePhotos/${walletAddress}_${startTime}`);
     await uploadBytes(photoRef, file);
