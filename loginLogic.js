@@ -53,7 +53,7 @@ beforeInput.addEventListener('change', async () => {
   if (!file) return;
 
   startTime = Date.now();
-  const readableTimestamp = new Date(startTime).toLocaleString();
+  const sessionTimes = new Date(startTime).toLocaleString();
   location = await getGeolocation();
 
   try {
