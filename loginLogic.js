@@ -19,6 +19,11 @@ const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const summaryBox = document.getElementById('summaryBox');
 const sessionTimes = document.getElementById('sessionTimes');
+if (sessionTimes) {
+  sessionTimes.textContent = `Started at: ${readableTimestamp}`;
+} else {
+  console.warn("sessionTimes element not found in DOM.");
+}
 const tokensEarned = document.getElementById('tokensEarned');
 const totalLVBTN = document.getElementById('totalLVBTN');
 const usdValue = document.getElementById('usdValue');
