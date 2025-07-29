@@ -71,7 +71,7 @@ walletStatus.textContent += ` | 📍 Lat: ${position.latitude.toFixed(4)}, Long:
 
   const photoGallery = document.getElementById('photoGallery');
 
-);
+;
 // Start Volunteering
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return;
