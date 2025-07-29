@@ -54,7 +54,7 @@ beforeInput.addEventListener('change', async () => {
   const file = beforeInput.files[0];
   if (!file) return;
 
-  startTime: new Date.(startTime);
+  startTime: startTime.toISOString(),
   const sessionTimes = new Date(startTime).toLocaleString();
   location = await getGeolocation();
 
