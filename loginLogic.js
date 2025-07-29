@@ -144,6 +144,8 @@ async function saveSessionToFirestore(endTime, endPhotoUrl) {
 
   const start = new Date(startTime);
   const end = new Date(endTime);
+
+  
   const durationMs = end - start;
   const durationMinutes = Math.floor(durationMs / 60000);
   const durationHours = (durationMinutes / 60).toFixed(2);
@@ -152,32 +154,28 @@ async function saveSessionToFirestore(endTime, endPhotoUrl) {
   if (tierLevel === "Tier 2") multiplier = 1.25;
   else if (tierLevel === "Tier 3") multiplier = 1.5;
 
-  const tokensEarned = parseFloat(durationHours * multiplier).toFixed(2);
-  const usd = (tokensEarned * 2.5).toFixed(2);
+  // Calculate session duration in hours
+const durationMs = new Date(endTime) - new Date(startTime);
+const durationHours = durationMs / (1000 * 60 * 60);
 
-  const sessionData = {
-    walletAddress,
-    tierLevel,
-    startTime,
-    endTime,
-    durationMinutes,
-    durationHours,
-    tokensEarned,
-    usdValue: usd,
-    startPhotoUrl,
-    endPhotoUrl,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  };
+// Token reward based on tier multiplier
+let multiplier = 1;
+if (tierLevel === "Tier 2") multiplier = 1.25;
+if (tierLevel === "Tier 3") multiplier = 1.5;
 
-  try {
-    await db
-      .collection("volunteerSessions")
-      .doc(walletAddress)
-      .collection("sessionLogs")
-      .add(sessionData);
+const earnedTokens = (durationHours * multiplier).toFixed(2);
+const usd = (earnedTokens * 2.5).toFixed(2);
 
-    console.log("✅ Session saved to Firestore.");
-  } catch (err) {
-    console.error("❌ Failed to save session:", err);
-  }
-}
+// Display session summary
+sessionTimes.textContent = `🕒 ${startTime} → ${endTime}`;
+tokensEarned.textContent = `🎁 LVBTN Earned: ${earnedTokens}`;
+usdValue.textContent = `💵 USD Value: $${usd}`;
+walletSummary.textContent = `🔐 Wallet: ${walletAddress}`;
+summaryBox.style.display = 'block';
+
+// Show photo in gallery
+const img = document.createElement('img');
+img.src = endPhotoUrl;
+img.style.width = '100px';
+img.style.borderRadius = '6px';
+afterPhotosBox.appendChild(img);
