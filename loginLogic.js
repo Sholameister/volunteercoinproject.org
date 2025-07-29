@@ -137,7 +137,7 @@ function showThankYouPopup(startTime, location) {
   alert(msg);
 }
 async function saveSessionToFirestore(endTime, endPhotoUrl) {
-  if (!walletAddress || !startTime || !tierLevel || !startPhotoUrl || !endTime) {
+ showSessionToFirestore(walletAddress || startTime || endTime || startPhotoUrl || endPhotoUrl); {
     console.error("Missing session data.");
     return;
   }
