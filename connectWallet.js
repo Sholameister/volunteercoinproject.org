@@ -1,4 +1,6 @@
-export async function connectWallet() {
+// connectWallet.js
+
+async function connectWallet() {
   if (window.solana && window.solana.isPhantom) {
     try {
       const resp = await window.solana.connect();
@@ -9,16 +11,16 @@ export async function connectWallet() {
       return null;
     }
   } else {
-    alert("Phantom Wallet not found. Install from https://phantom.app.");
+    alert("Phantom Wallet not found. Install from https://phantom.app");
     return null;
   }
 }
 
-export async function getWalletAddress() {
+async function getWalletAddress() {
   return window.solana?.publicKey?.toString() || null;
 }
 
-export async function fetchLiveLVBTNPrice() {
+async function fetchLiveLVBTNPrice() {
   try {
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=lvbtn&vs_currencies=usd");
     const data = await res.json();
@@ -27,3 +29,4 @@ export async function fetchLiveLVBTNPrice() {
     return 2.5;
   }
 }
+
