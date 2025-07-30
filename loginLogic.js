@@ -170,4 +170,4 @@ img.src = endPhotoUrl;
 img.style.width = '100px';
 img.style.borderRadius = '6px';
 afterPhotosBox.appendChild(img);
-}}
+}
