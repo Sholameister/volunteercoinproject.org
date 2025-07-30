@@ -1,14 +1,5 @@
-import { db } from './firebaseConfig.js';
-import {
-  collection,
-  addDoc,
-  doc,
-  getDoc,
-  query,
-  where,
-  getDocs,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+const db = window.db;
+db.collection("volunteers").get().then(...)
 
 // Globals
 let walletAddress = null;
