@@ -14,7 +14,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Wallet connect logic
 let walletAddress = null;
 
 async function connectWalletAndLoadSessions() {
@@ -22,10 +21,10 @@ async function connectWalletAndLoadSessions() {
     const resp = await window.solana.connect();
     walletAddress = resp.publicKey.toString();
     document.getElementById("walletDisplay").innerText = `Wallet: ${walletAddress}`;
-    loadSessionHistory(walletAddress);
+    await loadSessionHistory(walletAddress);
   } catch (err) {
     alert("Wallet connection failed.");
-    console.error(err);
+    console.error("Wallet error:", err);
   }
 }
 
@@ -33,44 +32,51 @@ async function loadSessionHistory(wallet) {
   const sessionList = document.getElementById("sessionList");
   sessionList.innerHTML = "";
 
-  const snapshot = await getDocs(collection(db, "volunteerSessions", wallet, "sessionLogs"));
+  try {
+    const snapshot = await getDocs(collection(db, "volunteerSessions", wallet, "sessionLogs"));
 
-  let totalTokens = 0;
-  let totalUSD = 0;
-  let totalHours = 0;
+    let totalTokens = 0;
+    let totalUSD = 0;
+    let totalHours = 0;
 
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    const hours = parseFloat(data.durationHours || 0);
-    const tokens = parseFloat(data.tokensEarned || 0);
-    const usd = parseFloat(data.usdValue || 0);
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const hours = parseFloat(data.durationHours || 0);
+      const tokens = parseFloat(data.tokensEarned || 0);
+      const usd = parseFloat(data.usdValue || 0);
+      const tier = data.tierLevel || "N/A";
+      const startPhoto = data.startPhotoUrl || "https://via.placeholder.com/120?text=No+Photo";
+      const endPhoto = data.endPhotoUrl || "https://via.placeholder.com/120?text=No+Photo";
 
-    totalTokens += tokens;
-    totalUSD += usd;
-    totalHours += hours;
+      totalTokens += tokens;
+      totalUSD += usd;
+      totalHours += hours;
 
-    const card = document.createElement("div");
-    card.className = "sessionCard";
-    card.innerHTML = `
-      <p><strong>Date:</strong> ${new Date(data.startTime).toLocaleString()}</p>
-      <p><strong>Tier:</strong> ${data.tierLevel || "N/A"}</p>
-      <p><strong>Duration:</strong> ${hours.toFixed(2)} hours</p>
-      <p><strong>LVBTN Earned:</strong> ${tokens.toFixed(2)}</p>
-      <p><strong>USD Value:</strong> $${usd.toFixed(2)}</p>
-      <p><strong>Start Photo:</strong><br><img src="${data.startPhotoUrl || ''}" /></p>
-      <p><strong>After Photo:</strong><br><img src="${data.endPhotoUrl || ''}" /></p>
-    `;
-    sessionList.appendChild(card);
-  });
+      const card = document.createElement("div");
+      card.className = "sessionCard";
+      card.innerHTML = `
+        <p><strong>Date:</strong> ${new Date(data.startTime).toLocaleString()}</p>
+        <p><strong>Tier:</strong> ${tier}</p>
+        <p><strong>Duration:</strong> ${hours.toFixed(2)} hours</p>
+        <p><strong>LVBTN Earned:</strong> ${tokens.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+        <p><strong>USD Value:</strong> $${usd.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+        <p><strong>Start Photo:</strong><br><img src="${startPhoto}" width="120"/></p>
+        <p><strong>After Photo:</strong><br><img src="${endPhoto}" width="120"/></p>
+      `;
+      sessionList.appendChild(card);
+    });
 
-  document.getElementById("totalTokens").innerText = `Total LVBTN Earned: ${totalTokens.toFixed(2)}`;
-  document.getElementById("usdTotalValue").innerText = `Total USD Value: $${totalUSD.toFixed(2)}`;
-  document.getElementById("totalHours").innerText = `Total Hours Volunteered: ${totalHours.toFixed(1)}`;
+    document.getElementById("totalTokens").innerText = `Total LVBTN Earned: ${totalTokens.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    document.getElementById("usdTotalValue").innerText = `Total USD Value: $${totalUSD.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    document.getElementById("totalHours").innerText = `Total Hours Volunteered: ${totalHours.toFixed(1)}`;
+  } catch (e) {
+    console.error("Failed to load sessions:", e);
+    sessionList.innerHTML = `<p style="color:red;">Failed to load volunteer history.</p>`;
+  }
 }
 
-// Auto-connect if Phantom installed
 window.addEventListener('load', () => {
-  if (window.solana && window.solana.isPhantom) {
+  if (window.solana?.isPhantom) {
     connectWalletAndLoadSessions();
   } else {
     alert("Please install Phantom Wallet to use the dashboard.");
