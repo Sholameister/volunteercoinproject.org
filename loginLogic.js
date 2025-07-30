@@ -5,8 +5,6 @@ const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
 const beforeInput = document.getElementById('beforePhoto');
 const afterInput = document.getElementById('afterPhoto');
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
 const summaryBox = document.getElementById('summaryBox');
 const sessionTimes = document.getElementById('sessionTimes');
 const tokensEarned = document.getElementById('tokensEarned');
@@ -19,13 +17,15 @@ let walletAddress = null;
 let tierLevel = null;
 let startTime = null;
 let startPhotoUrl = null;
-let geolocation = null;
+let location = null;
 
-// ----- Wallet Connect -----
+// ----- Connect Wallet -----
 connectBtn.addEventListener('click', async () => {
+  if (!window.connectWallet) return alert("Wallet script not loaded.");
   walletAddress = await window.connectWallet();
   if (!walletAddress) return;
 
+  if (!window.checkKYC) return alert("KYC check function not loaded.");
   const tier = await window.checkKYC(walletAddress);
   tierLevel = tier === "Tier 3" ? 3 : tier === "Tier 2" ? 2 : 1;
 
@@ -51,10 +51,9 @@ beforeInput.addEventListener('change', async () => {
     beforeInput.disabled = true;
     afterInput.disabled = false;
     showThankYouPopup(startTime, location);
-
   } catch (err) {
     console.error("❌ Error uploading before photo:", err);
-    alert("Photo upload failed.");
+    alert("Before photo upload failed.");
   }
 });
 
@@ -69,28 +68,43 @@ afterInput.addEventListener('change', async () => {
     await photoRef.put(file);
     const endPhotoUrl = await photoRef.getDownloadURL();
 
-    await window.logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location);
+    if (!window.logVolunteerSession) {
+      alert("Session logging function not loaded.");
+      return;
+    }
+
+    await window.logVolunteerSession(
+      walletAddress,
+      tierLevel,
+      startTime,
+      endTime,
+      startPhotoUrl,
+      endPhotoUrl,
+      location
+    );
 
     renderSessionSummary(startTime, endTime, tierLevel, endPhotoUrl);
-
     afterInput.disabled = true;
-    startBtn.disabled = true;
-    stopBtn.disabled = true;
-
   } catch (err) {
-    console.error("❌ Error uploading after photo or logging:", err);
+    console.error("❌ Error uploading after photo or logging session:", err);
     alert("Session end failed.");
   }
 });
 
-// ----- Render Summary -----
+// ----- Summary Display -----
 async function renderSessionSummary(start, end, tier, endPhotoUrl) {
   const startDate = new Date(start);
   const endDate = new Date(end);
-  const duration = (endDate - startDate) / (1000 * 60 * 60); // hours
+  const duration = (endDate - startDate) / (1000 * 60 * 60); // in hours
   const multiplier = tier === 3 ? 1.5 : tier === 2 ? 1.25 : 1;
   const tokens = duration * multiplier;
-  const price = 2.5; // use fixed for now; replace with await window.fetchLiveLVBTNPrice();
+
+  // If fetchLiveLVBTNPrice() exists, use it, otherwise fallback to 2.5
+  let price = 2.5;
+  try {
+    price = await window.fetchLiveLVBTNPrice?.() || 2.5;
+  } catch (e) {}
+
   const usd = tokens * price;
 
   sessionTimes.textContent = `Start: ${startDate.toLocaleString()} | End: ${endDate.toLocaleString()}`;
@@ -120,7 +134,7 @@ function getGeolocation() {
   });
 }
 
-// ----- Thank You Popup -----
+// ----- Thank You -----
 function showThankYouPopup(startTime, location) {
   const msg = `You have begun volunteering for the Volunteer Coin Project Foundation!\nTime: ${new Date(startTime).toLocaleTimeString()}\nLocation: ${location.latitude}, ${location.longitude}`;
   alert(msg);
