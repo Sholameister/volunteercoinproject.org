@@ -1,21 +1,6 @@
 // loginLogic.js
-import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
-import { db, storage, ref, uploadBytes, getDownloadURL } from './firebaseConfig.js';
-import { checkKYC, logVolunteerSession } from './kycUtils.js';
-import { serverTimeStamp } from "firebase/firestore";
 
 // DOM Elements
-function readabletimestamp(timestamp) {
-  const date = new Date(timestamp);
-  return date.toLocaleString(); // Returns something like: "7/29/2025, 2:34:56 PM"
-}
-
-let walletAddress = null;
-let tierLevel = null;
-let startTime = null;
-let startPhotoUrl = null;
-let location = null;
-
 const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
 const beforeInput = document.getElementById('beforePhoto');
@@ -24,44 +9,44 @@ const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const summaryBox = document.getElementById('summaryBox');
 const sessionTimes = document.getElementById('sessionTimes');
-if (sessionTimes) {
-  sessionTimes.textContent = `Started at: ${startTime}`;
-} else {
-  console.warn("sessionTimes element not found in DOM.");
-}
 const tokensEarned = document.getElementById('tokensEarned');
 const totalLVBTN = document.getElementById('totalLVBTN');
 const usdValue = document.getElementById('usdValue');
 const photoGallery = document.getElementById('afterPhotosBox');
 const priceDisplay = document.getElementById('lvbtnPrice');
 
+let walletAddress = null;
+let tierLevel = null;
+let startTime = null;
+let startPhotoUrl = null;
+let location = null;
+
 // ----- Wallet Connect -----
 connectBtn.addEventListener('click', async () => {
-  walletAddress = await connectWallet();
+  walletAddress = await window.connectWallet();
   if (!walletAddress) return;
 
-  const tier = await checkKYC(walletAddress);
+  const tier = await window.checkKYC(walletAddress);
   tierLevel = tier === "Tier 3" ? 3 : tier === "Tier 2" ? 2 : 1;
 
   connectBtn.disabled = true;
   beforeInput.disabled = false;
+  walletDisplay.textContent = walletAddress;
 });
 
 // ----- Start Volunteering -----
 beforeInput.addEventListener('change', async () => {
   if (!walletAddress) return alert("Connect wallet first.");
-
   const file = beforeInput.files[0];
   if (!file) return;
 
   startTime = new Date().toISOString();
-  const startTime = new Date().toLocaleString();
-  const location = await getGeolocation();
-  
+  location = await getGeolocation();
+
   try {
-    const photoRef = ref(storage, `beforePhotos/${walletAddress}_${startTime}`);
-    await uploadBytes(photoRef, file);
-    startPhotoUrl = await getDownloadURL(photoRef);
+    const photoRef = window.storage.ref(`beforePhotos/${walletAddress}_${startTime}`);
+    await photoRef.put(file);
+    startPhotoUrl = await photoRef.getDownloadURL();
 
     beforeInput.disabled = true;
     afterInput.disabled = false;
@@ -80,11 +65,13 @@ afterInput.addEventListener('change', async () => {
   if (!file) return;
 
   try {
-    const photoRef = ref(storage, `afterPhotos/${walletAddress}_${endTime}`);
-    await uploadBytes(photoRef, file);
-    const endPhotoUrl = await getDownloadURL(photoRef);
-    
-    await logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location);
+    const photoRef = window.storage.ref(`afterPhotos/${walletAddress}_${endTime}`);
+    await photoRef.put(file);
+    const endPhotoUrl = await photoRef.getDownloadURL();
+
+    await window.logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location);
+
+    renderSessionSummary(startTime, endTime, tierLevel, endPhotoUrl);
 
     afterInput.disabled = true;
     startBtn.disabled = true;
@@ -98,13 +85,15 @@ afterInput.addEventListener('change', async () => {
 
 // ----- Render Summary -----
 async function renderSessionSummary(start, end, tier, endPhotoUrl) {
-  const duration = (end - start) / (1000 * 60 * 60);
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const duration = (endDate - startDate) / (1000 * 60 * 60); // hours
   const multiplier = tier === 3 ? 1.5 : tier === 2 ? 1.25 : 1;
   const tokens = duration * multiplier;
-  const price = await fetchLiveLVBTNPrice();
+  const price = 2.5; // use fixed for now; replace with await window.fetchLiveLVBTNPrice();
   const usd = tokens * price;
 
-  sessionTimes.textContent = `Start: ${new Date(start).toLocaleString()} | End: ${new Date(end).toLocaleString()}`;
+  sessionTimes.textContent = `Start: ${startDate.toLocaleString()} | End: ${endDate.toLocaleString()}`;
   tokensEarned.textContent = `LVBTN Earned: ${tokens.toFixed(2)}`;
   usdValue.textContent = `USD Value: $${usd.toFixed(2)}`;
 
@@ -131,43 +120,8 @@ function getGeolocation() {
   });
 }
 
-// ----- Thank You -----
+// ----- Thank You Popup -----
 function showThankYouPopup(startTime, location) {
   const msg = `You have begun volunteering for the Volunteer Coin Project Foundation!\nTime: ${new Date(startTime).toLocaleTimeString()}\nLocation: ${location.latitude}, ${location.longitude}`;
   alert(msg);
-}
-async function saveSessionToFirestore(endTime, endPhotoUrl) {
- showSessionToFirestore(walletAddress || startTime || endTime || startPhotoUrl || endPhotoUrl); {
-    console.error("Missing session data.");
-    return;
-  }
-
-  const start = new Date(startTime);
-  const end = new Date(endTime);
-
-  
-  const durationMs = end - start;
-  const durationMinutes = Math.floor(durationMs / 60000);
-  const durationHours = (durationMinutes / 60).toFixed(2);
-
-  let multiplier = 1;
-  if (tierLevel === "Tier 2") multiplier = 1.25;
-  else if (tierLevel === "Tier 3") multiplier = 1.5;
-
-const earnedTokens = (durationHours * multiplier).toFixed(2);
-const usd = (earnedTokens * 2.5).toFixed(2);
-
-// Display session summary
-sessionTimes.textContent = `🕒 ${startTime} → ${endTime}`;
-tokensEarned.textContent = `🎁 LVBTN Earned: ${earnedTokens}`;
-usdValue.textContent = `💵 USD Value: $${usd}`;
-walletSummary.textContent = `🔐 Wallet: ${walletAddress}`;
-summaryBox.style.display = 'block';
-
-// Show photo in gallery
-const img = document.createElement('img');
-img.src = endPhotoUrl;
-img.style.width = '100px';
-img.style.borderRadius = '6px';
-afterPhotosBox.appendChild(img);
 }
