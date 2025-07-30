@@ -217,11 +217,14 @@
   updateBTCPrice();
   setInterval(updateBTCPrice, 60000);
 </script>
+<!-- Firebase App + Services (Compat for raw HTML) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
-<!-- App Logic -->
+<!-- Your custom Firebase config -->
+<script src="./firebaseConfig.js"></script>
 <script type="module" src="./connectWallet.js"></script>
 <script type="module" src="./loginLogic.js"></script>
-
 </body>
 </html>
-
