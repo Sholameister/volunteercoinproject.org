@@ -1,17 +1,3 @@
-// firebaseConfig.js
-
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import {
-  getFirestore,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
-
 // Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
