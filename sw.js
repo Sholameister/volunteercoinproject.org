@@ -13,32 +13,10 @@ const urlsToCache = [
   '/favicon.ico'
 ];
 
-// Install: cache files
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('[SW] Caching site assets...');
-      return cache.addAll(urlsToCache);
-    })
-  );
+self.addEventListener("install", e => {
+  console.log("Service Worker Installed");
 });
 
-// Activate: clean up old caches
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
-    )
-  );
-});
-
-// Fetch: serve from cache if offline
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    }).catch(() => {
-      return new Response('⚠️ Offline: Resource unavailable', { status: 503 });
-    })
-  );
+self.addEventListener("fetch", function (event) {
+  event.respondWith(fetch(event.request).catch(() => new Response("Offline fallback")));
 });
