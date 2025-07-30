@@ -1,4 +1,5 @@
-// Your Firebase config
+// firebaseConfig.js (browser-compatible, no imports)
+
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
@@ -9,15 +10,15 @@ const firebaseConfig = {
   measurementId: "G-0261HYV08P"
 };
 
-// Prevent duplicate Firebase initialization
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const app = firebase.apps.length === 0
+  ? firebase.initializeApp(firebaseConfig)
+  : firebase.app();
 
-// Export Firestore, Storage, Timestamp, and utils
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-export const serverTime = serverTimestamp;
-export { ref, uploadBytes, getDownloadURL };
+// Export Firestore and Storage
+const db = firebase.firestore();
+const storage = firebase.storage();
+const serverTime = firebase.firestore.FieldValue.serverTimestamp();
 
-// Optional: expose globally (remove if not needed)
 window.db = db;
 window.storage = storage;
+window.serverTime = serverTime;
