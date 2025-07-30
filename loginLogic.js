@@ -19,7 +19,7 @@ let walletAddress = null;
 let tierLevel = null;
 let startTime = null;
 let startPhotoUrl = null;
-let location = null;
+let geolocation = null;
 
 // ----- Wallet Connect -----
 connectBtn.addEventListener('click', async () => {
