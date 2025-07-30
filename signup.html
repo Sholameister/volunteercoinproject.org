@@ -37,17 +37,28 @@
     ul li {
       margin: 6px 0;
     }
+    .tier-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      color: white;
+      margin-top: 10px;
+    }
+    .tier-1 { background-color: #aaa; }
+    .tier-2 { background-color: #ff9900; }
+    .tier-3 { background-color: #008000; }
   </style>
 </head>
 <body>
   <h2>Sign Up & KYC Verification</h2>
   <p style="font-style: italic; color: #333; margin-top: 10px;">
-  To unlock volunteer rewards, please complete the KYC process below. The more verified you are, the more access and token rewards you’ll earn!
-</p>
+    To unlock volunteer rewards, please complete the KYC process below. The more verified you are, the more access and token rewards you’ll earn!
+  </p>
+
   <button id="connectWalletBtn">Connect Wallet</button>
   <p id="walletAddress"></p>
   <p id="kycStatus"></p>
-  <p id="tierInfo"></p>
+  <div id="tierInfo" class="tier-badge"></div>
 
   <a href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank">
     <button>Start KYC</button>
@@ -62,20 +73,29 @@
 
   <button onclick="window.location.href='login.html'">Go to Login</button>
   <button onclick="window.location.href='index.html'">Go to Home</button>
-  
-  <script type="module" src="./connectWallet.js"></script>
-  <script type="module" src="./setupKycDom.js"></script>
-  
-  <script type="module">
-    import { checkKYC } from './kycUtils.js';
-    import { connectWallet } from './connectWallet.js';
-    
-    document.getElementById('connectWalletBtn').addEventListener('click', async () => {
-      const wallet = await connectWallet();
-      
+
+  <!-- Scripts -->
+  <script src="./connectWallet.js"></script>
+  <script src="./kycUtils.js"></script>
+  <script>
+    const connectBtn = document.getElementById('connectWalletBtn');
+    const walletDisplay = document.getElementById('walletAddress');
+    const kycStatus = document.getElementById('kycStatus');
+    const tierInfo = document.getElementById('tierInfo');
+
+    connectBtn.addEventListener('click', async () => {
+      const wallet = await window.connectWallet();
       if (wallet) {
-        document.getElementById('walletAddress').textContent = wallet;
-        await checkKYC(wallet);
+        walletDisplay.textContent = `🔐 Wallet: ${wallet}`;
+        const tier = await window.checkKYC(wallet);
+
+        kycStatus.textContent = `✅ KYC Status: ${tier}`;
+        tierInfo.textContent = tier;
+
+        tierInfo.className = 'tier-badge'; // Reset class
+        if (tier === "Tier 3") tierInfo.classList.add("tier-3");
+        else if (tier === "Tier 2") tierInfo.classList.add("tier-2");
+        else tierInfo.classList.add("tier-1");
       }
     });
   </script>
