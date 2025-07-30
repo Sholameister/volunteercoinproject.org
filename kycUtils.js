@@ -86,8 +86,8 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
 // ---- Resume Volunteer Session ----
 async function resumeVolunteerSession(walletAddress) {
   try {
-    const q = query(collection(db, "volunteerSessions"), where("wallet", "==", walletAddress));
-    const snapshot = await getDocs(q);
+    const q = db.(collection("volunteerSessions").where("wallet", "==", walletAddress);
+    const snapshot = await qget();
     if (snapshot.empty) return;
 
     snapshot.forEach((doc) => {
@@ -100,4 +100,8 @@ async function resumeVolunteerSession(walletAddress) {
   }
 }
 
-export { checkKYC, logVolunteerSession, setKycDomElements, resumeVolunteerSession };
+// Attach functions to window instead of exporting (since we're not using modules here)
+window.checkKYC = checkKYC;
+window.logVolunteerSession = logVolunteerSession;
+window.setKycDomElements = setKycDomElements;
+window.resumeVolunteerSession = resumeVolunteerSession;
