@@ -1,5 +1,6 @@
 import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
 import { db, storage } from './firebaseConfig.js';
+import { updateKycDom } from './kycUtils.js';
 
 let walletAddress = null;
 let tierLevel = null;
