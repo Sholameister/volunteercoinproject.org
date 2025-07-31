@@ -11,6 +11,7 @@ const firebaseConfig = {
   appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
   measurementId: "G-0261HYV08P"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -41,7 +42,10 @@ async function loadSessionHistory(wallet) {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const hours = parseFloat(data.durationHours || 0);
+      const start = data.startTime?.toDate?.() || new Date(data.startTime);
+      const end = data.endTime?.toDate?.() || new Date(data.endTime);
+      const durationHours = (end - start) / (1000 * 60 * 60);
+
       const tokens = parseFloat(data.tokensEarned || 0);
       const usd = parseFloat(data.usdValue || 0);
       const tier = data.tierLevel || "N/A";
@@ -50,14 +54,14 @@ async function loadSessionHistory(wallet) {
 
       totalTokens += tokens;
       totalUSD += usd;
-      totalHours += hours;
+      totalHours += durationHours;
 
       const card = document.createElement("div");
       card.className = "sessionCard";
       card.innerHTML = `
-        <p><strong>Date:</strong> ${new Date(data.startTime).toLocaleString()}</p>
+        <p><strong>Date:</strong> ${start.toLocaleString()}</p>
         <p><strong>Tier:</strong> ${tier}</p>
-        <p><strong>Duration:</strong> ${hours.toFixed(2)} hours</p>
+        <p><strong>Duration:</strong> ${durationHours.toFixed(2)} hours</p>
         <p><strong>LVBTN Earned:</strong> ${tokens.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
         <p><strong>USD Value:</strong> $${usd.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
         <p><strong>Start Photo:</strong><br><img src="${startPhoto}" width="120"/></p>
@@ -68,7 +72,13 @@ async function loadSessionHistory(wallet) {
 
     document.getElementById("totalTokens").innerText = `Total LVBTN Earned: ${totalTokens.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     document.getElementById("usdTotalValue").innerText = `Total USD Value: $${totalUSD.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-    document.getElementById("totalHours").innerText = `Total Hours Volunteered: ${totalHours.toFixed(1)}`;
+    // Add missing element for total hours
+    const totalHoursDiv = document.createElement("div");
+    totalHoursDiv.innerText = `Total Hours Volunteered: ${totalHours.toFixed(2)}`;
+    totalHoursDiv.style.fontWeight = "bold";
+    totalHoursDiv.style.marginTop = "10px";
+    sessionList.prepend(totalHoursDiv);
+
   } catch (e) {
     console.error("Failed to load sessions:", e);
     sessionList.innerHTML = `<p style="color:red;">Failed to load volunteer history.</p>`;
