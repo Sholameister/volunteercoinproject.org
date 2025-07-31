@@ -79,25 +79,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ---- Start Volunteering ----
-startBtn.addEventListener('click', async () => {
-  const file = beforeInput.files[0];
-  if (!file || !walletAddress) return alert("Please upload your before photo and connect wallet.");
+const startBtn = document.getElementById('startVolunteeringBtn');
+if (startBtn) {
+  startBtn.addEventListener('click', async () => {
+    const file = beforeInput.files[0];
+    if (!file || !walletAddress) return alert("Please upload your before photo and connect your wallet.");
 
-  await getGeolocation();
+    await getGeolocation();
 
-  const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
-  const snapshot = await fileRef.put(file);
-  startPhotoUrl = await snapshot.ref.getDownloadURL();
+    const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
+    const snapshot = await fileRef.put(file);
+    startPhotoUrl = await snapshot.ref.getDownloadURL();
 
-  sessionStart = new Date();
+    sessionStart = new Date();
 
-  beforeInput.disabled = true;
-  afterInput.disabled = false;
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
+    beforeInput.disabled = true;
+    afterInput.disabled = false;
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
 
-  alert(`✅ You have begun volunteering!\n📍 Location: ${position.latitude}, ${position.longitude}\n🕒 Time: ${sessionStart.toLocaleString()}`);
-});
+    alert(`✅ You have begun volunteering!\n📍 Location: ${position.latitude}, ${position.longitude}`);
+  });
+}
+
 
 // ---- Stop Volunteering ----
 stopBtn.addEventListener('click', async () => {
