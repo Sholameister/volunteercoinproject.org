@@ -74,10 +74,18 @@ async function loadSessionHistory(wallet) {
   }
 }
 
-window.addEventListener('load', () => {
-  if (window.solana?.isPhantom) {
-    connectWalletAndLoadSessions();
-  } else {
+document.addEventListener('DOMContentLoaded', () => {
+  const connectBtn = document.getElementById('connectDashboardWalletBtn');
+
+  if (!window.solana?.isPhantom) {
     alert("Please install Phantom Wallet to use the dashboard.");
+    return;
+  }
+
+  if (connectBtn) {
+    connectBtn.addEventListener('click', () => {
+      connectWalletAndLoadSessions();
+    });
   }
 });
+
