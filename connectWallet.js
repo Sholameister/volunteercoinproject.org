@@ -1,4 +1,4 @@
-// connectWallet.js
+import { connectWallet } from './connectWallet.js;
 
 async function connectWallet() {
   if (window.solana && window.solana.isPhantom) {
