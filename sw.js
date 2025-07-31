@@ -12,13 +12,10 @@ const urlsToCache = [
   '/signup.html',
   '/volunteer-hours.html',
   '/dashboard.html',
-  '/styles.css',
-  '/connectWallet.js',
   '/loginLogic.js',
   '/dashboardLogic.js',
   '/firebaseConfig.js',
   '/lvbtn-logo.png',
-  '/favicon.ico'
 ];
 
   event.waitUntil(
