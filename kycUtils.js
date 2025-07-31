@@ -8,7 +8,11 @@ const db = window.db;
 
 const serverTime = window.serverTime;
 
-
+// DOM update function for KYC status and tier info
+export function updateKycDom(status, tier) {
+  document.getElementById('kycStatus').textContent = `KYC: ${status}`;
+  document.getElementById('tierInfo').textContent = `Tier: ${tier}`;
+}
 
 // Globals
 
