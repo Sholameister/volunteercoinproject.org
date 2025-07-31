@@ -1,5 +1,5 @@
-const db = window.db;
-db.collection("volunteers").get().then(...)
+// Ensure Firestore is available from compat setup
+const db = firebase.firestore();
 
 // Globals
 let walletAddress = null;
@@ -21,10 +21,10 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
 async function checkKYC(wallet) {
   walletAddress = wallet;
   try {
-    const docRef = doc(db, "verifiedKYC", walletAddress);
-    const docSnap = await getDoc(docRef);
+    const docRef = db.collection("verifiedKYC").doc(walletAddress);
+    const docSnap = await docRef.get();
 
-    if (docSnap.exists()) {
+    if (docSnap.exists) {
       const data = docSnap.data();
       tierLevel = data.tier || "Tier 1";
 
@@ -32,8 +32,6 @@ async function checkKYC(wallet) {
       if (tierStatusEl) tierStatusEl.textContent = `Tier: ${tierLevel}`;
       if (badgeEl) badgeEl.textContent = tierLevel === "Tier 3" ? "Emergency Access" : "";
 
-      const sessionLogs = await logVolunteerSession(walletAddress, tierLevel);
-      if (sessionLogs) console.log("✅ Session logged successfully!");
       return tierLevel;
     } else {
       if (kycStatusEl) kycStatusEl.textContent = "Not Found";
@@ -58,24 +56,27 @@ function setKYCRejected(message) {
 }
 
 // ---- Volunteer Session Logging ----
-async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, location) {
+async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime, startPhotoUrl, endPhotoUrl, volunteerLocation) {
   try {
     const duration = (endTime - startTime) / (1000 * 60 * 60); // hours
-    const multiplier = tierLevel === 3 ? 1.5 : tierLevel === 2 ? 1.25 : 1;
+    const multiplier = tierLevel === "Tier 3" ? 1.5 : tierLevel === "Tier 2" ? 1.25 : 1;
     const tokensEarned = duration * multiplier;
 
-    await addDoc(collection(db, "volunteerSessions"), {
-      walletAddress,
-      tierLevel,
-      startTime: new Date(startTime),
-      endTime: new Date(endTime),
-      startPhotoUrl,
-      endPhotoUrl,
-      location,
-      tokensEarned,
-      usdValue: tokensEarned * 2.5,
-      timestamp: serverTimestamp()
-    });
+    await db.collection("volunteerSessions")
+      .doc(walletAddress)
+      .collection("sessionLogs")
+      .add({
+        walletAddress,
+        tierLevel,
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
+        startPhotoUrl,
+        endPhotoUrl,
+        location: volunteerLocation,
+        tokensEarned,
+        usdValue: tokensEarned * 2.5,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
     console.log("✅ Volunteer session logged.");
   } catch (err) {
@@ -86,8 +87,9 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
 // ---- Resume Volunteer Session ----
 async function resumeVolunteerSession(walletAddress) {
   try {
-    const q = db.(collection("volunteerSessions").where("wallet", "==", walletAddress);
-    const snapshot = await qget();
+    const q = db.collection("volunteerSessions").doc(walletAddress).collection("sessionLogs");
+    const snapshot = await q.get();
+
     if (snapshot.empty) return;
 
     snapshot.forEach((doc) => {
@@ -100,7 +102,7 @@ async function resumeVolunteerSession(walletAddress) {
   }
 }
 
-// Attach functions to window instead of exporting (since we're not using modules here)
+// Attach functions to window for global access (since we're not using modules)
 window.checkKYC = checkKYC;
 window.logVolunteerSession = logVolunteerSession;
 window.setKycDomElements = setKycDomElements;
