@@ -1,6 +1,5 @@
-import { connectWallet } from './connectWallet.js;
 
-async function connectWallet() {
+export function connectWallet() {
   if (window.solana && window.solana.isPhantom) {
     try {
       const resp = await window.solana.connect();
@@ -17,7 +16,7 @@ async function connectWallet() {
   }
 }
 
-async function getWalletAddress() {
+export async function getWalletAddress() {
   try {
     return window.solana?.publicKey?.toString() || null;
   } catch {
@@ -25,7 +24,7 @@ async function getWalletAddress() {
   }
 }
 
-async function fetchLiveLVBTNPrice() {
+export async function fetchLiveLVBTNPrice() {
   try {
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=lvbtn&vs_currencies=usd");
     const data = await res.json();
