@@ -56,9 +56,9 @@
   </p>
 
   <button id="connectWalletBtn">Connect Wallet</button>
-  <p id="walletAddress"></p>
-  <p id="kycStatus"></p>
-  <div id="tierInfo" class="tier-badge"></div>
+  <p id="walletAddress">Wallet: Not Connected</p>
+  <p id="kycStatus">KYC: Unknown</p>
+  <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
 
   <a href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank">
     <button>Start KYC</button>
@@ -75,27 +75,29 @@
   <button onclick="window.location.href='index.html'">Go to Home</button>
 
   <!-- Scripts -->
-  <script src="./connectWallet.js"></script>
-  <script src="./kycUtils.js"></script>
-  <script>
+  <script type="module" src="./connectWallet.js"></script>
+  <script type="module" src="./kycUtils.js"></script>
+  <script type="module">
+    import { connectWallet, checkKYC } from './kycUtils.js';
+
     const connectBtn = document.getElementById('connectWalletBtn');
     const walletDisplay = document.getElementById('walletAddress');
     const kycStatus = document.getElementById('kycStatus');
     const tierInfo = document.getElementById('tierInfo');
 
     connectBtn.addEventListener('click', async () => {
-      const wallet = await window.connectWallet();
+      const wallet = await connectWallet();
       if (wallet) {
         walletDisplay.textContent = `🔐 Wallet: ${wallet}`;
-        const tier = await window.checkKYC(wallet);
+        const tier = await checkKYC(wallet);
 
         kycStatus.textContent = `✅ KYC Status: ${tier}`;
-        tierInfo.textContent = tier;
+        tierInfo.textContent = `Tier: ${tier}`;
 
-        tierInfo.className = 'tier-badge'; // Reset class
-        if (tier === "Tier 3") tierInfo.classList.add("tier-3");
-        else if (tier === "Tier 2") tierInfo.classList.add("tier-2");
-        else tierInfo.classList.add("tier-1");
+        tierInfo.className = 'tier-badge'; // Reset all first
+        if (tier === 3) tierInfo.classList.add('tier-3');
+        else if (tier === 2) tierInfo.classList.add('tier-2');
+        else tierInfo.classList.add('tier-1');
       }
     });
   </script>
