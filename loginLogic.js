@@ -24,9 +24,9 @@ const tokensEarned = document.getElementById('tokensEarned');
 const totalLVBTN = document.getElementById('totalLVBTN');
 const usdValue = document.getElementById('usdValue');
 const walletSummary = document.getElementById('walletSummary');
-const usdTotalValue = document.getElementById('usdTotalValue');
 const afterPhotosBox = document.getElementById('afterPhotosBox');
 
+// ---- Fetch Tier Level ----
 async function fetchTierLevel(addr) {
   const doc = await db.collection('users').doc(addr).get();
   return doc.exists ? doc.data().tier || 1 : 1;
@@ -38,13 +38,12 @@ function getMultiplier(tier) {
   return 1;
 }
 
-function getgeolocation() {
+function getGeolocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const coords = pos.coords;
-        position.latitude = coords.latitude;
-        position.longitude = coords.longitude;
+        position.latitude = pos.coords.latitude;
+        position.longitude = pos.coords.longitude;
         resolve();
       },
       reject,
@@ -53,6 +52,7 @@ function getgeolocation() {
   });
 }
 
+// ---- Connect Wallet ----
 connectBtn.addEventListener('click', async () => {
   walletAddress = await connectWallet();
   if (!walletAddress) return;
@@ -69,12 +69,12 @@ connectBtn.addEventListener('click', async () => {
   priceDisplay.textContent = `LVBTN Price: $${price.toFixed(2)}`;
 });
 
-// Start Volunteering
+// ---- Start Volunteering ----
 startBtn.addEventListener('click', async () => {
   const file = beforeInput.files[0];
   if (!file || !walletAddress) return alert("Please upload your before photo and connect wallet.");
 
-  await getgeolocation();
+  await getGeolocation();
 
   const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
   const snapshot = await fileRef.put(file);
@@ -87,10 +87,10 @@ startBtn.addEventListener('click', async () => {
   startBtn.disabled = true;
   stopBtn.disabled = false;
 
-  alert(`✅ You have begun volunteering for Volunteer Coin Project Foundation!\n📍 Location: ${position.latitude}, ${position.longitude}\n🕒 Time: ${sessionStart.toLocaleString()}`);
+  alert(`✅ You have begun volunteering!\n📍 Location: ${position.latitude}, ${position.longitude}\n🕒 Time: ${sessionStart.toLocaleString()}`);
 });
 
-// Stop Volunteering
+// ---- Stop Volunteering ----
 stopBtn.addEventListener('click', async () => {
   const end = new Date();
   const file = afterInput.files[0];
@@ -108,16 +108,16 @@ stopBtn.addEventListener('click', async () => {
   const usd = +(tokens * price).toFixed(2);
 
   await db.collection('volunteerSessions').add({
-    wallet: walletAddress,
-    tier: tierLevel,
+    walletAddress,
+    tierLevel,
     startTime: sessionStart.toISOString(),
     endTime: end.toISOString(),
     tokensEarned: tokens,
     usdValue: usd,
-    startPhoto: startPhotoUrl,
-    afterPhoto: afterPhotoUrl,
+    startPhotoUrl,
+    endPhotoUrl: afterPhotoUrl,
     geolocation: position,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    timestamp: window.serverTime
   });
 
   summaryBox.style.display = 'block';
@@ -126,7 +126,6 @@ stopBtn.addEventListener('click', async () => {
   totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
   usdValue.textContent = `💰 USD Value: $${usd}`;
   walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
-  usdTotalValue.textContent = `Total USD Value: $${usd}`;
 
   const img = document.createElement('img');
   img.src = afterPhotoUrl;
