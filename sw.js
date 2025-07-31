@@ -9,14 +9,53 @@ const urlsToCache = [
   '/styles.css',
   '/connectWallet.js',
   '/loginLogic.js',
+  '/dashboardLogic.js',
+  '/firebaseConfig.js',
   '/lvbtn-logo.png',
   '/favicon.ico'
 ];
 
-self.addEventListener("install", e => {
-  console.log("Service Worker Installed");
+// Install: Pre-cache assets
+self.addEventListener("install", event => {
+  console.log("[SW] Installing Service Worker and caching static assets...");
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
+  );
 });
 
-self.addEventListener("fetch", function (event) {
-  event.respondWith(fetch(event.request).catch(() => new Response("Offline fallback")));
+// Activate: Cleanup old caches
+self.addEventListener("activate", event => {
+  console.log("[SW] Activating and cleaning old caches...");
+  event.waitUntil(
+    caches.keys().then(cacheNames =>
+      Promise.all(
+        cacheNames.map(name => {
+          if (name !== CACHE_NAME) {
+            console.log(`[SW] Deleting old cache: ${name}`);
+            return caches.delete(name);
+          }
+        })
+      )
+    )
+  );
+  return self.clients.claim();
+});
+
+// Fetch: Serve cached or fetch from network
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      if (response) {
+        return response;
+      }
+      return fetch(event.request).catch(() => {
+        if (event.request.destination === 'document') {
+          return caches.match('/index.html');
+        }
+        return new Response("⚠️ Offline – resource not cached.");
+      });
+    })
+  );
 });
