@@ -54,7 +54,6 @@ function getGeolocation() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectWalletBtn');
   if (!connectBtn) {
     console.error('❌ connectWalletBtn not found!');
     return;
