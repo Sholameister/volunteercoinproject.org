@@ -53,22 +53,30 @@ function getGeolocation() {
   });
 }
 
-// ---- Connect Wallet ----
-connectBtn.addEventListener('click', async () => {
-  walletAddress = await connectWallet();
-  if (!walletAddress) return;
+document.addEventListener('DOMContentLoaded', () => {
+  const connectBtn = document.getElementById('connectWalletBtn');
+  if (!connectBtn) {
+    console.error('❌ connectWalletBtn not found!');
+    return;
+  }
 
-  walletDisplay.textContent = `Wallet: ${walletAddress}`;
-  tierLevel = await fetchTierLevel(walletAddress);
-  tierDisplay.textContent = `Tier: ${tierLevel}`;
-  kycStatus.textContent = 'KYC: ✅ Approved';
+  connectBtn.addEventListener('click', async () => {
+    walletAddress = await connectWallet();
+    if (!walletAddress) return;
 
-  beforeInput.disabled = false;
-  walletStatus.textContent = `✅ Wallet Connected`;
+    walletDisplay.textContent = `Wallet: ${walletAddress}`;
+    tierLevel = await fetchTierLevel(walletAddress);
+    tierDisplay.textContent = `Tier: ${tierLevel}`;
+    kycStatus.textContent = 'KYC: ✅ Approved';
 
-  const price = await fetchLiveLVBTNPrice();
-  priceDisplay.textContent = `LVBTN Price: $${price.toFixed(2)}`;
+    beforeInput.disabled = false;
+    walletStatus.textContent = `✅ Wallet Connected`;
+
+    const price = await fetchLiveLVBTNPrice();
+    priceDisplay.textContent = `LVBTN Price: $${price.toFixed(2)}`;
+  });
 });
+
 
 // ---- Start Volunteering ----
 startBtn.addEventListener('click', async () => {
