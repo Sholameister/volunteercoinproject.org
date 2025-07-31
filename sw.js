@@ -1,3 +1,4 @@
+const CACHE_NAME = 'lvbtn-cache-v1';
 // Install: Pre-cache assets
 self.addEventListener("install", event => {
   console.log("[SW] Installing Service Worker and caching static assets...");
