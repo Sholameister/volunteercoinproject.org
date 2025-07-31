@@ -229,3 +229,5 @@ window.logVolunteerSession = logVolunteerSession;
 window.setKycDomElements = setKycDomElements;
 
 window.resumeVolunteerSession = resumeVolunteerSession;
+
+window.updateKycDom = updateKycDom;
