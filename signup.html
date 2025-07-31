@@ -74,27 +74,26 @@
   <button onclick="window.location.href='login.html'">Go to Login</button>
   <button onclick="window.location.href='index.html'">Go to Home</button>
 
-  <!-- Scripts -->
-  <script type="module" src="./connectWallet.js"></script>
-  <script type="module" src="./kycUtils.js"></script>
-  <script type="module">
-    import { connectWallet, checkKYC } from './kycUtils.js';
+  <!-- Load core logic -->
+  <script src="./connectWallet.js"></script>
+  <script src="./kycUtils.js"></script>
 
+  <script>
     const connectBtn = document.getElementById('connectWalletBtn');
     const walletDisplay = document.getElementById('walletAddress');
     const kycStatus = document.getElementById('kycStatus');
     const tierInfo = document.getElementById('tierInfo');
 
     connectBtn.addEventListener('click', async () => {
-      const wallet = await connectWallet();
+      const wallet = await window.connectWallet(); // From connectWallet.js
       if (wallet) {
         walletDisplay.textContent = `🔐 Wallet: ${wallet}`;
-        const tier = await checkKYC(wallet);
+        const tier = await window.checkKYC(wallet); // From kycUtils.js
 
         kycStatus.textContent = `✅ KYC Status: ${tier}`;
         tierInfo.textContent = `Tier: ${tier}`;
 
-        tierInfo.className = 'tier-badge'; // Reset all first
+        tierInfo.className = 'tier-badge'; // Reset classes
         if (tier === 3) tierInfo.classList.add('tier-3');
         else if (tier === 2) tierInfo.classList.add('tier-2');
         else tierInfo.classList.add('tier-1');
