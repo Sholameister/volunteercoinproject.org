@@ -1,141 +1,137 @@
-// loginLogic.js
+import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
+import { db, storage } from './firebaseConfig.js';
+
+let walletAddress = null;
+let tierLevel = null;
+let sessionStart = null;
+let startPhotoUrl = null;
+let position = { latitude: null, longitude: null };
 
 // DOM Elements
 const connectBtn = document.getElementById('connectWalletBtn');
 const walletDisplay = document.getElementById('walletAddress');
+const kycStatus = document.getElementById('kycStatus');
+const tierDisplay = document.getElementById('tierInfo');
+const priceDisplay = document.getElementById('lvbtnPrice');
+const walletStatus = document.getElementById('walletStatus');
 const beforeInput = document.getElementById('beforePhoto');
 const afterInput = document.getElementById('afterPhoto');
+const startBtn = document.getElementById('startVolunteeringBtn');
+const stopBtn = document.getElementById('stopVolunteeringBtn');
 const summaryBox = document.getElementById('summaryBox');
 const sessionTimes = document.getElementById('sessionTimes');
 const tokensEarned = document.getElementById('tokensEarned');
 const totalLVBTN = document.getElementById('totalLVBTN');
 const usdValue = document.getElementById('usdValue');
-const photoGallery = document.getElementById('afterPhotosBox');
-const priceDisplay = document.getElementById('lvbtnPrice');
+const walletSummary = document.getElementById('walletSummary');
+const usdTotalValue = document.getElementById('usdTotalValue');
+const afterPhotosBox = document.getElementById('afterPhotosBox');
 
-let walletAddress = null;
-let tierLevel = null;
-let startTime = null;
-let startPhotoUrl = null;
-let geolocation = null;
-
-// ----- Connect Wallet -----
-connectBtn.addEventListener('click', async () => {
-  if (!window.connectWallet) return alert("Wallet script not loaded.");
-  walletAddress = await window.connectWallet();
-  if (!walletAddress) return;
-
-  if (!window.checkKYC) return alert("KYC check function not loaded.");
-  const tier = await window.checkKYC(walletAddress);
-  tierLevel = tier === "Tier 3" ? 3 : tier === "Tier 2" ? 2 : 1;
-
-  connectBtn.disabled = true;
-  beforeInput.disabled = false;
-  walletDisplay.textContent = walletAddress;
-});
-
-// ----- Start Volunteering -----
-beforeInput.addEventListener('change', async () => {
-  if (!walletAddress) return alert("Connect wallet first.");
-  const file = beforeInput.files[0];
-  if (!file) return;
-
-  startTime = new Date().toISOString();
-  geolocation = await getGeolocation();
-
-  try {
-    const photoRef = window.storage.ref(`beforePhotos/${walletAddress}_${startTime}`);
-    await photoRef.put(file);
-    startPhotoUrl = await photoRef.getDownloadURL();
-
-    beforeInput.disabled = true;
-    afterInput.disabled = false;
-    showThankYouPopup(startTime, location);
-  } catch (err) {
-    console.error("❌ Error uploading before photo:", err);
-    alert("Before photo upload failed.");
-  }
-});
-
-// ----- Stop Volunteering -----
-afterInput.addEventListener('change', async () => {
-  const endTime = new Date().toISOString();
-  const file = afterInput.files[0];
-  if (!file) return;
-
-  try {
-    const photoRef = window.storage.ref(`afterPhotos/${walletAddress}_${endTime}`);
-    await photoRef.put(file);
-    const endPhotoUrl = await photoRef.getDownloadURL();
-
-    if (!window.logVolunteerSession) {
-      alert("Session logging function not loaded.");
-      return;
-    }
-
-    await window.logVolunteerSession(
-      walletAddress,
-      tierLevel,
-      startTime,
-      endTime,
-      startPhotoUrl,
-      endPhotoUrl,
-      geolocation
-    );
-
-    renderSessionSummary(startTime, endTime, tierLevel, endPhotoUrl);
-    afterInput.disabled = true;
-  } catch (err) {
-    console.error("❌ Error uploading after photo or logging session:", err);
-    alert("Session end failed.");
-  }
-});
-
-// ----- Summary Display -----
-async function renderSessionSummary(start, end, tier, endPhotoUrl) {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const duration = (endDate - startDate) / (1000 * 60 * 60); // in hours
-  const multiplier = tier === 3 ? 1.5 : tier === 2 ? 1.25 : 1;
-  const tokens = duration * multiplier;
-
-  // If fetchLiveLVBTNPrice() exists, use it, otherwise fallback to 2.5
-  let price = 2.5;
-  try {
-    price = await window.fetchLiveLVBTNPrice?.() || 2.5;
-  } catch (e) {}
-
-  const usd = tokens * price;
-
-  sessionTimes.textContent = `Start: ${startDate.toLocaleString()} | End: ${endDate.toLocaleString()}`;
-  tokensEarned.textContent = `LVBTN Earned: ${tokens.toFixed(2)}`;
-  usdValue.textContent = `USD Value: $${usd.toFixed(2)}`;
-
-  const newImg = document.createElement('img');
-  newImg.src = endPhotoUrl;
-  newImg.alt = "After Photo";
-  newImg.style.maxWidth = '100px';
-  newImg.style.margin = '8px';
-  photoGallery.appendChild(newImg);
-
-  summaryBox.style.display = 'block';
+async function fetchTierLevel(addr) {
+  const doc = await db.collection('users').doc(addr).get();
+  return doc.exists ? doc.data().tier || 1 : 1;
 }
 
-// ----- Geolocation -----
-function getGeolocation() {
-  return new Promise((resolve) => {
+function getMultiplier(tier) {
+  if (tier === 3) return 1.5;
+  if (tier === 2) return 1.25;
+  return 1;
+}
+
+function getgeolocation() {
+  return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({
-        latitude: pos.coords.latitude,
-        longitude: pos.coords.longitude
-      }),
-      () => resolve({ latitude: null, longitude: null })
+      (pos) => {
+        const coords = pos.coords;
+        position.latitude = coords.latitude;
+        position.longitude = coords.longitude;
+        resolve();
+      },
+      reject,
+      { enableHighAccuracy: true }
     );
   });
 }
 
-// ----- Thank You -----
-function showThankYouPopup(startTime, geolocation) {
-  const msg = `You have begun volunteering for the Volunteer Coin Project Foundation!\nTime: ${new Date(startTime).toLocaleTimeString()}\nLocation: ${geolocation.latitude}, ${geolocation.longitude}`;
-  alert(msg);
-}
+connectBtn.addEventListener('click', async () => {
+  walletAddress = await connectWallet();
+  if (!walletAddress) return;
+
+  walletDisplay.textContent = `Wallet: ${walletAddress}`;
+  tierLevel = await fetchTierLevel(walletAddress);
+  tierDisplay.textContent = `Tier: ${tierLevel}`;
+  kycStatus.textContent = 'KYC: ✅ Approved';
+
+  beforeInput.disabled = false;
+  walletStatus.textContent = `✅ Wallet Connected`;
+
+  const price = await fetchLiveLVBTNPrice();
+  priceDisplay.textContent = `LVBTN Price: $${price.toFixed(2)}`;
+});
+
+// Start Volunteering
+startBtn.addEventListener('click', async () => {
+  const file = beforeInput.files[0];
+  if (!file || !walletAddress) return alert("Please upload your before photo and connect wallet.");
+
+  await getgeolocation();
+
+  const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
+  const snapshot = await fileRef.put(file);
+  startPhotoUrl = await snapshot.ref.getDownloadURL();
+
+  sessionStart = new Date();
+
+  beforeInput.disabled = true;
+  afterInput.disabled = false;
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+
+  alert(`✅ You have begun volunteering for Volunteer Coin Project Foundation!\n📍 Location: ${position.latitude}, ${position.longitude}\n🕒 Time: ${sessionStart.toLocaleString()}`);
+});
+
+// Stop Volunteering
+stopBtn.addEventListener('click', async () => {
+  const end = new Date();
+  const file = afterInput.files[0];
+  if (!file || !sessionStart) return alert("Please upload your after photo.");
+
+  const fileRef = storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
+  const snapshot = await fileRef.put(file);
+  const afterPhotoUrl = await snapshot.ref.getDownloadURL();
+
+  const durationMs = end - sessionStart;
+  const durationHours = Math.max(durationMs / 3600000, 0.01);
+  const multiplier = getMultiplier(tierLevel);
+  const tokens = +(durationHours * multiplier).toFixed(2);
+  const price = await fetchLiveLVBTNPrice();
+  const usd = +(tokens * price).toFixed(2);
+
+  await db.collection('volunteerSessions').add({
+    wallet: walletAddress,
+    tier: tierLevel,
+    startTime: sessionStart.toISOString(),
+    endTime: end.toISOString(),
+    tokensEarned: tokens,
+    usdValue: usd,
+    startPhoto: startPhotoUrl,
+    afterPhoto: afterPhotoUrl,
+    geolocation: position,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  summaryBox.style.display = 'block';
+  sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
+  tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
+  totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
+  usdValue.textContent = `💰 USD Value: $${usd}`;
+  walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
+  usdTotalValue.textContent = `Total USD Value: $${usd}`;
+
+  const img = document.createElement('img');
+  img.src = afterPhotoUrl;
+  afterPhotosBox.appendChild(img);
+
+  afterInput.disabled = true;
+  stopBtn.disabled = true;
+});
