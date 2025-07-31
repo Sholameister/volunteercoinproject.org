@@ -1,7 +1,10 @@
-// firebaseConfig.js (browser-compatible, no imports)
+// firebaseConfig.js (modular, browser-compatible)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getFirestore, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+  apiKey: "AIzaSyCLLrOx4JwJ1PN8xFFxNhIryx3NShADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
   storageBucket: "lvbtn-bucket.appspot.com",
@@ -10,14 +13,12 @@ const firebaseConfig = {
   measurementId: "G-0261HYV08P"
 };
 
-const app = firebase.apps.length === 0
-  ? firebase.initializeApp(firebaseConfig)
-  : firebase.app();
+const app = initializeApp(firebaseConfig);
 
-// Export Firestore and Storage
-const db = firebase.firestore();
-const storage = firebase.storage();
-const serverTime = firebase.firestore.FieldValue.serverTimestamp();
+// Modular-compatible exports
+const db = getFirestore(app);
+const storage = getStorage(app);
+const serverTime = serverTimestamp();
 
 window.db = db;
 window.storage = storage;
