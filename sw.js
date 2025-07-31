@@ -1,5 +1,5 @@
 const CACHE_NAME = 'lvbtn-cache-v1';
-const cache.addAll([
+const urlsToCache = [
   '/',
   '/index.html',
   '/styles.css',
@@ -16,6 +16,12 @@ const cache.addAll([
   '/lvbtn-logo.png',
   '/favicon.ico'
 ];
+
+event.waitUntil(
+  caches.open(CACHE_NAME).then(cache => {
+    return cache.addAll(urlsToCache);
+  })
+);
 
 // Install: Pre-cache assets
 self.addEventListener("install", event => {
