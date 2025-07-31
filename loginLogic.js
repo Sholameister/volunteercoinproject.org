@@ -2,7 +2,7 @@ import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectW
 import { db, storage } from './firebaseConfig.js';
 import { updateKycDom } from './kycUtils.js';
 
-let walletAddress = null;
+let dashboardWallet = null;
 let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
