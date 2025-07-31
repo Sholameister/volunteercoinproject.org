@@ -1,7 +1,9 @@
 const CACHE_NAME = 'lvbtn-cache-v1';
-const urlsToCache = [
+const cache.addAll([
   '/',
   '/index.html',
+  '/styles.css',
+  '/connectWallet.js',
   '/login.html',
   '/signup.html',
   '/volunteer-hours.html',
