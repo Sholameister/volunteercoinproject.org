@@ -1,19 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-// Firebase setup
-const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
-  authDomain: "lovebutton-heaven.firebaseapp.com",
-  projectId: "lovebutton-heaven",
-  storageBucket: "lvbtn-bucket.appspot.com",
-  messagingSenderId: "1079456151721",
-  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
-  measurementId: "G-0261HYV08P"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// DashboardLogic.js — no import statements, use window.db
 
 let walletAddress = null;
 
@@ -34,7 +19,12 @@ async function loadSessionHistory(wallet) {
   sessionList.innerHTML = "";
 
   try {
-    const snapshot = await getDocs(collection(db, "volunteerSessions", wallet, "sessionLogs"));
+    const db = window.db;
+    const snapshot = await db
+      .collection("volunteerSessions")
+      .where("walletAddress", "==", wallet)
+      .orderBy("timestamp", "desc")
+      .get();
 
     let totalTokens = 0;
     let totalUSD = 0;
@@ -42,8 +32,8 @@ async function loadSessionHistory(wallet) {
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const start = data.startTime?.toDate?.() || new Date(data.startTime);
-      const end = data.endTime?.toDate?.() || new Date(data.endTime);
+      const start = new Date(data.startTime?.seconds * 1000 || data.startTime);
+      const end = new Date(data.endTime?.seconds * 1000 || data.endTime);
       const durationHours = (end - start) / (1000 * 60 * 60);
 
       const tokens = parseFloat(data.tokensEarned || 0);
@@ -72,7 +62,6 @@ async function loadSessionHistory(wallet) {
 
     document.getElementById("totalTokens").innerText = `Total LVBTN Earned: ${totalTokens.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     document.getElementById("usdTotalValue").innerText = `Total USD Value: $${totalUSD.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-    // Add missing element for total hours
     const totalHoursDiv = document.createElement("div");
     totalHoursDiv.innerText = `Total Hours Volunteered: ${totalHours.toFixed(2)}`;
     totalHoursDiv.style.fontWeight = "bold";
