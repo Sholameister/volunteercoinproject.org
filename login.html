@@ -37,7 +37,7 @@
       background-color: #fafafa;
       display: none;
     }
-    #photoGallery img {
+    #afterPhotosBox img {
       max-width: 100px;
       margin: 5px;
       border-radius: 6px;
@@ -46,18 +46,20 @@
 </head>
 <body>
   <h1>Volunteer Session Logger</h1>
+
   <button id="connectWalletBtn">Connect Phantom Wallet to Proceed</button>
   <p id="walletAddress">Wallet: Not Connected</p>
   <p id="kycStatus">KYC: Check After Connecting Wallet</p>
-  <p id="tierInfo">Tier:  </p>
+  <p id="tierInfo">Tier: </p>
   <p id="lvbtnPrice">LVBTN Price: Fixed $2.50</p>
   <p id="walletStatus"></p>
-<div id="usdTotalValue">Total USD Value: </div>
-  <h3>Please Take Before Photo, Choose File & Upload.  Then Click Start Volunteering Button</h3>
+  <div id="usdTotalValue">Total USD Value: </div>
+
+  <h3>Please Take Before Photo, Choose File & Upload. Then Click Start Volunteering</h3>
   <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
   <button id="startVolunteeringBtn" disabled>Start Volunteering</button>
 
-  <h3>Please Take After Photo, Choose File & Upload.  Then Click Stop Volunteering Button</h3>
+  <h3>Please Take After Photo, Choose File & Upload. Then Click Stop Volunteering</h3>
   <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
   <button id="stopVolunteeringBtn" disabled>Stop Volunteering</button>
 
@@ -70,15 +72,15 @@
     <p id="walletSummary"></p>
   </div>
 
-    <h4>Past Volunteering Experiences!</h4>
-    <div id="afterPhotosBox" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-  </div>
-</div>
+  <h4>Past Volunteering Experiences!</h4>
+  <div id="afterPhotosBox" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+
   <button onclick="window.location.href='signup.html'">Go to Signup</button>
   <button onclick="window.location.href='index.html'">Go to Home</button>
-  
-  <script type="module" src="./connectWallet.js"></script>
-  <script type="module" src="./loginLogic.js"></script>
-  <script type="module" src="./setupKycDom.js"></script>
+
+  <!-- Scripts (use non-module for Firebase compat) -->
+  <script src="./connectWallet.js"></script>
+  <script src="./loginLogic.js"></script>
 </body>
 </html>
+
