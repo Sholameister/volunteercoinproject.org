@@ -17,7 +17,7 @@ let walletAddress = null;
 let tierLevel = null;
 let startTime = null;
 let startPhotoUrl = null;
-let location = null;
+let geolocation = null;
 
 // ----- Connect Wallet -----
 connectBtn.addEventListener('click', async () => {
@@ -41,7 +41,7 @@ beforeInput.addEventListener('change', async () => {
   if (!file) return;
 
   startTime = new Date().toISOString();
-  location = await getGeolocation();
+  geolocation = await getGeolocation();
 
   try {
     const photoRef = window.storage.ref(`beforePhotos/${walletAddress}_${startTime}`);
@@ -80,7 +80,7 @@ afterInput.addEventListener('change', async () => {
       endTime,
       startPhotoUrl,
       endPhotoUrl,
-      location
+      geolocation
     );
 
     renderSessionSummary(startTime, endTime, tierLevel, endPhotoUrl);
@@ -135,7 +135,7 @@ function getGeolocation() {
 }
 
 // ----- Thank You -----
-function showThankYouPopup(startTime, location) {
-  const msg = `You have begun volunteering for the Volunteer Coin Project Foundation!\nTime: ${new Date(startTime).toLocaleTimeString()}\nLocation: ${location.latitude}, ${location.longitude}`;
+function showThankYouPopup(startTime, geolocation) {
+  const msg = `You have begun volunteering for the Volunteer Coin Project Foundation!\nTime: ${new Date(startTime).toLocaleTimeString()}\nLocation: ${geolocation.latitude}, ${geolocation.longitude}`;
   alert(msg);
 }
