@@ -1,9 +1,9 @@
-
-export function connectWallet() {
+// connectWallet.js
+export async function connectWallet() {
   if (window.solana && window.solana.isPhantom) {
     try {
       const resp = await window.solana.connect();
-      console.log("✅ Wallet connected:", resp.publicKey.toString());
+      console.log("🟢 Wallet connected:", resp.publicKey.toString());
       return resp.publicKey.toString();
     } catch (err) {
       console.error("❌ Wallet connection failed:", err);
@@ -32,12 +32,7 @@ export async function fetchLiveLVBTNPrice() {
     if (!price) throw new Error("Price not found");
     return price;
   } catch (err) {
-    console.warn("⚠️ Falling back to $2.50 LVBTN fixed price.");
-    return 2.5;
+    console.error("Failed to fetch LVBTN price:", err);
+    return null;
   }
 }
-
-// Bind to global scope for compatibility with inline <script> tags
-window.connectWallet = connectWallet;
-window.getWalletAddress = getWalletAddress;
-window.fetchLiveLVBTNPrice = fetchLiveLVBTNPrice;
