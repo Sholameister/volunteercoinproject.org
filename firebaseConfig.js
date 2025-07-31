@@ -23,3 +23,5 @@ const serverTime = serverTimestamp();
 window.db = db;
 window.storage = storage;
 window.serverTime = serverTime;
+
+export { db, storage, serverTime };
