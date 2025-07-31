@@ -100,6 +100,8 @@ if (startBtn) {
 
     alert(`✅ You have begun volunteering!\n📍 Location: ${position.latitude}, ${position.longitude}`);
   });
+} else {
+  console.warn('startVolunteeringBtn not found in Dom');
 }
 
 
