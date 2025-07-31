@@ -88,7 +88,10 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
 async function resumeVolunteerSession(walletAddress) {
   try {
     const q = db.collection("volunteerSessions").doc(walletAddress).collection("sessionLogs");
-    const snapshot = await q.get();
+    const snapshot = await db
+    .collection("volunteerSessions")
+    .where("walletAddress", "==", walletAddress)
+    .get();
 
     if (snapshot.empty) return;
 
