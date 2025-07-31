@@ -1,5 +1,5 @@
 // Ensure Firestore is available from compat setup
-const db = firebase.firestore();
+const db = window.db;
 
 // Globals
 let walletAddress = null;
@@ -72,7 +72,7 @@ async function logVolunteerSession(walletAddress, tierLevel, startTime, endTime,
         endTime: new Date(endTime),
         startPhotoUrl,
         endPhotoUrl,
-        location: volunteerLocation,
+        geolocation: volunteerLocation,
         tokensEarned,
         usdValue: tokensEarned * 2.5,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
