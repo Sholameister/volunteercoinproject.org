@@ -1,4 +1,7 @@
-const CACHE_NAME = 'lvbtn-cache-v1';
+// Install: Pre-cache assets
+self.addEventListener("install", event => {
+  console.log("[SW] Installing Service Worker and caching static assets...");
+  
 const urlsToCache = [
   '/',
   '/index.html',
@@ -17,15 +20,6 @@ const urlsToCache = [
   '/favicon.ico'
 ];
 
-event.waitUntil(
-  caches.open(CACHE_NAME).then(cache => {
-    return cache.addAll(urlsToCache);
-  })
-);
-
-// Install: Pre-cache assets
-self.addEventListener("install", event => {
-  console.log("[SW] Installing Service Worker and caching static assets...");
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(urlsToCache);
