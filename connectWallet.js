@@ -15,7 +15,11 @@ export async function connectWallet() {
     return null;
   }
 }
-
+async function fetchBlockedWallets() {
+  const response = await fetch('./legacy_wallets.json');
+  if (!response.ok) throw new Error("Failed to fetch blocklist.");
+  return await response.json();
+}
 export async function getWalletAddress() {
   try {
     return window.solana?.publicKey?.toString() || null;
