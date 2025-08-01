@@ -62,33 +62,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const afterPhotosBox = document.getElementById('afterPhotosBox');
 
   // ---- Wallet Connect ----
-  if (connectBtn) {
-    connectBtn.addEventListener('click', async () => {
-      try {
+if (connectBtn) {
+  connectBtn.addEventListener('click', async () => {
+    try {
       walletAddress = await connectWallet();
       if (!walletAddress) return;
 
       const blockedWallets = await fetchBlockedWallets();
-if (blockedWallets.includes(walletAddress)) {
-  alert("🚫 This wallet is blocked.");
-  document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-  throw new Error("Blocked wallet attempted access.");
+      if (blockedWallets.includes(walletAddress)) {
+        alert("🚫 This wallet is blocked.");
+        document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+        throw new Error("Blocked wallet attempted access.");
+      }
 
-    }
       walletDisplay.textContent = `Wallet: ${walletAddress}`;
       tierLevel = await fetchTierLevel(walletAddress);
       tierDisplay.textContent = `Tier: ${tierLevel}`;
-      kycStatus.textContent = `KYC: ✅ Approved`;
+      kycStatus.textContent = 'KYC: ✅ Approved';
       beforeInput.disabled = false;
       walletStatus.textContent = `✅ Wallet Connected`;
-  } catch (err) {
-    console.error("Wallet connection or KYC failed", err);
-    alert("Something went wrong while connecting your wallet.");
-  }
-});
+    } catch (err) {
+      console.error("❌ Wallet connection or KYC failed", err);
+      alert("Something went wrong while connecting your wallet.");
+    }
+  });
 } else {
   console.warn('❌ connectWalletBtn not found in DOM');
 }
+
   // ---- Start Volunteering ----
   if (startBtn) {
     startBtn.addEventListener('click', async () => {
