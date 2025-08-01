@@ -64,11 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
       walletAddress = await connectWallet();
       if (!walletAddress) return;
 
+      const blockedWallets = await fetchBlockedWallets();
+if (blockedWallets.includes(walletAddress)) {
+  alert("🚫 This wallet is blocked.");
+  document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+  throw new Error("Blocked wallet attempted access.");
+}
+
       walletDisplay.textContent = `Wallet: ${walletAddress}`;
       tierLevel = await fetchTierLevel(walletAddress);
       tierDisplay.textContent = `Tier: ${tierLevel}`;
       kycStatus.textContent = 'KYC: ✅ Approved';
-
       beforeInput.disabled = false;
       walletStatus.textContent = `✅ Wallet Connected`;
 
@@ -78,13 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.warn('❌ connectWalletBtn not found in DOM');
   }
-
-const blockedWallets = await fetchBlockedWallets();
-if (blockedWallets.includes(walletAddress)) {
-  alert("🚫 This wallet is blocked.");
-  document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-  throw new Error("Blocked wallet attempted access.");
-}
+});
   // ---- Start Volunteering ----
   if (startBtn) {
     startBtn.addEventListener('click', async () => {
