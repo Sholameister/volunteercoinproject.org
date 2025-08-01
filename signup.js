@@ -28,3 +28,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 <button id="connectSignupWalletBtn">Connect Wallet</button>
 <p id="signupWalletDisplay">Wallet: Not Connected</p>
+<script type="module" src="./signup.js></script>
