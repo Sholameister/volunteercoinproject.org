@@ -1,4 +1,35 @@
 // kycUtils.js — COMPAT STYLE
+// kycUtils.js
+
+import { db } from './firebaseConfig.js';
+
+// Fetch the tier level for a given wallet address
+export async function fetchTierLevel(walletAddress) {
+  const docRef = db.collection('users').doc(walletAddress);
+  const doc = await docRef.get();
+  return doc.exists ? doc.data().tier || 1 : 1;
+}
+
+// Fetch the legacy blacklist (wallets not allowed)
+export async function fetchBlockedWallets() {
+  const response = await fetch('https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/legacy-unrecognized-wallets.json');
+  const data = await response.json();
+  return data.wallets || [];
+}
+
+// Optional DOM update helper
+export function updateKycDom(tier) {
+  const tierDisplay = document.getElementById('tierInfo');
+  const kycStatus = document.getElementById('kycStatus');
+
+  kycStatus.textContent = `KYC: ✅ Approved`;
+  tierDisplay.textContent = `Tier: ${tier}`;
+
+  tierDisplay.className = 'tier-badge';
+  if (tier === 3) tierDisplay.classList.add('tier-3');
+  else if (tier === 2) tierDisplay.classList.add('tier-2');
+  else tierDisplay.classList.add('tier-1');
+}
 
 
 
