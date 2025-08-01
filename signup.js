@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
         throe new Error("Blockedwallet attempted access.");
       }
-
-     document.getElementById('walletDisplay').textContent = `Wallet: ${walletAddress}`;
+      walletDisplay.textContent = `Wallet: ${wallet}`;
     });
   } else {
     console.warn("connectWalletBtn  not found in DOM.");
