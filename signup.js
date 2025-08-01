@@ -1,8 +1,6 @@
 import { connectWallet } from './connectWallet.js';
 import { fetchBlockedWallets } from './kycUtils.js'; // If you're blocking wallets
 
-let walletAddress = null;
-
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connectSignupWalletBtn');
   const walletDisplay = document.getElementById('signupWalletDisplay');
@@ -17,15 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (blockedWallets.includes(walletAddress)) {
         alert("🚫 This wallet is blocked.");
         document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-        return;
+        throe new Error("Blockedwallet attempted access.");
       }
 
-      walletDisplay.textContent = `Wallet: ${walletAddress}`;
+     document.getElementById('walletDisplay').textContent = `Wallet: ${walletAddress}`;
     });
   } else {
-    console.warn("Connect button not found in DOM.");
+    console.warn("connectWalletBtn  not found in DOM.");
   }
 });
+
 <button id="connectSignupWalletBtn">Connect Wallet</button>
 <p id="signupWalletDisplay">Wallet: Not Connected</p>
 <script type="module" src="./signup.js></script>
