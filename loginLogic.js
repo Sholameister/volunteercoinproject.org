@@ -1,11 +1,10 @@
-import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
+import { connectWallet, fetchBlockedWallets, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
 import { db, storage } from './firebaseConfig.js';
 import { updateKycDom } from './kycUtils.js';
 
 // Only run this logic on login.html
 if (!window.location.pathname.includes('login.html')) {
   console.log('ℹ️ loginLogic.js loaded but skipped — not on login.html');
-  return;
 }
 
 let walletAddress = null;
