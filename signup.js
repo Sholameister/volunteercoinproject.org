@@ -1,28 +1,29 @@
-import { connectWallet } from './connectWallet.js';
-import { fetchBlockedWallets } from './kycUtils.js'; // If you're blocking wallets
+import { connectWallet, fetchBlockedWallets } from './connectWallet.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectWalletBtn');
+  const connectBtn = document.getElementById('connectSignupWalletBtn');
   const walletDisplay = document.getElementById('signupWalletDisplay');
 
+  if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
-      const wallet = await connectWallet();
-      if (!wallet) return;
+      try {
+        const walletAddress = await connectWallet();
+        if (!walletAddress) return;
 
-      // Check against blocklist (if you're doing this)
-      const blockedWallets = await fetchBlockedWallets();
-      if (blockedWallets.includes(walletAddress)) {
-        alert("🚫 This wallet is blocked.");
-        document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-        throw new Error("Blockedwallet attempted access.");
+        const blockedWallets = await fetchBlockedWallets();
+        if (blockedWallets.includes(walletAddress)) {
+          alert("🚫 This wallet is blocked.");
+          document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+          throw new Error("Blocked wallet attempted access.");
+        }
+
+        walletDisplay.textContent = `Wallet: ${walletAddress}`;
+      } catch (err) {
+        console.error("⚠️ Wallet connection or blocklist check failed:", err);
+        alert("Something went wrong while connecting your wallet.");
       }
-      walletDisplay.textContent = `Wallet: ${wallet}`;
-       } else {
-    console.warn("connectWalletBtn  not found in DOM.");
     });
+  } else {
+    console.warn("connectSignupWalletBtn not found in DOM.");
   }
 });
-
-<button id="connectSignupWalletBtn">Connect Wallet</button>
-<p id="signupWalletDisplay">Wallet: Not Connected</p>
-<script type="module" src="./signup.js></script>
