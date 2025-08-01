@@ -78,8 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.warn('❌ connectWalletBtn not found in DOM');
   }
-walletAddress = await connectWallet();
-if (!walletAddress) return;
 
 const blockedWallets = await fetchBlockedWallets();
 if (blockedWallets.includes(walletAddress)) {
