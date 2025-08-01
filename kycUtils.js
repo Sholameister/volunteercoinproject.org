@@ -18,10 +18,10 @@ export async function fetchBlockedWallets() {
 }
 
 // Optional DOM update helper
-export function updateKycDom(tier) {
-  const tierDisplay = document.getElementById('tierInfo');
-  const kycStatus = document.getElementById('kycStatus');
-
+export function updateKycDom(tier, status = 'Approved') {
+  document.getElementById('tierInfo').textContent = `KYC: ${status}`;
+  document.getElementById('kycStatus').textContent = `Tier: ${tier}`;
+}
   kycStatus.textContent = `KYC: ✅ Approved`;
   tierDisplay.textContent = `Tier: ${tier}`;
 
