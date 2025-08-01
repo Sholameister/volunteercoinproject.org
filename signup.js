@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error("Blockedwallet attempted access.");
       }
       walletDisplay.textContent = `Wallet: ${wallet}`;
-    });
-  } else {
+       } else {
     console.warn("connectWalletBtn  not found in DOM.");
+    });
   }
 });
 
