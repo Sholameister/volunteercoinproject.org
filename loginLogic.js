@@ -16,17 +16,20 @@ let startPhotoUrl = null;
 let position = { latitude: null, longitude: null };
 
 // ---- Tier & Utility Functions ----
+async function fetchBlockedWallets() {
+  const response = await fetch('./legacy_wallets.json');
+  if (!response.ok) throw new Error("Failed to fetch blocklist.");
+  return await response.json();
+}
 async function fetchTierLevel(addr) {
   const doc = await db.collection('users').doc(addr).get();
   return doc.exists ? doc.data().tier || 1 : 1;
 }
-
 function getMultiplier(tier) {
   if (tier === 3) return 1.5;
   if (tier === 2) return 1.25;
   return 1;
 }
-
 function getGeolocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
