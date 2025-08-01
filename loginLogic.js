@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ---- Start Volunteering ----
-const startBtn = document.getElementById('startVolunteeringBtn');
+
 if (startBtn) {
   startBtn.addEventListener('click', async () => {
     const file = beforeInput.files[0];
