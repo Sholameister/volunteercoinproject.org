@@ -30,9 +30,6 @@ export function updateKycDom(tier, status = 'Approved') {
   else if (tier === 2) tierDisplay.classList.add('tier-2');
   else tierDisplay.classList.add('tier-1');
 
-
-const serverTime = window.serverTime;
-
 // DOM update function for KYC status and tier info
 export function updateKycDom(status, tier) {
   document.getElementById('kycStatus').textContent = `KYC: ${status}`;
@@ -42,7 +39,6 @@ export function updateKycDom(status, tier) {
 // Globals
 
 let walletAddress = null;
-
 let tierLevel = null;
 
 
@@ -54,17 +50,11 @@ let walletDisplayEl, kycStatusEl, tierStatusEl, tokenCalcEl, badgeEl;
 
 
 function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, badge }) {
-
   walletDisplayEl = walletDisplay || null;
-
   kycStatusEl = kycStatus || null;
-
   tierStatusEl = tierStatus || null;
-
   tokenCalcEl = tokenCalc || null;
-
   badgeEl = badge || null;
-
 }
 
 
@@ -72,41 +62,23 @@ function setKycDomElements({ walletDisplay, kycStatus, tierStatus, tokenCalc, ba
 // ---- KYC Verification ----
 
 async function checkKYC(wallet) {
-
   walletAddress = wallet;
-
   try {
-
     const docRef = db.collection("verifiedKYC").doc(walletAddress);
-
     const docSnap = await docRef.get();
 
 
-
     if (docSnap.exists) {
-
       const data = docSnap.data();
-
       tierLevel = data.tier || "Tier 1";
 
-
-
       if (kycStatusEl) kycStatusEl.textContent = "Verified";
-
       if (tierStatusEl) tierStatusEl.textContent = `Tier: ${tierLevel}`;
-
       if (badgeEl) badgeEl.textContent = tierLevel === "Tier 3" ? "Emergency Access" : "";
-
-
-
       return tierLevel;
-
     } else {
-
       if (kycStatusEl) kycStatusEl.textContent = "Not Found";
-
       if (tierStatusEl) tierStatusEl.textContent = "Tier: Unverified";
-
       return null;
 
     }
