@@ -1,7 +1,7 @@
 import { connectWallet } from './connectWallet.js';
 import { getWalletAddress } from './connectWallet.js';
 import { fetchLiveLVBTNPrice } from './connectWallet.js';
-import { fetchBlockedWallets from './kycUtils.js';,  
+import { fetchBlockedWallets from './kycUtils.js';  
 import { db, storage } from './firebaseConfig.js';
 import { updateKycDom } from './kycUtils.js';
 
