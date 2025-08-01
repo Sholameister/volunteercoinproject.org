@@ -1,0 +1,37 @@
+{
+  "name": "Volunteer Coin Token List",
+  "logoURI": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
+  "tags": {
+    "vcpf": { "name": "VCPF", "description": "Volunteer Coin Project Foundation token" },
+    "meshsync": { "name": "MeshSync", "description": "Emergency wireless & blockchain mesh" }
+  },
+  "tokens": [
+    {
+      "chainId": 101,
+      "address": "6YZJBVwA78f6G17apnKStKgpFBVAF4jDmdyBSyaXyDKe",
+      "symbol": "SYNCM",
+      "name": "MeshSync’s Native Coin",
+      "decimals": 9,
+      "logoURI": "https://volunteercoinproject.org/assets/syncm-logo.png",
+      "tags": ["meshsync", "vcpf"],
+      "extensions": {
+        "website": "https://volunteercoinproject.org",
+        "secondary_site": "https://meshsync.co",
+        "description": "Backbone of VCPF & emergency mesh networks powered by MeshSync Corp"
+      }
+    },
+    {
+      "chainId": 101,
+      "address": "Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s",
+      "symbol": "LVBTN",
+      "name": "LoveButton Token",
+      "decimals": 9,
+      "logoURI": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
+      "tags": ["vcpf", "meshsync"],
+      "extensions": {
+        "website": "https://volunteercoinproject.org",
+        "description": "Volunteer reward token for humanitarian action and verified service"
+      }
+    }
+  ]
+}
