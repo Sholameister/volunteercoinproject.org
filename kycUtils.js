@@ -31,12 +31,6 @@ export function updateKycDom(tier) {
   else tierDisplay.classList.add('tier-1');
 }
 
-
-
-// Use global Firebase Firestore from firebaseConfig.js
-
-const db = window.db;
-
 const serverTime = window.serverTime;
 
 // DOM update function for KYC status and tier info
