@@ -2,13 +2,12 @@ import { connectWallet } from './connectWallet.js';
 import { fetchBlockedWallets } from './kycUtils.js'; // If you're blocking wallets
 
 document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectSignupWalletBtn');
+  const connectBtn = document.getElementById('connectWalletBtn');
   const walletDisplay = document.getElementById('signupWalletDisplay');
 
-  if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
-      walletAddress = await connectWallet();
-      if (!walletAddress) return;
+      const wallet = await connectWallet();
+      if (!wallet) return;
 
       // Check against blocklist (if you're doing this)
       const blockedWallets = await fetchBlockedWallets();
