@@ -2,6 +2,13 @@ import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectW
 import { db, storage } from './firebaseConfig.js';
 import { updateKycDom } from './kycUtils.js';
 
+// Only run this logic on login.html
+if (!window.location.pathname.includes('login.html')) {
+  console.log('ℹ️ loginLogic.js loaded but skipped — not on login.html');
+  export {}; // keep module valid
+  return;
+}
+
 let walletAddress = null;
 let tierLevel = null;
 let sessionStart = null;
