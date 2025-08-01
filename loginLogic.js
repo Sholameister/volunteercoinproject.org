@@ -173,4 +173,4 @@ if (blockedWallets.includes(walletAddress)) {
   } else {
     console.warn('❌ stopVolunteeringBtn not found in DOM');
   }
-});
+
