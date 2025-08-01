@@ -70,30 +70,18 @@ if (blockedWallets.includes(walletAddress))
   document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
   throw new Error("Blocked wallet attempted access.");
 
-
+    }
       walletDisplay.textContent = `Wallet: ${walletAddress}`;
       tierLevel = await fetchTierLevel(walletAddress);
       tierDisplay.textContent = `Tier: ${tierLevel}`;
       kycStatus.textContent = 'KYC: ✅ Approved';
       beforeInput.disabled = false;
       walletStatus.textContent = `✅ Wallet Connected`;
-
-     if (connectBtn) {
-  connectBtn.addEventListener('click', async () => {
-    walletAddress = await connectWallet();
-    if (!walletAddress) return;
-
-    const blockedWallets = await fetchBlockedWallets();
-    if (blockedWallets.includes(walletAddress)) {
-      alert("🚫 This wallet is blocked.");
-      document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-      throw new Error("Blocked wallet attempted access.");
-    }
-
-    // Proceed with wallet display and UI updates here
-    walletDisplay.textContent = `Wallet: ${walletAddress}`;
-    // ...rest of your logic like fetchTierLevel, etc
-  });
+  } catch (err) {
+    console.error("Wallet connection or KYC failed", err);
+    alert("Something went wrong while connecting your wallet.");
+  }
+});
 } else {
   console.warn('❌ connectWalletBtn not found in DOM');
 }
