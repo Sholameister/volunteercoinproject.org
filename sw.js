@@ -1,26 +1,35 @@
-const CACHE_NAME = 'lvbtn-cache-v1';
-// Install: Pre-cache assets
+// sw.js (fixed cache logic)
 self.addEventListener("install", event => {
   console.log("[SW] Installing Service Worker and caching static assets...");
-  
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/connectWallet.js',
-  '/login.html',
-  '/signup.html',
-  '/volunteer-hours.html',
-  '/dashboard.html',
-  '/loginLogic.js',
-  '/dashboardLogic.js',
-  '/firebaseConfig.js',
-  '/lvbtn-logo.png',
-];
+
+  const urlsToCache = [
+    '/',
+    '/index.html',
+    '/connectWallet.js',
+    '/login.html',
+    '/signup.html',
+    '/volunteer-hours.html',
+    '/dashboard.html',
+    '/loginLogic.js',
+    '/dashboardLogic.js',
+    '/firebaseConfig.js',
+    '/LVBTN-logo.png',
+  ];
 
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
+      return Promise.all(
+        urlsToCache.map(url =>
+          fetch(url).then(response => {
+            if (!response.ok) {
+              throw new Error(`⚠️ Failed to fetch ${url}`);
+            }
+            return cache.put(url, response.clone());
+          }).catch(err => {
+            console.warn(`[SW] Skipping ${url}:`, err.message);
+          })
+        )
+      );
     })
   );
 });
