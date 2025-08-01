@@ -67,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const blockedWallets = await fetchBlockedWallets();
 if (blockedWallets.includes(walletAddress)) 
   alert("🚫 This wallet is blocked.");
-  document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+  document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>');
   throw new Error("Blocked wallet attempted access.");
 
     }
       walletDisplay.textContent = `Wallet: ${walletAddress}`;
       tierLevel = await fetchTierLevel(walletAddress);
       tierDisplay.textContent = `Tier: ${tierLevel}`;
-      kycStatus.textContent = 'KYC: ✅ Approved';
+      kycStatus.textContent = `KYC: ✅ Approved`;
       beforeInput.disabled = false;
       walletStatus.textContent = `✅ Wallet Connected`;
   } catch (err) {
