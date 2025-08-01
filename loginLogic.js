@@ -78,13 +78,25 @@ if (blockedWallets.includes(walletAddress)) {
       beforeInput.disabled = false;
       walletStatus.textContent = `✅ Wallet Connected`;
 
-      const price = await fetchLiveLVBTNPrice();
-      priceDisplay.textContent = `LVBTN Price: $${price.toFixed(2)}`;
-    });
-  } else {
-    console.warn('❌ connectWalletBtn not found in DOM');
-  }
-});
+     if (connectBtn) {
+  connectBtn.addEventListener('click', async () => {
+    walletAddress = await connectWallet();
+    if (!walletAddress) return;
+
+    const blockedWallets = await fetchBlockedWallets();
+    if (blockedWallets.includes(walletAddress)) {
+      alert("🚫 This wallet is blocked.");
+      document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+      throw new Error("Blocked wallet attempted access.");
+    }
+
+    // Proceed with wallet display and UI updates here
+    walletDisplay.textContent = `Wallet: ${walletAddress}`;
+    // ...rest of your logic like fetchTierLevel, etc
+  });
+} else {
+  console.warn('❌ connectWalletBtn not found in DOM');
+}
   // ---- Start Volunteering ----
   if (startBtn) {
     startBtn.addEventListener('click', async () => {
