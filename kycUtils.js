@@ -30,14 +30,6 @@ export function updateKycDom(tier, status = 'Approved') {
   else if (tier === 2) tierDisplay.classList.add('tier-2');
   else tierDisplay.classList.add('tier-1');
 
-// DOM update function for KYC status and tier info
-export function updateKycDom(status, tier) {
-  document.getElementById('kycStatus').textContent = `KYC: ${status}`;
-  document.getElementById('tierInfo').textContent = `Tier: ${tier}`;
-}
-
-// Globals
-
 let walletAddress = null;
 let tierLevel = null;
 
