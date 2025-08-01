@@ -29,7 +29,7 @@ export function updateKycDom(tier, status = 'Approved') {
   if (tier === 3) tierDisplay.classList.add('tier-3');
   else if (tier === 2) tierDisplay.classList.add('tier-2');
   else tierDisplay.classList.add('tier-1');
-}
+
 
 const serverTime = window.serverTime;
 
