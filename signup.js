@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (blockedWallets.includes(walletAddress)) {
         alert("🚫 This wallet is blocked.");
         document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-        throe new Error("Blockedwallet attempted access.");
+        throw new Error("Blockedwallet attempted access.");
       }
       walletDisplay.textContent = `Wallet: ${wallet}`;
     });
