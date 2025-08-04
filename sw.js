@@ -1,7 +1,8 @@
+const CACHE_NAMEV= "lvbtn-cache-v1";
 // sw.js (fixed cache logic)
 self.addEventListener("install", event => {
   console.log("[SW] Installing Service Worker and caching static assets...");
-const CACHE_NAMEV= "lvbtn-cache-v1";
+
   const urlsToCache = [
     '/',
     '/index.html',
