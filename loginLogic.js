@@ -1,6 +1,6 @@
-import { connectWallet } from './connectWallet.js';
-import { getWalletAddress } from './connectWallet.js';
-import { fetchLiveLVBTNPrice } from './connectWallet.js';
+// loginLogic.js
+
+import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
 import { fetchBlockedWallets } from './kycUtils.js';  
 import { db, storage } from './firebaseConfig.js';
 import { updateKycDom } from './kycUtils.js';
@@ -42,7 +42,6 @@ function getGeolocation() {
 
 // ---- Main DOM Logic ----
 document.addEventListener('DOMContentLoaded', () => {
-  // Get DOM elements
   const connectBtn = document.getElementById('connectWalletBtn');
   const walletDisplay = document.getElementById('walletAddress');
   const kycStatus = document.getElementById('kycStatus');
@@ -61,34 +60,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletSummary = document.getElementById('walletSummary');
   const afterPhotosBox = document.getElementById('afterPhotosBox');
 
+  // Optional Wallet Detection on Load
+  if (window.solana && window.solana.isPhantom) {
+    walletStatus.innerText = "✅ Phantom Wallet Detected. You can connect anytime.";
+    connectBtn.style.display = 'inline-block';
+  } else {
+    walletStatus.innerText = "👋 Welcome! You can explore without connecting your wallet.";
+    connectBtn.style.display = 'none';
+  }
+
   // ---- Wallet Connect ----
-if (connectBtn) {
-  connectBtn.addEventListener('click', async () => {
-    try {
-      walletAddress = await connectWallet();
-      if (!walletAddress) return;
+  if (connectBtn) {
+    connectBtn.addEventListener('click', async () => {
+      try {
+        walletAddress = await connectWallet();
+        if (!walletAddress) return;
 
-      const blockedWallets = await fetchBlockedWallets();
-      if (blockedWallets.includes(walletAddress)) {
-        alert("🚫 This wallet is blocked.");
-        document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-        throw new Error("Blocked wallet attempted access.");
+        const blockedWallets = await fetchBlockedWallets();
+        if (blockedWallets.includes(walletAddress)) {
+          alert("🚫 This wallet is blocked.");
+          document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+          throw new Error("Blocked wallet attempted access.");
+        }
+
+        walletDisplay.textContent = `Wallet: ${walletAddress}`;
+        walletStatus.textContent = `✅ Wallet Connected`;
+        tierLevel = await fetchTierLevel(walletAddress);
+        tierDisplay.textContent = `Tier: ${tierLevel}`;
+        kycStatus.textContent = 'KYC: ✅ Approved';
+        beforeInput.disabled = false;
+      } catch (err) {
+        console.error("❌ Wallet connection or KYC failed", err);
+        alert("Something went wrong while connecting your wallet.");
       }
-
-      walletDisplay.textContent = `Wallet: ${walletAddress}`;
-      tierLevel = await fetchTierLevel(walletAddress);
-      tierDisplay.textContent = `Tier: ${tierLevel}`;
-      kycStatus.textContent = 'KYC: ✅ Approved';
-      beforeInput.disabled = false;
-      walletStatus.textContent = `✅ Wallet Connected`;
-    } catch (err) {
-      console.error("❌ Wallet connection or KYC failed", err);
-      alert("Something went wrong while connecting your wallet.");
-    }
-  });
-} else {
-  console.warn('❌ connectWalletBtn not found in DOM');
-}
+    });
+  } else {
+    console.warn('❌ connectWalletBtn not found in DOM');
+  }
 
   // ---- Start Volunteering ----
   if (startBtn) {
@@ -103,7 +111,6 @@ if (connectBtn) {
       startPhotoUrl = await snapshot.ref.getDownloadURL();
 
       sessionStart = new Date();
-
       beforeInput.disabled = true;
       afterInput.disabled = false;
       startBtn.disabled = true;
@@ -130,6 +137,8 @@ if (connectBtn) {
       const durationHours = Math.max(durationMs / 3600000, 0.01);
       const multiplier = getMultiplier(tierLevel);
       const tokens = +(durationHours * multiplier).toFixed(2);
+
+      // ⬇ Change to fetchLiveSYNCMPrice() if switching tokens
       const price = await fetchLiveLVBTNPrice();
       const usd = +(tokens * price).toFixed(2);
 
@@ -166,4 +175,7 @@ if (connectBtn) {
   } else {
     console.warn('❌ stopVolunteeringBtn not found in DOM');
   }
-    });
+});
+
+
+Sent from my iPhone
