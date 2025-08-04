@@ -1,28 +1,5 @@
 // connectWallet.js
 
-// DOM-safe Phantom detection on page load
-document.addEventListener('DOMContentLoaded', async () => {
-  const walletStatus = document.getElementById('walletStatus');
-  const connectBtn = document.getElementById('connectWalletBtn');
-
-  // Try to detect Phantom quietly
-  if (window.solana && window.solana.isPhantom) {
-    walletStatus.innerText = "Wallet Connected";
-    connectBtn.style.display = 'inline-block';
-  } else {
-    walletStatus.innerText = "👋 Welcome! You can explore without a wallet. Connect later if you'd like.";
-    connectBtn.style.display = 'none'; // Only show button if Phantom is found
-  }
-
-  // If user clicks connect
-  connectBtn?.addEventListener('click', async () => {
-    const connectedWallet = await connectWallet(); // uses exported function below
-    if (connectedWallet) {
-      walletStatus.innerText = `🎉 Wallet Connected: ${connectedWallet}`;
-    }
-  });
-});
-
 // 🔌 Connect to Phantom wallet
 export async function connectWallet() {
   if (window.solana && window.solana.isPhantom) {
