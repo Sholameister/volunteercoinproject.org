@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       await getGeolocation();
 
-      const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
+      const fileRef = window.storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
       const snapshot = await fileRef.put(file);
       startPhotoUrl = await snapshot.ref.getDownloadURL();
 
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const file = afterInput.files[0];
       if (!file || !sessionStart) return alert("Please upload your after photo.");
 
-      const fileRef = storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
+      const fileRef = window.storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
       const snapshot = await fileRef.put(file);
       const afterPhotoUrl = await snapshot.ref.getDownloadURL();
 
