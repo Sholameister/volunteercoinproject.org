@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Try to detect Phantom quietly
   if (window.solana && window.solana.isPhantom) {
-    walletStatus.innerText = "✅ Phantom Wallet Detected. You may connect anytime.";
+    walletStatus.innerText = "Wallet Connected";
     connectBtn.style.display = 'inline-block';
   } else {
     walletStatus.innerText = "👋 Welcome! You can explore without a wallet. Connect later if you'd like.";
