@@ -24,6 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   } else {
-    console.warn("connectSignupWalletBtn not found in DOM.");
+    console.warn("connectWalletBtn not found in DOM.");
   }
 });
