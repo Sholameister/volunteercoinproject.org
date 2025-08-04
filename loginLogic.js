@@ -176,6 +176,3 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('❌ stopVolunteeringBtn not found in DOM');
   }
 });
-
-
-Sent from my iPhone
