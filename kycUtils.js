@@ -19,16 +19,22 @@ export async function fetchBlockedWallets() {
 
 // Optional DOM update helper
 export function updateKycDom(tier, status = 'Approved') {
-  document.getElementById('tierInfo').textContent = `KYC: ${status}`;
-  document.getElementById('kycStatus').textContent = `Tier: ${tier}`;
-}
-  kycStatus.textContent = `KYC: ✅ Approved`;
-  tierDisplay.textContent = `Tier: ${tier}`;
+  const tierDisplay = document.getElementById('tierInfo');
+  const kycStatus = document.getElementById('kycStatus');
 
-  tierDisplay.className = 'tier-badge';
-  if (tier === 3) tierDisplay.classList.add('tier-3');
-  else if (tier === 2) tierDisplay.classList.add('tier-2');
-  else tierDisplay.classList.add('tier-1');
+  if (tierDisplay && kycStatus) {
+    kycStatus.textContent = `KYC: ✅ ${status}`;
+    tierDisplay.textContent = `Tier: ${tier}`;
+
+    tierDisplay.className = 'tier-badge';
+    if (tier === 3) tierDisplay.classList.add('tier-3');
+    else if (tier === 2) tierDisplay.classList.add('tier-2');
+    else tierDisplay.classList.add('tier-1');
+  } else {
+    console.warn("❗ Could not update KYC DOM — element(s) missing.");
+  }
+}
+
 
 let walletAddress = null;
 let tierLevel = null;
