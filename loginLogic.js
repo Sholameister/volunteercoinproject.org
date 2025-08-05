@@ -21,14 +21,12 @@ let position = { latitude: null, longitude: null };
 // ---- Tier & Utility Functions ----
 import { collection, getDocs } from 'firebase/firestore';
 
-async function fetchTierLevel(walletAddress) {
-  try {
-    const querySnapshot = await getDocs(collection(db, 'kyc'));
-    for (const doc of querySnapshot.docs) {
-      const data = doc.data();
-      if (data.walletAddress === walletAddress) {
-        return data.tier || 'Tier 1';
-      }
+async function fetchTierLevel(addr) {
+  const userRef = doc(db, 'users', addr);
+  const docSnap = await getDoc(userRef);
+  return docSnap.exists() ? docSnap.data().tier || 1 : 1;
+}
+
     }
     return 'Tier 1'; // default if not found
   } catch (err) {
