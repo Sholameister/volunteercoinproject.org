@@ -2,6 +2,7 @@
 // kycUtils.js
 
 import { db, serverTime } from './firebaseConfig.js';
+import { fetchBlockedWallets } from './connectWallet.js';
 
 // Fetch the tier level for a given wallet address
 export async function fetchTierLevel(walletAddress) {
