@@ -9,7 +9,6 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-
 // Only run this logic on login.html
 if (!window.location.pathname.includes('login.html')) {
   console.log('ℹ️ loginLogic.js loaded but skipped — not on login.html');
-  return;
 }
 
 let walletAddress = null;
