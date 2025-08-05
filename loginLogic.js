@@ -4,6 +4,7 @@ import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectW
 import { fetchBlockedWallets } from './kycUtils.js';  
 import { db, storage } from './firebaseConfig.js';
 import { updateKycDom } from './kycUtils.js';
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Only run this logic on login.html
 if (!window.location.pathname.includes('login.html')) {
@@ -18,10 +19,24 @@ let startPhotoUrl = null;
 let position = { latitude: null, longitude: null };
 
 // ---- Tier & Utility Functions ----
-async function fetchTierLevel(addr) {
-  const doc = await db.collection('users').doc(addr).get();
-  return doc.exists ? doc.data().tier || 1 : 1;
+import { collection, getDocs } from 'firebase/firestore';
+
+async function fetchTierLevel(walletAddress) {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'kyc'));
+    for (const doc of querySnapshot.docs) {
+      const data = doc.data();
+      if (data.walletAddress === walletAddress) {
+        return data.tier || 'Tier 1';
+      }
+    }
+    return 'Tier 1'; // default if not found
+  } catch (err) {
+    console.error('Failed to fetch tier level:', err);
+    return 'Tier 1';
+  }
 }
+
 function getMultiplier(tier) {
   if (tier === 3) return 1.5;
   if (tier === 2) return 1.25;
