@@ -14,7 +14,7 @@ self.addEventListener("install", event => {
     '/loginLogic.js',
     '/dashboardLogic.js',
     '/firebaseConfig.js',
-    '/LVBTN_logo.png',
+    '/assets/LVBTN_logo.png',
   ];
 
   event.waitUntil(
