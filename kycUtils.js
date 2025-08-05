@@ -12,7 +12,7 @@ export async function fetchTierLevel(walletAddress) {
 
 // Fetch the legacy blacklist (wallets not allowed)
 export async function fetchBlockedWallets() {
-  const response = await fetch('https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/legacy-unrecognized-wallets.json');
+  const response = await fetch('https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/legacy_wallets.json');
   const data = await response.json();
   return data.wallets || [];
 }
