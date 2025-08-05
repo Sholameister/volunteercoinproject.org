@@ -61,8 +61,8 @@ These wallets held LVBTN as of the close of the 1-for-2 token exchange window on
 
 ## 🧮 Totals
 
-- **Total unrecognized LVBTN tokens:** 1,006.000  
-- **Total compensatory burn completed:** 4,040.133  
+- **Total unrecognized LVBTN tokens:** 461.79  
+- **Total burns completed:** 89,991,832.5  
 - **Burn wallet address:** [`3KgE9qf91RufgWJwD2W27N4QXSXrs87VM7PQRc9sstsZ`](https://solscan.io/account/3KgE9qf91RufgWJwD2W27N4QXSXrs87VM7PQRc9sstsZ)
 
 ---
@@ -75,6 +75,6 @@ These wallets are permanently marked as **ineligible** to participate in:
 - Marketplace or liquidity access  
 - Any future LoveButton incentive event
 
-They are outside the reset and recovery structure. The above balances are **effectively nullified** as of July 20, 2025.
+They are outside the reset and recovery structure. The above balances are **effectively nullified** as of August 04, 2025.
 
-All valid LVBTN tokens are now held within VCPF’s wallets, the volunteer onboarding pool, or the founder’s verified wallets. This clean slate ensures fair launch of the new $2.50 floor.
+All valid LVBTN tokens are now held within VCPF’s wallets, the volunteer onboarding pool, or the founder’s verified wallets. This clean slate ensures fair launch of the new $10.00 floor.
