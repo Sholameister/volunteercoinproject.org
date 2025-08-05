@@ -77,12 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
         walletAddress = await connectWallet();
         if (!walletAddress) return;
 
-        const blockedWallets = await fetchBlockedWallets();
-        if (blockedWallets.includes(walletAddress)) {
-          alert("🚫 This wallet is blocked.");
-          document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-          throw new Error("Blocked wallet attempted access.");
-        }
+        async function fetchBlockedWallets() {
+  const res = await fetch('https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/legacy_wallets.json');
+  const json = await res.json();
+  return json.blockedWallets || []; // assumes the JSON has a structure like { "blockedWallets": [...] }
+}
 
         walletDisplay.textContent = `Wallet: ${walletAddress}`;
         walletStatus.textContent = `✅ Wallet Connected`;
