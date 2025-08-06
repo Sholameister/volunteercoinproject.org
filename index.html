@@ -241,6 +241,33 @@
   }
   updateBTCPrice();
   setInterval(updateBTCPrice, 60000);
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const connectButton = document.getElementById("connectWalletBtn");
+
+    if (isMobile) {
+        // Replace connect button with Phantom deep link
+        if (connectButton) {
+            connectButton.innerText = "Open in Phantom Wallet";
+            connectButton.onclick = function () {
+                window.location.href = "https://phantom.app/ul/browse/" + window.location.hostname;
+            };
+        }
+    } else {
+        // Standard wallet connection logic here (example placeholder)
+        if (connectButton) {
+            connectButton.onclick = function () {
+                // Existing connect logic here
+                alert("Attempting to connect to Phantom Wallet...");
+            };
+        }
+    }
+});
+</script>
+
+  
 </script>
 <!-- Firebase SDKs (Compat for raw HTML) -->
 <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -253,6 +280,7 @@
 
 </body>
 </html>
+
 
 
 
