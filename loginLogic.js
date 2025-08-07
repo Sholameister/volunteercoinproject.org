@@ -26,7 +26,7 @@ async function fetchTierLevel(addr) {
     console.error('Failed to fetch tier level:', err);
     return 1;
   }
-}
+
 
 function getMultiplier(tier) {
   if (tier === 3) return 1.5;
