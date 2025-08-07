@@ -278,9 +278,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <!-- Firebase config and initialization -->
 <script type="module" src="./firebaseConfig.js"></script>
+<script type="module">
+  import { connectWallet, getWalletAddress } from './connectWallet.js';
 
+  document.addEventListener("DOMContentLoaded", () => {
+    const connectBtn = document.getElementById("connectWalletBtn");
+    const walletDisplay = document.getElementById("walletDisplay");
+
+    if (connectBtn) {
+      connectBtn.addEventListener("click", async () => {
+        const address = await connectWallet();
+        if (address) {
+          walletDisplay.textContent = `Wallet: ${address}`;
+          localStorage.setItem("userWallet", address);
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
+
 
 
 
