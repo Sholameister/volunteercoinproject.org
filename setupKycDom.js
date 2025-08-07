@@ -1,5 +1,5 @@
 // setupKycDom.js
-import { setKycDomElements } from './kycUtils.js';
+import { setKycDomElements } from '/js/kycUtils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   setKycDomElements({
