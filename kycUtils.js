@@ -1,5 +1,5 @@
 <script type="module">
-  import { db } from './firebaseConfig.js';
+  import { db } from '/js/firebaseConfig.js';
 
   export async function checkKYCStatus(wallet) {
     const docRef = db.collection("kyc").doc(wallet);
