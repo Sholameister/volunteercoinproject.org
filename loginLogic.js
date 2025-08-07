@@ -1,36 +1,30 @@
-// loginLogic.js
-
+<script type="module">
 import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
-import { fetchBlockedWallets } from './kycUtils.js';  
+import { fetchBlockedWallets, updateKycDom } from './kycUtils.js';
 import { db, storage } from './firebaseConfig.js';
-import { updateKycDom } from './kycUtils.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-// Only run this logic on login.html
+// Guard clause if not on login.html
 if (!window.location.pathname.includes('login.html')) {
   console.log('ℹ️ loginLogic.js loaded but skipped — not on login.html');
 }
 
+// Globals
 let walletAddress = null;
 let tierLevel = null;
 let sessionStart = null;
 let startPhotoUrl = null;
 let position = { latitude: null, longitude: null };
 
-// ---- Tier & Utility Functions ----
-import { collection, getDocs } from 'firebase/firestore';
-
+// Fetch Tier Level
 async function fetchTierLevel(addr) {
-  const userRef = doc(db, 'users', addr);
-  const docSnap = await getDoc(userRef);
-  return docSnap.exists() ? docSnap.data().tier || 1 : 1;
-}
-
-    }
-    return 'Tier 1'; // default if not found
+  try {
+    const userRef = doc(db, 'users', addr);
+    const docSnap = await getDoc(userRef);
+    return docSnap.exists() ? docSnap.data().tier || 1 : 1;
   } catch (err) {
     console.error('Failed to fetch tier level:', err);
-    return 'Tier 1';
+    return 1;
   }
 }
 
@@ -39,6 +33,7 @@ function getMultiplier(tier) {
   if (tier === 2) return 1.25;
   return 1;
 }
+
 function getGeolocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -53,7 +48,7 @@ function getGeolocation() {
   });
 }
 
-// ---- Main DOM Logic ----
+// ---- Main Logic ----
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connectWalletBtn');
   const walletDisplay = document.getElementById('walletAddress');
@@ -73,27 +68,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletSummary = document.getElementById('walletSummary');
   const afterPhotosBox = document.getElementById('afterPhotosBox');
 
-  // Optional Wallet Detection on Load
   if (window.solana && window.solana.isPhantom) {
     walletStatus.innerText = "✅ Phantom Wallet Detected. You can connect anytime.";
     connectBtn.style.display = 'inline-block';
   } else {
-    walletStatus.innerText = "👋 Welcome! You can explore without connecting your wallet.";
+    walletStatus.innerText = "👋 You can explore without connecting your wallet.";
     connectBtn.style.display = 'none';
   }
 
-  // ---- Wallet Connect ----
+  // Wallet Connect
   if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
       try {
         walletAddress = await connectWallet();
         if (!walletAddress) return;
 
-        async function fetchBlockedWallets() {
-  const res = await fetch('https://raw.githubusercontent.com/Sholameister/volunteercoinproject.org/main/legacy_wallets.json');
-  const json = await res.json();
-  return json.blockedWallets || []; // assumes the JSON has a structure like { "blockedWallets": [...] }
-}
+        const blockedWallets = await fetchBlockedWallets();
+        if (blockedWallets.includes(walletAddress)) {
+          alert("🚫 This wallet is blocked.");
+          document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
+          throw new Error("Blocked wallet attempted access.");
+        }
 
         walletDisplay.textContent = `Wallet: ${walletAddress}`;
         walletStatus.textContent = `✅ Wallet Connected`;
@@ -106,11 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("Something went wrong while connecting your wallet.");
       }
     });
-  } else {
-    console.warn('❌ connectWalletBtn not found in DOM');
   }
 
-  // ---- Start Volunteering ----
+  // Start Volunteering
   if (startBtn) {
     startBtn.addEventListener('click', async () => {
       const file = beforeInput.files[0];
@@ -118,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       await getGeolocation();
 
-      const fileRef = window.storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
+      const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
       const snapshot = await fileRef.put(file);
       startPhotoUrl = await snapshot.ref.getDownloadURL();
 
@@ -130,18 +123,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       alert(`✅ You have begun volunteering!\n📍 Location: ${position.latitude}, ${position.longitude}`);
     });
-  } else {
-    console.warn('❌ startVolunteeringBtn not found in DOM');
   }
 
-  // ---- Stop Volunteering ----
+  // Stop Volunteering
   if (stopBtn) {
     stopBtn.addEventListener('click', async () => {
       const end = new Date();
       const file = afterInput.files[0];
       if (!file || !sessionStart) return alert("Please upload your after photo.");
 
-      const fileRef = window.storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
+      const fileRef = storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
       const snapshot = await fileRef.put(file);
       const afterPhotoUrl = await snapshot.ref.getDownloadURL();
 
@@ -150,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const multiplier = getMultiplier(tierLevel);
       const tokens = +(durationHours * multiplier).toFixed(2);
 
-      // ⬇ Change to fetchLiveSYNCMPrice() if switching tokens
       const price = await fetchLiveLVBTNPrice();
       const usd = +(tokens * price).toFixed(2);
 
@@ -164,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startPhotoUrl,
         endPhotoUrl: afterPhotoUrl,
         geolocation: position,
-        timestamp: window.serverTime,
+        timestamp: new Date().toISOString()
       });
 
       summaryBox.style.display = 'block';
@@ -184,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
       afterInput.disabled = true;
       stopBtn.disabled = true;
     });
-  } else {
-    console.warn('❌ stopVolunteeringBtn not found in DOM');
   }
 });
+</script>
