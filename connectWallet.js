@@ -1,4 +1,4 @@
-// connectWallet.js
+// connectWallet.js (module, no <script> tags)
 export async function connectWallet() {
   if ('solana' in window) {
     const provider = window.solana;
@@ -8,11 +8,13 @@ export async function connectWallet() {
         return resp.publicKey.toString();
       } catch (err) {
         console.error("Wallet connection failed:", err);
+        return null;
       }
     }
   } else {
     alert("Phantom Wallet not found. Please install it to proceed.");
   }
+  return null;
 }
 
 export async function getWalletAddress() {
@@ -34,3 +36,6 @@ export async function fetchLiveLVBTNPrice() {
     return "10.00"; // fallback
   }
 }
+
+
+Sent from my iPhone
