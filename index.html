@@ -15,10 +15,10 @@
   </script>
 
 <!-- Utility and logic files -->
-<script type="module" src="./connectWallet.js"></script>
-<script type="module" src="./kycUtils.js"></script> <!-- Only if needed -->
-<script type="module" src="./dashboardLogic.js"></script> <!-- Only if needed -->
-<script type="module" src="./loginLogic.js"></script>
+<script type="module" src="/js/connectWallet.js"></script>
+<script type="module" src="/js/kycUtils.js"></script> <!-- Only if needed -->
+<script type="module" src="/js/dashboardLogic.js"></script> <!-- Only if needed -->
+<script type="module" src="/js/loginLogic.js"></script>
   
   <!-- Meta / App Manifest -->
   <meta name="apple-mobile-web-app-title" content="LoveButton">
@@ -168,7 +168,7 @@
   <a href="./faq.html" target="_blank">Faq's</a>
   <a href="./founder.html" target="_blank">Founder's Short Bio</a>
   <a href="./national-rollout.html" class="top-btn" target="_blank">💰 $1M Vision Rollout Plan</a>
-  <a href=:./legal-transparency.html" target="_blank">Legalities</a>
+  <a href="./legal-transparency.html" target="_blank">Legalities</a>
   <a href="https://github.com/Sholameister/volunteercoinproject.org/releases/download/v1.0.0/LoveButton.apk" target="_blank">📲 Download App</a>
 </div>
 </header>
@@ -277,9 +277,9 @@ document.addEventListener("DOMContentLoaded", function () {
 <script type="module" src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <!-- Firebase config and initialization -->
-<script type="module" src="./firebaseConfig.js"></script>
+<script type="module" src="/js/firebaseConfig.js"></script>
 <script type="module">
-  import { connectWallet, getWalletAddress } from './connectWallet.js';
+  import { connectWallet, getWalletAddress } from '/js/connectWallet.js';
 
   document.addEventListener("DOMContentLoaded", () => {
     const connectBtn = document.getElementById("connectWalletBtn");
@@ -298,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 </body>
 </html>
+
 
 
 
