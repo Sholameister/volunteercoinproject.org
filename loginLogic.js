@@ -1,7 +1,7 @@
 <script type="module">
-import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from './connectWallet.js';
-import { fetchBlockedWallets, updateKycDom } from './kycUtils.js';
-import { db, storage } from './firebaseConfig.js';
+import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from '/js/connectWallet.js';
+import { fetchBlockedWallets, updateKycDom } from '/js/kycUtils.js';
+import { db, storage } from '/js/firebaseConfig.js';
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Guard clause if not on login.html
