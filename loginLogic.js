@@ -1,4 +1,4 @@
-<script type="module">
+
 import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from '/js/connectWallet.js';
 import { fetchBlockedWallets, updateKycDom } from '/js/kycUtils.js';
 import { db, storage } from '/js/firebaseConfig.js';
@@ -176,4 +176,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-</script>
+
