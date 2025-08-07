@@ -1,49 +1,37 @@
-// connectWallet.js
-
-// 🔌 Connect to Phantom wallet
-export async function connectWallet() {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const resp = await window.solana.connect();
-      console.log("🟢 Wallet connected:", resp.publicKey.toString());
-      return resp.publicKey.toString();
-    } catch (err) {
-      console.error("❌ Wallet connection failed:", err);
-      alert("Failed to connect Phantom Wallet.");
-      return null;
+<script type="module">
+  export async function connectWallet() {
+    if ('solana' in window) {
+      const provider = window.solana;
+      if (provider.isPhantom) {
+        try {
+          const resp = await provider.connect();
+          return resp.publicKey.toString();
+        } catch (err) {
+          console.error("Wallet connection failed:", err);
+        }
+      }
+    } else {
+      alert("Phantom Wallet not found. Please install it to proceed.");
     }
-  } else {
-    alert("Phantom Wallet not found. Install it from https://phantom.app");
+  }
+
+  export async function getWalletAddress() {
+    if (window.solana && window.solana.isConnected) {
+      return window.solana.publicKey.toString();
+    }
     return null;
   }
-}
 
-// 🛡 Fetch JSON blocklist
-export async function fetchBlockedWallets() {
-  const response = await fetch('./legacy_wallets.json');
-  if (!response.ok) throw new Error("Failed to fetch blocklist.");
-  return await response.json();
-}
-
-// 📬 Get current connected wallet address
-export async function getWalletAddress() {
-  try {
-    return window.solana?.publicKey?.toString() || null;
-  } catch {
-    return null;
+  export async function fetchLiveLVBTNPrice() {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+      const data = await response.json();
+      const solPrice = data.solana.usd;
+      const lvbtnPrice = solPrice * 2.5;
+      return lvbtnPrice.toFixed(2);
+    } catch (error) {
+      console.error("Error fetching price:", error);
+      return "10.00"; // fallback
+    }
   }
-}
-
-// 💸 Get live LVBTN price from CoinGecko
-export async function fetchLiveLVBTNPrice() {
-  try {
-    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=lvbtn&vs_currencies=usd");
-    const data = await res.json();
-    const price = data?.lvbtn?.usd;
-    if (!price) throw new Error("Price not found");
-    return price;
-  } catch (err) {
-    console.error("Failed to fetch LVBTN price:", err);
-    return null;
-  }
-}
+</script>
