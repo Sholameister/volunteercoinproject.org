@@ -1,5 +1,5 @@
-import { connectWallet } from './connectWallet.js';
-import { fetchBlockedWallets } from './kycUtils.js';
+import { connectWallet } from '/js/connectWallet.js';
+import { fetchBlockedWallets } from '/js/kycUtils.js';
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connectWalletBtn');
   const walletDisplay = document.getElementById('signupWalletDisplay');
