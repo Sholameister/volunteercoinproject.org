@@ -28,4 +28,3 @@
       kycStatus.textContent = "KYC & Hours Verified!";
     }
   }
-</script>
