@@ -1,17 +1,33 @@
-// DashboardLogic.js — no import statements, use window.db
+// DashboardLogic.js — uses window.db (compat)
 
 let walletAddress = null;
 
 async function connectWalletAndLoadSessions() {
   try {
-    const resp = await window.solana.connect();
-    walletAddress = resp.publicKey.toString();
+    const p = window.solana;
+    if (!p?.isPhantom) throw new Error('Phantom not detected');
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      throw new Error('Wallet requires HTTPS or localhost');
+    }
+    const resp = await p.connect({ onlyIfTrusted: false });
+    walletAddress = resp?.publicKey?.toBase58?.();
+    if (!walletAddress) throw new Error('No public key returned');
+
     document.getElementById("walletDisplay").innerText = `Wallet: ${walletAddress}`;
     await loadSessionHistory(walletAddress);
   } catch (err) {
-    alert("Wallet connection failed.");
+    alert(err?.message || "Wallet connection failed.");
     console.error("Wallet error:", err);
   }
+}
+
+function toDate(val) {
+  // Supports Firestore Timestamp or ISO string
+  if (!val) return new Date(0);
+  if (typeof val === 'object' && typeof val.seconds === 'number') {
+    return new Date(val.seconds * 1000);
+  }
+  return new Date(val);
 }
 
 async function loadSessionHistory(wallet) {
@@ -20,6 +36,7 @@ async function loadSessionHistory(wallet) {
 
   try {
     const db = window.db;
+    // If 'timestamp' is stored as ISO string, this still works fine. If errors, remove orderBy.
     const snapshot = await db
       .collection("volunteerSessions")
       .where("walletAddress", "==", wallet)
@@ -30,11 +47,11 @@ async function loadSessionHistory(wallet) {
     let totalUSD = 0;
     let totalHours = 0;
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const start = new Date(data.startTime?.seconds * 1000 || data.startTime);
-      const end = new Date(data.endTime?.seconds * 1000 || data.endTime);
-      const durationHours = (end - start) / (1000 * 60 * 60);
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const start = toDate(data.startTime);
+      const end = toDate(data.endTime);
+      const durationHours = Math.max((end - start) / (1000 * 60 * 60), 0);
 
       const tokens = parseFloat(data.tokensEarned || 0);
       const usd = parseFloat(data.usdValue || 0);
@@ -76,16 +93,9 @@ async function loadSessionHistory(wallet) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const connectBtn = document.getElementById('connectDashboardWalletBtn');
-
   if (!window.solana?.isPhantom) {
     alert("Please install Phantom Wallet to use the dashboard.");
     return;
   }
-
-  if (connectBtn) {
-    connectBtn.addEventListener('click', () => {
-      connectWalletAndLoadSessions();
-    });
-  }
+  connectBtn?.addEventListener('click', connectWalletAndLoadSessions);
 });
-
