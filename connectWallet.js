@@ -1,41 +1,24 @@
-// connectWallet.js (module, no <script> tags)
+// connectWallet.js — unified wallet connect
 export async function connectWallet() {
-  if ('solana' in window) {
-    const provider = window.solana;
-    if (provider.isPhantom) {
-      try {
-        const resp = await provider.connect();
-        return resp.publicKey.toString();
-      } catch (err) {
-        console.error("Wallet connection failed:", err);
-        return null;
-      }
-    }
-  } else {
-    alert("Phantom Wallet not found. Please install it to proceed.");
+  const p = window.solana;
+  if (!p || !p.isPhantom) {
+    alert("Phantom Wallet not found. Install it to continue.");
+    window.open("https://phantom.app/download", "_blank");
+    return null;
   }
-  return null;
+  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+    alert("Wallet requires HTTPS or localhost.");
+    return null;
+  }
+  const resp = await p.connect({ onlyIfTrusted: false });
+  const pk = resp?.publicKey?.toBase58?.();
+  if (!pk) { alert("No public key returned."); return null; }
+  (document.getElementById("walletAddress") || document.getElementById("walletDisplay"))?.replaceChildren(
+    document.createTextNode(`Wallet: ${pk}`)
+  );
+  return pk;
 }
 
-export async function getWalletAddress() {
-  if (window.solana && window.solana.isConnected) {
-    return window.solana.publicKey.toString();
-  }
-  return null;
+export function getWalletAddress() {
+  return window.solana?.publicKey?.toBase58?.() || null;
 }
-
-export async function fetchLiveLVBTNPrice() {
-  try {
-    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-    const data = await response.json();
-    const solPrice = data.solana.usd;
-    const lvbtnPrice = solPrice * 2.5;
-    return lvbtnPrice.toFixed(2);
-  } catch (error) {
-    console.error("Error fetching price:", error);
-    return "10.00"; // fallback
-  }
-}
-
-
-Sent from my iPhone
