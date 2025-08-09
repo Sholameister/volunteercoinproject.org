@@ -140,64 +140,62 @@ if (!location.pathname.includes('login.html')) {
       });
     }
 
-    // Stop Volunteering
-    if (stopBtn) {
-      stopBtn.addEventListener('click', async () => {
-        try {
-          const end = new Date();
-          const file = afterInput?.files?.[0];
-          if (!file || !sessionStart) {
-            alert('Please upload your AFTER photo.');
-            return;
-          }
+   if (stopBtn) {
+  stopBtn.addEventListener('click', async () => {
+    try {
+      const end = new Date();
+      const file = afterInput?.files?.[0];
+      if (!file || !sessionStart) {
+        alert('Please upload your AFTER photo.');
+        return;
+      }
 
-          const aRef = storageRef(storage, `afterPhotos/${walletAddress}_${Date.now()}`);
-          await uploadBytes(aRef, file);
-          const afterPhotoUrl = await getDownloadURL(aRef);
+      const aRef = storageRef(storage, `afterPhotos/${walletAddress}_${Date.now()}`);
+      await uploadBytes(aRef, file);
+      const afterPhotoUrl = await getDownloadURL(aRef);
 
-          const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
-          const multiplier = getMultiplier(tierLevel);
-          const tokens = +(durationHours * multiplier).toFixed(2);
+      const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
+      const multiplier = getMultiplier(tierLevel);
+      const tokens = +(durationHours * multiplier).toFixed(2);
 
-          const price = await fetchLiveLVBTNPrice();
-          const usd = +(tokens * price).toFixed(2);
+      const price = await fetchLiveLVBTNPrice();
+      const usd = +(tokens * price).toFixed(2);
 
-          await addDoc(collection(db, 'volunteerSessions'), {
-            walletAddress,
-            tierLevel,
-            startTime: sessionStart.toISOString(),
-            endTime: end.toISOString(),
-            tokensEarned: tokens,
-            usdValue: usd,
-            startPhotoUrl,
-            endPhotoUrl: afterPhotoUrl,
-            geolocation: position,
-            timestamp: new Date().toISOString()
-          });
-
-          if (summaryBox) summaryBox.style.display = 'block';
-          if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
-          if (tokensEarned) tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
-          if (totalLVBTN) totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
-          if (usdValue) usdValue.textContent = `💰 USD Value: $${usd}`;
-          if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
-
-          if (afterPhotosBox) {
-            const img = document.createElement('img');
-            img.src = afterPhotoUrl;
-            img.alt = 'After Photo';
-            img.style.maxWidth = '100%';
-            img.style.marginTop = '10px';
-            afterPhotosBox.appendChild(img);
-          }
-
-          if (afterInput) afterInput.disabled = true;
-          if (stopBtn) stopBtn.disabled = true;
-        } catch (e) {
-          console.error('Stop volunteering failed', e);
-          alert('Could not finish session. Please try again.');
-        }
+      await addDoc(collection(db, 'volunteerSessions'), {
+        walletAddress,
+        tierLevel,
+        startTime: sessionStart.toISOString(),
+        endTime: end.toISOString(),
+        tokensEarned: tokens,
+        usdValue: usd,
+        startPhotoUrl,
+        endPhotoUrl: afterPhotoUrl,
+        geolocation: position,
+        timestamp: new Date().toISOString()
       });
+
+      if (summaryBox) summaryBox.style.display = 'block';
+      if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
+      if (tokensEarned) tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
+      if (totalLVBTN) totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
+      if (usdValue) usdValue.textContent = `💰 USD Value: $${usd}`;
+      if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
+
+      if (afterPhotosBox) {
+        const img = document.createElement('img');
+        img.src = afterPhotoUrl;
+        img.alt = 'After Photo';
+        img.style.maxWidth = '100%';
+        img.style.marginTop = '10px';
+        afterPhotosBox.appendChild(img);
+      }
+
+      if (afterInput) afterInput.disabled = true;
+      if (stopBtn) stopBtn.disabled = true;
+
+    } catch (e) {
+      console.error('Stop volunteering failed', e);
+      alert('Could not finish session. Please try again.');
     }
-  }
+  });
 }
