@@ -1,7 +1,7 @@
-// connectWallet.js — unified wallet connect
+// connectWallet.js — Phantom connect (ESM)
 export async function connectWallet() {
-  const p = window.solana;
-  if (!p || !p.isPhantom) {
+  const provider = window?.phantom?.solana || window?.solana || null;
+  if (!provider || !provider.isPhantom) {
     alert("Phantom Wallet not found. Install it to continue.");
     window.open("https://phantom.app/download", "_blank");
     return null;
@@ -10,15 +10,15 @@ export async function connectWallet() {
     alert("Wallet requires HTTPS or localhost.");
     return null;
   }
-  const resp = await p.connect({ onlyIfTrusted: false });
+  const resp = await provider.connect({ onlyIfTrusted: false });
   const pk = resp?.publicKey?.toBase58?.();
   if (!pk) { alert("No public key returned."); return null; }
-  (document.getElementById("walletAddress") || document.getElementById("walletDisplay"))?.replaceChildren(
-    document.createTextNode(`Wallet: ${pk}`)
-  );
+  const slot = document.getElementById("walletAddress") || document.getElementById("walletDisplay");
+  if (slot) slot.textContent = `Wallet: ${pk}`;
   return pk;
 }
 
 export function getWalletAddress() {
-  return window.solana?.publicKey?.toBase58?.() || null;
+  const p = window?.phantom?.solana || window?.solana || null;
+  return p?.publicKey?.toBase58?.() || null;
 }
