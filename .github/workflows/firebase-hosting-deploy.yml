@@ -1,0 +1,47 @@
+# Deploy to Firebase Hosting on PRs (preview) and pushes to main (live)
+
+name: Deploy to Firebase Hosting
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Optional build hooks — safe if you have no package.json (they no-op)
+      - name: Install deps (optional)
+        run: |
+          if [ -f package.json ]; then
+            npm ci || npm i
+          else
+            echo "No package.json, skipping install."
+          fi
+
+      - name: Build (optional)
+        run: |
+          if [ -f package.json ]; then
+            npm run build --if-present
+          else
+            echo "No build step, skipping."
+          fi
+
+      # Deploy: live on push to main, preview on PR
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOVEBUTTON_HEAVEN }}
+          projectId: lovebutton-heaven
+          channelId: ${{ github.event_name == 'push' && 'live' || '' }}
