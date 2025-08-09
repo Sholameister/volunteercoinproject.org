@@ -1,5 +1,5 @@
 // sw.js — VCPF service worker (flat root)
-const CACHE_NAME = "lvbtn-cache-v6"; // bump when you deploy
+const CACHE_NAME = "lvbtn-cache-v7"; // bump when you deploy
 
 const PRE_CACHE = [
   "./", "./index.html", "./signup.html", "./login.html",
