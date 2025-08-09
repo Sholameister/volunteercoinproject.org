@@ -62,7 +62,7 @@ These wallets held LVBTN as of the close of the 1-for-2 token exchange window on
 ## 🧮 Totals
 
 - **Total unrecognized LVBTN tokens:** 461.79  
-- **Total burns completed:** 89,991,832.5  
+- **Total burns completed:** 89,998,707.5  
 - **Burn wallet address:** [`3KgE9qf91RufgWJwD2W27N4QXSXrs87VM7PQRc9sstsZ`](https://solscan.io/account/3KgE9qf91RufgWJwD2W27N4QXSXrs87VM7PQRc9sstsZ)
 
 ---
