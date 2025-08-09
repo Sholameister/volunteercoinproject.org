@@ -1,11 +1,9 @@
-# Deploy to Firebase Hosting on PRs (preview) and pushes to main (live)
-
 name: Deploy to Firebase Hosting
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
 
 permissions:
@@ -20,7 +18,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Optional build hooks — safe if you have no package.json (they no-op)
+      # Debug step to show exactly what's in the repo
+      - name: Show repo files and firebase.json
+        run: |
+          echo "PWD:" && pwd
+          echo "Listing files:" && ls -la
+          echo "firebase.json contents:" && cat firebase.json || echo "firebase.json missing"
+
+      # Optional build step
       - name: Install deps (optional)
         run: |
           if [ -f package.json ]; then
@@ -37,11 +42,12 @@ jobs:
             echo "No build step, skipping."
           fi
 
-      # Deploy: live on push to main, preview on PR
+      # Deploy to Firebase Hosting
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOVEBUTTON_HEAVEN }}
           projectId: lovebutton-heaven
-          channelId: ${{ github.event_name == 'push' && 'live' || '' }}
+          site: lovebutton-heaven
+
