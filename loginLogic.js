@@ -1,179 +1,203 @@
+// loginLogic.js — modular v9, root-relative imports
 
-import { connectWallet, getWalletAddress, fetchLiveLVBTNPrice } from '/js/connectWallet.js';
-import { fetchBlockedWallets, updateKycDom } from '/js/kycUtils.js';
-import { db, storage } from '/js/firebaseConfig.js';
-import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { connectWallet } from './connectWallet.js';
+import { db, storage } from './firebaseConfig.js';
 
-// Guard clause if not on login.html
-if (!window.location.pathname.includes('login.html')) {
-  console.log('ℹ️ loginLogic.js loaded but skipped — not on login.html');
-}
+// Firestore (modular)
+import {
+  doc, getDoc, collection, addDoc
+} from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
 
-// Globals
-let walletAddress = null;
-let tierLevel = null;
-let sessionStart = null;
-let startPhotoUrl = null;
-let position = { latitude: null, longitude: null };
+// Storage (modular)
+import {
+  ref as storageRef, uploadBytes, getDownloadURL
+} from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js';
 
-// Fetch Tier Level
-async function fetchTierLevel(addr) {
-  try {
-    const userRef = doc(db, 'users', addr);
-    const docSnap = await getDoc(userRef);
-    return docSnap.exists() ? docSnap.data().tier || 1 : 1;
-  } catch (err) {
-    console.error('Failed to fetch tier level:', err);
+// ---- Guard: only run on login.html ----
+if (!location.pathname.includes('login.html')) {
+  // not on login page; do nothing
+} else {
+
+  let walletAddress = null;
+  let tierLevel = 1;
+  let sessionStart = null;
+  let startPhotoUrl = null;
+  let position = { latitude: null, longitude: null };
+
+  async function fetchTierLevel(addr) {
+    try {
+      const userRef = doc(db, 'users', addr);
+      const snap = await getDoc(userRef);
+      return snap.exists() ? (snap.data().tier || 1) : 1;
+    } catch (e) {
+      console.error('fetchTierLevel failed:', e);
+      return 1;
+    }
+  }
+
+  function getMultiplier(tier) {
+    if (tier === 3) return 1.5;
+    if (tier === 2) return 1.25;
     return 1;
   }
 
-
-function getMultiplier(tier) {
-  if (tier === 3) return 1.5;
-  if (tier === 2) return 1.25;
-  return 1;
-}
-
-function getGeolocation() {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        position.latitude = pos.coords.latitude;
-        position.longitude = pos.coords.longitude;
-        resolve();
-      },
-      reject,
-      { enableHighAccuracy: true }
-    );
-  });
-}
-
-// ---- Main Logic ----
-document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const walletDisplay = document.getElementById('walletAddress');
-  const kycStatus = document.getElementById('kycStatus');
-  const tierDisplay = document.getElementById('tierInfo');
-  const priceDisplay = document.getElementById('lvbtnPrice');
-  const walletStatus = document.getElementById('walletStatus');
-  const beforeInput = document.getElementById('beforePhoto');
-  const afterInput = document.getElementById('afterPhoto');
-  const startBtn = document.getElementById('startVolunteeringBtn');
-  const stopBtn = document.getElementById('stopVolunteeringBtn');
-  const summaryBox = document.getElementById('summaryBox');
-  const sessionTimes = document.getElementById('sessionTimes');
-  const tokensEarned = document.getElementById('tokensEarned');
-  const totalLVBTN = document.getElementById('totalLVBTN');
-  const usdValue = document.getElementById('usdValue');
-  const walletSummary = document.getElementById('walletSummary');
-  const afterPhotosBox = document.getElementById('afterPhotosBox');
-
-  if (window.solana && window.solana.isPhantom) {
-    walletStatus.innerText = "✅ Phantom Wallet Detected. You can connect anytime.";
-    connectBtn.style.display = 'inline-block';
-  } else {
-    walletStatus.innerText = "👋 You can explore without connecting your wallet.";
-    connectBtn.style.display = 'none';
-  }
-
-  // Wallet Connect
-  if (connectBtn) {
-    connectBtn.addEventListener('click', async () => {
-      try {
-        walletAddress = await connectWallet();
-        if (!walletAddress) return;
-
-        const blockedWallets = await fetchBlockedWallets();
-        if (blockedWallets.includes(walletAddress)) {
-          alert("🚫 This wallet is blocked.");
-          document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-          throw new Error("Blocked wallet attempted access.");
-        }
-
-        walletDisplay.textContent = `Wallet: ${walletAddress}`;
-        walletStatus.textContent = `✅ Wallet Connected`;
-        tierLevel = await fetchTierLevel(walletAddress);
-        tierDisplay.textContent = `Tier: ${tierLevel}`;
-        kycStatus.textContent = 'KYC: ✅ Approved';
-        beforeInput.disabled = false;
-      } catch (err) {
-        console.error("❌ Wallet connection or KYC failed", err);
-        alert("Something went wrong while connecting your wallet.");
+  function getGeolocation() {
+    return new Promise((resolve, reject) => {
+      if (!('geolocation' in navigator)) {
+        reject(new Error('Geolocation not supported'));
+        return;
       }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          position.latitude = pos.coords.latitude;
+          position.longitude = pos.coords.longitude;
+          resolve();
+        },
+        (err) => reject(err),
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
+      );
     });
   }
 
-  // Start Volunteering
-  if (startBtn) {
-    startBtn.addEventListener('click', async () => {
-      const file = beforeInput.files[0];
-      if (!file || !walletAddress) return alert("Please upload your before photo and connect your wallet.");
+  // placeholder until you wire a live price
+  async function fetchLiveLVBTNPrice() { return 1; }
 
-      await getGeolocation();
+  document.addEventListener('DOMContentLoaded', () => {
+    const $ = (id) => document.getElementById(id);
 
-      const fileRef = storage.ref(`beforePhotos/${walletAddress}_${Date.now()}`);
-      const snapshot = await fileRef.put(file);
-      startPhotoUrl = await snapshot.ref.getDownloadURL();
+    const connectBtn   = $('connectWalletBtn');
+    const walletDisp   = $('walletAddress') || $('walletDisplay');
+    const kycStatus    = $('kycStatus');
+    const tierDisp     = $('tierInfo');
+    const priceDisp    = $('lvbtnPrice');
+    const walletStatus = $('walletStatus');
+    const beforeInput  = $('beforePhoto');
+    const afterInput   = $('afterPhoto');
+    const startBtn     = $('startVolunteeringBtn');
+    const stopBtn      = $('stopVolunteeringBtn');
+    const summaryBox   = $('summaryBox');
+    const sessionTimes = $('sessionTimes');
+    const tokensEarned = $('tokensEarned');
+    const totalLVBTN   = $('totalLVBTN');
+    const usdValue     = $('usdValue');
+    const walletSummary= $('walletSummary');
+    const afterPhotosBox = $('afterPhotosBox');
 
-      sessionStart = new Date();
-      beforeInput.disabled = true;
-      afterInput.disabled = false;
-      startBtn.disabled = true;
-      stopBtn.disabled = false;
+    if (window?.phantom?.solana?.isPhantom || window?.solana?.isPhantom) {
+      if (walletStatus) walletStatus.innerText = '✅ Phantom Wallet Detected. You can connect anytime.';
+      if (connectBtn) connectBtn.style.display = 'inline-block';
+    } else {
+      if (walletStatus) walletStatus.innerText = '👋 You can explore without connecting your wallet.';
+      if (connectBtn) connectBtn.style.display = 'none';
+    }
 
-      alert(`✅ You have begun volunteering!\n📍 Location: ${position.latitude}, ${position.longitude}`);
-    });
-  }
+    // Wallet Connect
+    if (connectBtn) {
+      connectBtn.addEventListener('click', async () => {
+        try {
+          walletAddress = await connectWallet();
+          if (!walletAddress) return;
 
-  // Stop Volunteering
-  if (stopBtn) {
-    stopBtn.addEventListener('click', async () => {
-      const end = new Date();
-      const file = afterInput.files[0];
-      if (!file || !sessionStart) return alert("Please upload your after photo.");
-
-      const fileRef = storage.ref(`afterPhotos/${walletAddress}_${Date.now()}`);
-      const snapshot = await fileRef.put(file);
-      const afterPhotoUrl = await snapshot.ref.getDownloadURL();
-
-      const durationMs = end - sessionStart;
-      const durationHours = Math.max(durationMs / 3600000, 0.01);
-      const multiplier = getMultiplier(tierLevel);
-      const tokens = +(durationHours * multiplier).toFixed(2);
-
-      const price = await fetchLiveLVBTNPrice();
-      const usd = +(tokens * price).toFixed(2);
-
-      await db.collection('volunteerSessions').add({
-        walletAddress,
-        tierLevel,
-        startTime: sessionStart.toISOString(),
-        endTime: end.toISOString(),
-        tokensEarned: tokens,
-        usdValue: usd,
-        startPhotoUrl,
-        endPhotoUrl: afterPhotoUrl,
-        geolocation: position,
-        timestamp: new Date().toISOString()
+          if (walletDisp) walletDisp.textContent = `Wallet: ${walletAddress}`;
+          if (walletStatus) walletStatus.textContent = '✅ Wallet Connected';
+          tierLevel = await fetchTierLevel(walletAddress);
+          if (tierDisp) tierDisp.textContent = `Tier: ${tierLevel}`;
+          if (kycStatus) kycStatus.textContent = 'KYC: ✅ Approved';
+          if (beforeInput) beforeInput.disabled = false;
+        } catch (err) {
+          console.error('Wallet connect / KYC failed', err);
+          alert('Something went wrong while connecting your wallet.');
+        }
       });
+    }
 
-      summaryBox.style.display = 'block';
-      sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
-      tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
-      totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
-      usdValue.textContent = `💰 USD Value: $${usd}`;
-      walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
+    // Start Volunteering
+    if (startBtn) {
+      startBtn.addEventListener('click', async () => {
+        try {
+          const file = beforeInput?.files?.[0];
+          if (!file || !walletAddress) {
+            alert('Please upload your BEFORE photo and connect your wallet.');
+            return;
+          }
+          await getGeolocation();
 
-      const img = document.createElement('img');
-      img.src = afterPhotoUrl;
-      img.alt = 'After Photo';
-      img.style.maxWidth = '100%';
-      img.style.marginTop = '10px';
-      afterPhotosBox.appendChild(img);
+          const bRef = storageRef(storage, `beforePhotos/${walletAddress}_${Date.now()}`);
+          await uploadBytes(bRef, file);
+          startPhotoUrl = await getDownloadURL(bRef);
 
-      afterInput.disabled = true;
-      stopBtn.disabled = true;
-    });
+          sessionStart = new Date();
+          if (beforeInput) beforeInput.disabled = true;
+          if (afterInput) afterInput.disabled = false;
+          if (startBtn) startBtn.disabled = true;
+          if (stopBtn)  stopBtn.disabled = false;
+
+          alert(`✅ Volunteering started!\n📍 ${position.latitude}, ${position.longitude}`);
+        } catch (e) {
+          console.error('Start volunteering failed', e);
+          alert('Could not start volunteering. Check permissions (location/photos).');
+        }
+      });
+    }
+
+    // Stop Volunteering
+    if (stopBtn) {
+      stopBtn.addEventListener('click', async () => {
+        try {
+          const end = new Date();
+          const file = afterInput?.files?.[0];
+          if (!file || !sessionStart) {
+            alert('Please upload your AFTER photo.');
+            return;
+          }
+
+          const aRef = storageRef(storage, `afterPhotos/${walletAddress}_${Date.now()}`);
+          await uploadBytes(aRef, file);
+          const afterPhotoUrl = await getDownloadURL(aRef);
+
+          const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
+          const multiplier = getMultiplier(tierLevel);
+          const tokens = +(durationHours * multiplier).toFixed(2);
+
+          const price = await fetchLiveLVBTNPrice();
+          const usd = +(tokens * price).toFixed(2);
+
+          await addDoc(collection(db, 'volunteerSessions'), {
+            walletAddress,
+            tierLevel,
+            startTime: sessionStart.toISOString(),
+            endTime: end.toISOString(),
+            tokensEarned: tokens,
+            usdValue: usd,
+            startPhotoUrl,
+            endPhotoUrl: afterPhotoUrl,
+            geolocation: position,
+            timestamp: new Date().toISOString()
+          });
+
+          if (summaryBox) summaryBox.style.display = 'block';
+          if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
+          if (tokensEarned) tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
+          if (totalLVBTN) totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
+          if (usdValue) usdValue.textContent = `💰 USD Value: $${usd}`;
+          if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
+
+          if (afterPhotosBox) {
+            const img = document.createElement('img');
+            img.src = afterPhotoUrl;
+            img.alt = 'After Photo';
+            img.style.maxWidth = '100%';
+            img.style.marginTop = '10px';
+            afterPhotosBox.appendChild(img);
+          }
+
+          if (afterInput) afterInput.disabled = true;
+          if (stopBtn) stopBtn.disabled = true;
+        } catch (e) {
+          console.error('Stop volunteering failed', e);
+          alert('Could not finish session. Please try again.');
+        }
+      });
+    }
   }
-});
-
+}
