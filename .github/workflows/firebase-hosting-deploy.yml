@@ -1,3 +1,4 @@
+# .github/workflows/firebase-hosting-deploy.yml
 name: Deploy to Firebase Hosting
 
 on:
@@ -18,36 +19,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Debug step to show exactly what's in the repo
       - name: Show repo files and firebase.json
         run: |
           echo "PWD:" && pwd
           echo "Listing files:" && ls -la
           echo "firebase.json contents:" && cat firebase.json || echo "firebase.json missing"
 
-      # Optional build step
-      - name: Install deps (optional)
-        run: |
-          if [ -f package.json ]; then
-            npm ci || npm i
-          else
-            echo "No package.json, skipping install."
-          fi
-
-      - name: Build (optional)
-        run: |
-          if [ -f package.json ]; then
-            npm run build --if-present
-          else
-            echo "No build step, skipping."
-          fi
-
-      # Deploy to Firebase Hosting
-      - name: Deploy to Firebase Hosting
+      # LIVE on push to main
+      - name: Deploy LIVE (push to main)
+        if: github.event_name == 'push'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOVEBUTTON_HEAVEN }}
           projectId: lovebutton-heaven
           site: lovebutton-heaven
+          channelId: live
 
+      # PREVIEW on PRs
+      - name: Deploy PREVIEW (pull request)
+        if: github.event_name == 'pull_request'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOVEBUTTON_HEAVEN }}
+          projectId: lovebutton-heaven
+          site: lovebutton-heaven
+          channelId: pr-${{ github.event.number }}
+          expires: 7d
