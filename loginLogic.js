@@ -176,7 +176,7 @@ if (stopBtn) {
 
       if (summaryBox) summaryBox.style.display = 'block';
       if (sessionTimes)  sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
-      if (tokensEarned)  tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
+      if (tokensEarned)  tokensEarned.textContent = `✅ SYNCM Earned: ${tokens}`;
       if (totalLVBTN)    totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
       if (usdValue)      usdValue.textContent = `💰 USD Value: $${usd}`;
       if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
