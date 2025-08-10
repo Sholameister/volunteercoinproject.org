@@ -55,6 +55,25 @@
   <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
   <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
 
+<div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
+<script>
+  (function(){
+    const d = document.getElementById('walletDebug');
+    const detected = {
+      phantom: !!(window?.phantom?.solana && window.phantom.solana.isPhantom) || !!(window?.solana?.isPhantom),
+      solflare: !!window?.solflare?.isSolflare,
+      backpack: !!window?.backpack?.solana,
+      glow: !!window?.glow?.solana,
+      exodus: !!window?.exodus?.solana,
+      trust: !!window?.trustwallet?.solana
+    };
+    const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
+    d.innerText = 'Wallet detect → ' + JSON.stringify(detected) + ' | HTTPS/localhost: ' + httpsOK + ' | UA: ' + navigator.userAgent;
+    d.style.display = 'block';
+  })();
+</script>
+
+  
   <!-- Scripts (relative paths only) -->
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./firebaseConfig.js"></script>
