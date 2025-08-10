@@ -9,33 +9,25 @@ const PRE_CACHE = [
   "./manifest.json", "./icons/icon-192x192.png", "./icons/icon-512x512.png",
 ];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(PRE_CACHE)));
+// sw.js — force-update & immediate control
+
+self.addEventListener('install', event => {
+  // Skip the "waiting" phase
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
-    )
-  );
-  self.clients.claim();
+self.addEventListener('activate', event => {
+  // Claim control so the new SW takes over right away
+  event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
-  const sameOrigin = url.origin === self.location.origin;
+self.addEventListener('fetch', event => {
+  // Basic network-first fetch
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
+});
 
-  const isNav =
-    request.mode === "navigate" ||
-    (request.method === "GET" && request.headers.get("accept")?.includes("text/html"));
-
-  if (isNav) {
-    event.respondWith(fetch(request).catch(() => caches.match("./index.html")));
-    return;
-  }
 
   if (sameOrigin) {
     event.respondWith(
