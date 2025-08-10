@@ -1,58 +1,58 @@
-// /js/signup.js
-import { connectWallet } from '/js/connectWallet.js';
-import { fetchBlockedWallets } from '/js/kycUtils.js';
+// signup.js — wallet connect + KYC/tier display
 
-document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectWalletBtn');
-  const walletDisplay = document.getElementById('signupWalletDisplay');
+import { connectWallet } from './connectWallet.js';
+import { db, doc, getDoc } from './firebaseConfig.js';
 
-  if (!connectBtn) {
-    console.warn("connectWalletBtn not found in DOM.");
-    return;
-  }
+if (location.pathname.includes('signup.html')) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const $ = (id) => document.getElementById(id);
 
-  connectBtn.addEventListener('click', async () => {
-    // Phantom guard
-    if (!window.solana?.isPhantom) {
-      alert("Phantom Wallet not found. Please install Phantom to continue.");
-      return;
+    const connectBtn = $('connectWalletBtn');
+    const walletAddressSlot = $('walletAddress') || $('signupWalletDisplay');
+    const walletStatus = $('walletStatus');
+    const kycStatus = $('kycStatus');
+    const tierInfo = $('tierInfo');
+
+    function paintTier(tier) {
+      const t = Number(tier) || 1;
+      tierInfo.textContent = `Tier: ${t}`;
+      tierInfo.classList.remove('tier-1','tier-2','tier-3');
+      tierInfo.classList.add(t === 3 ? 'tier-3' : t === 2 ? 'tier-2' : 'tier-1');
     }
 
-    // UI: disable while working
-    connectBtn.disabled = true;
-    connectBtn.textContent = 'Connecting…';
-
-    try {
-      const walletAddress = await connectWallet();
-      if (!walletAddress) return;
-
-      // Blocklist check (defensive in case JSON is { blockedWallets: [...] } or just [...] )
-      let blocked = [];
+    async function loadProfile(addr) {
       try {
-        const res = await fetchBlockedWallets();
-        if (Array.isArray(res)) blocked = res;
-        else if (Array.isArray(res?.blockedWallets)) blocked = res.blockedWallets;
-        else if (Array.isArray(res?.wallets)) blocked = res.wallets;
+        const ref = doc(db, 'users', addr);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const data = snap.data();
+          const tier = data.tier ?? 1;
+          const approved = Boolean(data.kycApproved ?? (tier > 1));
+          paintTier(tier);
+          if (kycStatus) kycStatus.textContent = `KYC: ${approved ? '✅ Approved' : '⏳ Pending'}`;
+        } else {
+          paintTier(1);
+          if (kycStatus) kycStatus.textContent = 'KYC: ⏳ Pending';
+        }
       } catch (e) {
-        console.warn('Blocklist fetch failed; proceeding open.', e);
+        console.error('loadProfile failed', e);
+        if (kycStatus) kycStatus.textContent = 'KYC: (error loading status)';
       }
+    }
 
-      if (blocked.map(s => s?.toLowerCase?.()).includes(walletAddress.toLowerCase())) {
-        alert("🚫 This wallet is blocked.");
-        document.body.innerHTML = '<h2 style="color:red;text-align:center;">Access Denied. Blocked Wallet.</h2>';
-        throw new Error("Blocked wallet attempted access.");
-      }
-
-      if (walletDisplay) {
-        walletDisplay.textContent = `Wallet: ${walletAddress}`;
-      }
-      connectBtn.textContent = 'Connected ✅';
-    } catch (err) {
-      console.error("⚠️ Wallet connection or blocklist check failed:", err);
-      alert("Something went wrong while connecting your wallet.");
-      connectBtn.textContent = 'Connect Wallet';
-    } finally {
-      connectBtn.disabled = false;
+    if (connectBtn) {
+      connectBtn.addEventListener('click', async () => {
+        try {
+          const addr = await connectWallet();
+          if (!addr) return;
+          if (walletAddressSlot) walletAddressSlot.textContent = `Wallet: ${addr}`;
+          if (walletStatus) walletStatus.textContent = '✅ Wallet Connected';
+          await loadProfile(addr);
+        } catch (e) {
+          console.error('connect failed', e);
+          alert('Could not connect wallet.');
+        }
+      });
     }
   });
-});
+}
