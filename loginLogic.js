@@ -14,7 +14,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js';
 
 // ---- Guard: only run on login.html ----
-if (!location.pathname.includes('login.html')) {
+if (!location.pathname.includes('./login.html')) {
   // not on login page; do nothing
 } else {
 
