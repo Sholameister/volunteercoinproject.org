@@ -139,8 +139,8 @@ if (!location.pathname.includes('login.html')) {
         }
       });
     }
-
-   if (stopBtn) {
+// Stop Volunteering (REPLACE your existing stopBtn handler with this)
+if (stopBtn) {
   stopBtn.addEventListener('click', async () => {
     try {
       const end = new Date();
@@ -175,10 +175,10 @@ if (!location.pathname.includes('login.html')) {
       });
 
       if (summaryBox) summaryBox.style.display = 'block';
-      if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
-      if (tokensEarned) tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
-      if (totalLVBTN) totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
-      if (usdValue) usdValue.textContent = `💰 USD Value: $${usd}`;
+      if (sessionTimes)  sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
+      if (tokensEarned)  tokensEarned.textContent = `✅ LVBTN Earned: ${tokens}`;
+      if (totalLVBTN)    totalLVBTN.textContent = `📊 Tier Multiplier: x${multiplier}`;
+      if (usdValue)      usdValue.textContent = `💰 USD Value: $${usd}`;
       if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
 
       if (afterPhotosBox) {
@@ -191,8 +191,7 @@ if (!location.pathname.includes('login.html')) {
       }
 
       if (afterInput) afterInput.disabled = true;
-      if (stopBtn) stopBtn.disabled = true;
-
+      if (stopBtn)    stopBtn.disabled    = true;
     } catch (e) {
       console.error('Stop volunteering failed', e);
       alert('Could not finish session. Please try again.');
