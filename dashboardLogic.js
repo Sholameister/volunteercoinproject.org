@@ -1,101 +1,63 @@
-// DashboardLogic.js — uses window.db (compat)
+// dashboardLogic.js — wallet connect + session history
 
-let walletAddress = null;
+import { connectWallet, getWalletAddress } from './connectWallet.js';
+import {
+  db, collection, getDocs, query, where, orderBy
+} from './firebaseConfig.js';
 
-async function connectWalletAndLoadSessions() {
-  try {
-    const p = window.solana;
-    if (!p?.isPhantom) throw new Error('Phantom not detected');
-    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-      throw new Error('Wallet requires HTTPS or localhost');
+if (location.pathname.includes('dashboard.html')) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const $ = (id) => document.getElementById(id);
+
+    const connectBtn = $('connectDashboardWalletBtn');
+    const walletDisplay = $('walletDisplay');
+    const totalTokensEl = $('totalTokens');
+    const usdTotalEl = $('usdTotalValue');
+    const listEl = $('sessionList');
+
+    const FIXED_PRICE = 10; // $10 for now
+
+    async function loadSessions(addr) {
+      try {
+        const q = query(
+          collection(db, 'volunteerSessions'),
+          where('walletAddress', '==', addr),
+          orderBy('startTime', 'desc')
+        );
+        const snap = await getDocs(q);
+
+        let totalTokens = 0;
+        let cards = '';
+        snap.forEach(docSnap => {
+          const s = docSnap.data();
+          totalTokens += Number(s.tokensEarned || 0);
+          const start = new Date(s.startTime).toLocaleString();
+          const end = new Date(s.endTime).toLocaleString();
+          cards += `
+            <div class="sessionCard">
+              <div><strong>${start}</strong> → ${end}</div>
+              <div>Tokens: ${s.tokensEarned} | Tier: ${s.tierLevel} | USD: $${(Number(s.tokensEarned||0)*FIXED_PRICE).toFixed(2)}</div>
+              ${s.endPhotoUrl ? `<img src="${s.endPhotoUrl}" alt="After photo">` : ''}
+            </div>
+          `;
+        });
+
+        if (listEl) listEl.innerHTML = cards || 'No sessions yet. Log your first one on the Volunteer Logger.';
+        if (totalTokensEl) totalTokensEl.textContent = `Total LVBTN Earned: ${totalTokens.toFixed(2)}`;
+        if (usdTotalEl) usdTotalEl.textContent = `Total USD Value: $${(totalTokens*FIXED_PRICE).toFixed(2)}`;
+      } catch (e) {
+        console.error('loadSessions failed', e);
+        if (listEl) listEl.textContent = 'Error loading sessions.';
+      }
     }
-    const resp = await p.connect({ onlyIfTrusted: false });
-    walletAddress = resp?.publicKey?.toBase58?.();
-    if (!walletAddress) throw new Error('No public key returned');
 
-    document.getElementById("walletDisplay").innerText = `Wallet: ${walletAddress}`;
-    await loadSessionHistory(walletAddress);
-  } catch (err) {
-    alert(err?.message || "Wallet connection failed.");
-    console.error("Wallet error:", err);
-  }
+    if (connectBtn) {
+      connectBtn.addEventListener('click', async () => {
+        const addr = (await connectWallet()) || getWalletAddress();
+        if (!addr) return;
+        if (walletDisplay) walletDisplay.textContent = `Wallet: ${addr}`;
+        await loadSessions(addr);
+      });
+    }
+  });
 }
-
-function toDate(val) {
-  // Supports Firestore Timestamp or ISO string
-  if (!val) return new Date(0);
-  if (typeof val === 'object' && typeof val.seconds === 'number') {
-    return new Date(val.seconds * 1000);
-  }
-  return new Date(val);
-}
-
-async function loadSessionHistory(wallet) {
-  const sessionList = document.getElementById("sessionList");
-  sessionList.innerHTML = "";
-
-  try {
-    const db = window.db;
-    // If 'timestamp' is stored as ISO string, this still works fine. If errors, remove orderBy.
-    const snapshot = await db
-      .collection("volunteerSessions")
-      .where("walletAddress", "==", wallet)
-      .orderBy("timestamp", "desc")
-      .get();
-
-    let totalTokens = 0;
-    let totalUSD = 0;
-    let totalHours = 0;
-
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      const start = toDate(data.startTime);
-      const end = toDate(data.endTime);
-      const durationHours = Math.max((end - start) / (1000 * 60 * 60), 0);
-
-      const tokens = parseFloat(data.tokensEarned || 0);
-      const usd = parseFloat(data.usdValue || 0);
-      const tier = data.tierLevel || "N/A";
-      const startPhoto = data.startPhotoUrl || "https://via.placeholder.com/120?text=No+Photo";
-      const endPhoto = data.endPhotoUrl || "https://via.placeholder.com/120?text=No+Photo";
-
-      totalTokens += tokens;
-      totalUSD += usd;
-      totalHours += durationHours;
-
-      const card = document.createElement("div");
-      card.className = "sessionCard";
-      card.innerHTML = `
-        <p><strong>Date:</strong> ${start.toLocaleString()}</p>
-        <p><strong>Tier:</strong> ${tier}</p>
-        <p><strong>Duration:</strong> ${durationHours.toFixed(2)} hours</p>
-        <p><strong>LVBTN Earned:</strong> ${tokens.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-        <p><strong>USD Value:</strong> $${usd.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-        <p><strong>Start Photo:</strong><br><img src="${startPhoto}" width="120"/></p>
-        <p><strong>After Photo:</strong><br><img src="${endPhoto}" width="120"/></p>
-      `;
-      sessionList.appendChild(card);
-    });
-
-    document.getElementById("totalTokens").innerText = `Total LVBTN Earned: ${totalTokens.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-    document.getElementById("usdTotalValue").innerText = `Total USD Value: $${totalUSD.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-    const totalHoursDiv = document.createElement("div");
-    totalHoursDiv.innerText = `Total Hours Volunteered: ${totalHours.toFixed(2)}`;
-    totalHoursDiv.style.fontWeight = "bold";
-    totalHoursDiv.style.marginTop = "10px";
-    sessionList.prepend(totalHoursDiv);
-
-  } catch (e) {
-    console.error("Failed to load sessions:", e);
-    sessionList.innerHTML = `<p style="color:red;">Failed to load volunteer history.</p>`;
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const connectBtn = document.getElementById('connectDashboardWalletBtn');
-  if (!window.solana?.isPhantom) {
-    alert("Please install Phantom Wallet to use the dashboard.");
-    return;
-  }
-  connectBtn?.addEventListener('click', connectWalletAndLoadSessions);
-});
