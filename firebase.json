@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "LoveButtonApp/public",
+    "public": "public/LoveButtonApp",
     "ignore": [
       "firebase.json",
       "**/.*",
