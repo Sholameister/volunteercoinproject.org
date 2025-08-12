@@ -3,7 +3,7 @@
 import { connectWallet } from './js/connectWallet.js';
 import { db, doc, getDoc } from './js/firebaseConfig.js';
 
-if (location.pathname.includes('signup.html')) {
+if (location.pathname.includes('./signup.html')) {
   document.addEventListener('DOMContentLoaded', () => {
     const $ = (id) => document.getElementById(id);
 
