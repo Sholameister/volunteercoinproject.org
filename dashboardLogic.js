@@ -1,9 +1,9 @@
 // dashboardLogic.js — wallet connect + session history
 
-import { connectWallet, getWalletAddress } from './connectWallet.js';
+import { connectWallet, getWalletAddress } from './js/connectWallet.js';
 import {
   db, collection, getDocs, query, where, orderBy
-} from './firebaseConfig.js';
+} from './js/firebaseConfig.js';
 
 if (location.pathname.includes('dashboard.html')) {
   document.addEventListener('DOMContentLoaded', () => {
