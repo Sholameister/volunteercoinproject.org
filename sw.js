@@ -40,8 +40,5 @@ self.addEventListener('fetch', event => {
         });
       })
     );
-    return;
-  }
-
-  event.respondWith(fetch(request).catch(() => new Response(null, { status: 504 })));
+    event.respondWith(fetch(request).catch(() => new Response(null, { status: 504 })));
 });
