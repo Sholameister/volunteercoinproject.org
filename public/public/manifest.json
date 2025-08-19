@@ -1,0 +1,26 @@
+{
+  "name": "LoveButton App",
+  "short_name": "LoveButton",
+  "id": "/",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff3366",
+  "description": "Volunteer. Give. Earn. The LoveButton App tracks volunteer hours and rewards people with LVBTN tokens.",
+  "orientation": "portrait",
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

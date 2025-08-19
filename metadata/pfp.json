@@ -1,0 +1,10 @@
+{
+  "chainId": 101,
+  "address": "Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s",
+  "symbol": "LVBTN",
+  "name": "LoveButton",
+  "decimals": 9,
+  "logoURI": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
+  "website": "https://volunteercoinproject.org",
+  "tags": ["charity", "community", "volunteer", "PFP"]
+}

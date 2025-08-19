@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LVBTN Signup & KYC</title>
+  <style>
+    body { background:#fdf2f8; font-family:'Segoe UI',sans-serif; text-align:center; padding:20px; }
+    h2 { margin: 0 0 8px; }
+    p { margin: 8px 0; }
+    button { background:#e60073; color:#fff; padding:12px 20px; border:none; border-radius:6px; font-size:16px; margin:10px; cursor:pointer; }
+    button:hover { background:#cc005f; }
+    #walletAddress,#walletStatus,#kycStatus,#tierInfo,#signupWalletDisplay { font-weight:bold; margin:10px 0; }
+    ul { list-style:none; text-align:left; max-width:420px; margin:20px auto; padding:0; }
+    ul li { margin:6px 0; }
+    .tier-badge { padding:4px 10px; border-radius:4px; font-weight:bold; display:inline-block; }
+    .tier-1 { background:#ffe0e0; color:#c0392b }
+    .tier-2 { background:#fff3cd; color:#856404 }
+    .tier-3 { background:#d4edda; color:#155724 }
+    .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
+  </style>
+</head>
+<body>
+  <h2>Sign Up & KYC Verification</h2>
+  <p style="font-style:italic;color:#333;">
+    To unlock volunteer rewards, please complete the KYC process below. The more verified you are, the more access and token rewards you’ll earn!
+  </p>
+
+  <!-- Wallet -->
+  <button id="connectWalletBtn">Connect Wallet</button>
+  <p id="signupWalletDisplay"></p>
+  <p id="walletAddress"></p>
+  <p id="walletStatus"></p>
+
+  <!-- KYC / Tier -->
+  <p id="kycStatus">KYC: ⏳ Pending</p>
+  <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
+
+  <!-- Blockpass -->
+  <div style="margin-top:12px;">
+    <a href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" rel="noopener">
+      <button>Start KYC</button>
+    </a>
+  </div>
+
+  <!-- Rewards blurb -->
+  <ul>
+    <li>💗 LVBTN Token Earnings (example):</li>
+    <li>• Tier 1 – 1 LVBTN/hr (basic signup)</li>
+    <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
+    <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + 25+ hours)</li>
+  </ul>
+
+  <!-- Nav -->
+  <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
+  <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
+
+  <!-- Scripts (relative paths only) -->
+  <script type="module" src="./connectWallet.js"></script>
+  <script type="module" src="./kycUtils.js"></script>
+  <script type="module" src="./signup.js"></script>
+</body>
+</html>
