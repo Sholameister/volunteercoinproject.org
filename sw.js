@@ -43,7 +43,6 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(fetch(request).catch(() => new Response(null, { status: 504 })));
-});
 
 // Activate: Cleanup old caches
 self.addEventListener("activate", event => {
