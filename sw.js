@@ -4,9 +4,9 @@ const CACHE_NAME = "lvbtn-cache-v7"; // bump when you deploy
 const PRE_CACHE = [
   "./", "./index.html", "./signup.html", "./login.html",
   "./dashboard.html", "./volunteer-hours.html",
-  "./js/connectWallet.js", "./js/loginLogic.js", "./js/dashboardLogic.js",
-  "./js/kycUtils.js", "./js/firebaseConfig.js", "./js/setupKycDom.js",
-  "./js/manifest.json", "./icons/icon-192x192.png", "./icons/icon-512x512.png",
+  "./connectWallet.js", "./loginLogic.js", "./dashboardLogic.js",
+  "./kycUtils.js", "./firebaseConfig.js", "./setupKycDom.js",
+  "./manifest.json", "./icons/icon-192x192.png", "./icons/icon-512x512.png",
 ];
 
 // sw.js — force-update & immediate control
@@ -40,7 +40,6 @@ self.addEventListener('fetch', event => {
         });
       })
     );
-    return;
   }
 
   event.respondWith(fetch(request).catch(() => new Response(null, { status: 504 })));
