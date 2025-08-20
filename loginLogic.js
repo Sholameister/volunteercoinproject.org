@@ -1,7 +1,7 @@
 // loginLogic.js — modular v9, root-relative imports
 
-import { connectWallet } from './js/connectWallet.js';
-import { db, storage } from './js/firebaseConfig.js';
+import { connectWallet } from './connectWallet.js';
+import { db, storage } from './firebaseConfig.js';
 
 // Firestore (modular)
 import {
