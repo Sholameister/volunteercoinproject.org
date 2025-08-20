@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Volunteer Logger</title>
   <style>
-    body{background:#fffdfd;font-family:'Segoe UI',sans-serif;padding:20px;text-align:center}
-    button,input[type="file"]{display:block;margin:10px auto;padding:12px;border-radius:6px;width:90%;max-width:400px;font-size:16px}
-    button{background:#e60073;color:#fff;border:none;cursor:pointer}
-    button:hover{background:#cc005f}
-    #summaryBox{margin-top:20px;padding:10px;border:1px solid #ddd;border-radius:8px;background:#fafafa;display:none}
-    #afterPhotosBox img{max-width:100px;margin:5px;border-radius:6px}
+    body { background:#fffdfd; font-family:'Segoe UI',sans-serif; padding:20px; text-align:center }
+    button, input[type="file"] {
+      display:block; margin:10px auto; padding:12px; border-radius:6px;
+      width:90%; max-width:400px; font-size:16px
+    }
+    button { background:#e60073; color:#fff; border:none; cursor:pointer }
+    button:hover { background:#cc005f }
+    #summaryBox { margin-top:20px; padding:10px; border:1px solid #ddd; border-radius:8px; background:#fafafa; display:none }
+    #afterPhotosBox img { max-width:100px; margin:5px; border-radius:6px }
   </style>
 </head>
 <body>
@@ -44,97 +47,17 @@
   <h4>Past Volunteering Experiences</h4>
   <div id="afterPhotosBox" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
 
-  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
-  <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
-  <a href="./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">Go to 501(c)(3) approval</a>
+  <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
+  <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
+  <a href="http://./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">Go to 501(c)(3) approval</a>
 
-<div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
-<script>
-  (function(){
-    const d = document.getElementById('walletDebug');
-    const detected = {
-      phantom: !!(window?.phantom?.solana && window.phantom.solana.isPhantom) || !!(window?.solana?.isPhantom),
-      solflare: !!window?.solflare?.isSolflare,
-      backpack: !!window?.backpack?.solana,
-      glow: !!window?.glow?.solana,
-      exodus: !!window?.exodus?.solana,
-      trust: !!window?.trustwallet?.solana
-    };
-    const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
-    d.innerText = 'Wallet detect → ' + JSON.stringify(detected) + ' | HTTPS/localhost: ' + httpsOK + ' | UA: ' + navigator.userAgent;
-    d.style.display = 'block';
-  })();
-</script>
+  <div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
 
-  
-  <!-- Scripts (fixed) -->
-  <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.life.min.js"></script>
+  <!-- Scripts -->
+  <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
   <script type="module" src="./connectWallet.js"></script>
-  <script typr="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./kycUtils.js"></script>
   <script type="module" src="./loginLogic.js"></script>
-
-  <!-- SAFETY-NET: ensures Connect Wallet button actually does something -->
-<script type="module">
-  // 1) Load the multi-wallet connector
-  import { connectWallet } from './connectWallet.js';
-
-  // 2) Grab the button (both pages use the same id)
-  const btn = document.getElementById('connectWalletBtn');
-
-  // 3) Minimal wallet detection (for user-friendly hints)
-  const walletsDetected = Boolean(
-    (window?.phantom?.solana && window.phantom.solana.isPhantom) ||
-    (window?.solana?.isPhantom) ||
-    (window?.solflare?.isSolflare) ||
-    (window?.backpack?.solana) ||
-    (window?.glow?.solana) ||
-    (window?.exodus?.solana) ||
-    (window?.trustwallet?.solana)
-  );
-  const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
-
-  // 4) Add a small one-time helper if nothing is injected
-  const helperId = 'walletHelpInline';
-  if (!walletsDetected) {
-    const div = document.createElement('div');
-    div.id = helperId;
-    div.style.cssText = 'max-width:420px;margin:10px auto;padding:10px;border:1px solid #f2d388;background:#fff8c5;border-radius:6px;font:13px system-ui';
-    div.innerHTML = `
-      <b>No wallet detected here.</b><br>
-      Desktop: use Chrome/Brave with Phantom or Solflare extension installed.<br>
-      Mobile: open this site inside your wallet app’s browser (Phantom → Browser tab).
-    `;
-    document.body.appendChild(div);
-  }
-
-  // 5) Ensure the button exists and bind a guaranteed click handler
-  if (btn) {
-    // Remove any previous listeners (if a stale SW kept an old script)
-    btn.replaceWith(btn.cloneNode(true));
-    const wiredBtn = document.getElementById('connectWalletBtn');
-
-    wiredBtn.addEventListener('click', async () => {
-      try {
-        if (!httpsOK) {
-          alert('Wallet requires HTTPS or localhost.');
-          return;
-        }
-        const addr = await connectWallet();
-        if (addr) {
-          alert('✅ Connected: ' + addr);
-        } else {
-          alert('⚠️ Connect failed (no address returned).');
-        }
-      } catch (e) {
-        console.error('Connect error:', e);
-        alert('❌ Wallet connect error: ' + (e?.message || e));
-      }
-    });
-  } else {
-    console.warn('Connect button #connectWalletBtn not found on this page.');
-  }
-</script>
-
 </body>
 </html>
