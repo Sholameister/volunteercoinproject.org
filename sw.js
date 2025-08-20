@@ -78,4 +78,3 @@ self.addEventListener("fetch", event => {
     })
   );
 });
->>>>>>> 86c5d19 (Initial Firebase Github Actions setup)
