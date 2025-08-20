@@ -69,15 +69,15 @@
   
   <!-- Scripts (fixed) -->
   <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.life.min.js"></script>
-  <script type="module" src="./js/connectWallet.js"></script>
-  <script typr="module" src="./js/firebaseConfig.js"></script>
-  <script type="module" src="./js/kycUtils.js"></script>
-  <script type="module" src="./js/loginLogic.js"></script>
+  <script type="module" src="./connectWallet.js"></script>
+  <script typr="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./kycUtils.js"></script>
+  <script type="module" src="./loginLogic.js"></script>
 
   <!-- SAFETY-NET: ensures Connect Wallet button actually does something -->
 <script type="module">
   // 1) Load the multi-wallet connector
-  import { connectWallet } from './js/connectWallet.js';
+  import { connectWallet } from './connectWallet.js';
 
   // 2) Grab the button (both pages use the same id)
   const btn = document.getElementById('connectWalletBtn');
@@ -135,15 +135,6 @@
     console.warn('Connect button #connectWalletBtn not found on this page.');
   }
 </script>
-<body>
-  <!-- Page content -->
-
-  <!-- Solana web3.js -->
-  <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
-
-  <!-- Your wallet connection logic -->
-  <script type="module" src="./js/loginLogic.js"></script>
-</body>
 
 </body>
 </html>
