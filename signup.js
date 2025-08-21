@@ -1,7 +1,7 @@
 // signup.js — wallet connect + KYC/tier display
 
-import { connectWallet } from './js/connectWallet.js';
-import { db, doc, getDoc } from './js/firebaseConfig.js';
+import { connectWallet } from './connectWallet.js';
+import { db, doc, getDoc } from './firebaseConfig.js';
 
 if (location.pathname.includes('./signup.html')) {
   document.addEventListener('DOMContentLoaded', () => {
