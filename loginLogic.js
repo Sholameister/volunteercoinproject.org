@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletDisp   = $('walletAddress') || $('walletDisplay');
   const kycStatus    = $('kycStatus');
   const tierDisp     = $('tierInfo');
-  const priceDisp    = $('lvbtnPrice'); // your HTML says LVBTN, but math below is for SYNCM/hour
+  const priceDisp    = $('lvbtnPrice'); // we'll show SYNCM label
   const walletStatus = $('walletStatus');
 
   const beforeInput  = $('beforePhoto');
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function getMultiplier(tier) {
+  function getHourlySyncm(tier) {
     if (tier === 3) return 15;   // SYNCM/hr (Tier 3)
     if (tier === 2) return 10;   // SYNCM/hr (Tier 2)
     return 5;                    // SYNCM/hr (Tier 1)
@@ -83,9 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Placeholder until you wire a real live price; set to SYNCM internal $0.25 if you want
+  // Placeholder until you wire a real live price; internal $0.25 for SYNCM
   async function fetchLiveSyncmPriceUSD() {
-    return 0.25; // adjust as needed
+    return 0.25;
   }
 
   function paintWallet(addr) {
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------- Initial UI ----------
-  if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)'; // matches placeholder above
+  if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
   paintWallet(null);
   if (tierDisp)  tierDisp.textContent = 'Tier: ';
   if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
@@ -209,8 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
 
-      // Token math: SYNCM per hour by tier (5/10/15). Keep your own policy here.
-      const hourly = getMultiplier(tierLevel);
+      // Token math: SYNCM per hour by tier (5/10/15).
+      const hourly = getHourlySyncm(tierLevel);
       const tokens = +(durationHours * hourly).toFixed(2);
 
       // Dollar value (placeholder)
