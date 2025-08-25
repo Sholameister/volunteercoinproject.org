@@ -90,6 +90,7 @@ function paintWalletUi(pubkeyBase58) {
 
 // Main connect handler (call on button click)
 async function handleConnect() {
+  const provider = window?.solana;
   if (!(provider && provider.isPhantom)) {
     maybeShowHint();
     return null;
@@ -122,6 +123,7 @@ function setupConnectButton() {
   });
 
   // If Phantom is already connected (returning visitor), reflect UI
+  const provider = window?.solana;
   if (provider?.isConnected && provider.publicKey) {
     const pubkey = provider.publicKey.toString();
     window.appWallet = { publicKey: pubkey };
@@ -133,6 +135,7 @@ function setupConnectButton() {
 
 // Listen for Phantom account changes & disconnects
 function wireProviderEvents() {
+  const provider = window?.solana;
   if (!provider) return;
   provider.on?.('accountChanged', (pk) => {
     const pubkey = pk ? pk.toString() : null;
