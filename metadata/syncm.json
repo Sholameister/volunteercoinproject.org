@@ -24,5 +24,12 @@
         "share": 100
       }
     ]
+  },
+  "extensions": {
+    "website": "https://volunteercoinproject.org",
+    "twitter": "https://twitter.com/YourHandle",
+    "telegram": "https://t.me/YourChannel",
+    "organization": "Volunteer Coin Project Foundation (VCPF)",
+    "description": "Volunteercoinproject.org is the official steward of SYNCM until MeshSync transitions into active control."
   }
 }
