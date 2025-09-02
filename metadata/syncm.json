@@ -25,11 +25,11 @@
       }
     ]
   },
-  "extensions": {
-    "website": "https://volunteercoinproject.org",
-    "twitter": "https://twitter.com/YourHandle",
-    "telegram": "https://t.me/YourChannel",
-    "organization": "Volunteer Coin Project Foundation (VCPF)",
-    "description": "Volunteercoinproject.org is the official steward of SYNCM until MeshSync transitions into active control."
+"extensions": {
+  "twitter": "https://t.me/+TvnQ8aJX8sc4YTkx",
+      "telegram": "https://t.me/sholameister",
+      "facebook": "https://www.facebook.com/share/1ByBdXjLaW/?mibextid=wwXIfr",
+     "linkedin": "https://www.linkedin.com/company/volunteercoinprojectfoundation",
+  "organization": "https://volunteercoinproject.org",
+  "description": "Volunteercoinproject.org is the official steward of SYNCM until MeshSync transitions into active control."
   }
-}
