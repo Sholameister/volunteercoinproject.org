@@ -1,0 +1,28 @@
+{
+  "name": "SYNCM",
+  "symbol": "SYNCM",
+  "description": "SYNCM powers the Proof-of-Impact ecosystem, rewarding volunteers and backing resilient blockchain infrastructure.",
+  "image": "https://volunteercoinproject.org/assets/syncm-logo.png",
+  "external_url": "https://volunteercoinproject.org",
+  "seller_fee_basis_points": 0,
+  "attributes": [
+    { "trait_type": "Category", "value": "Utility Token" },
+    { "trait_type": "Ecosystem", "value": "Volunteer Coin Project Foundation" },
+    { "trait_type": "Blockchain", "value": "Solana" }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://volunteercoinproject.org/assets/syncm-logo.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "79rQdXmJr1CVHY8zrhG5T5SLoX7jp6HTjwro2AiQUdsa",
+        "share": 100
+      }
+    ]
+  }
+}
