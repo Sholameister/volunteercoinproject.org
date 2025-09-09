@@ -3,17 +3,11 @@
 import { handleConnect } from './connectWallet.js';
 import { db, storage } from './firebaseConfig.js';
 
-// Firestore (modular CDN OK)
-import {
-  doc, getDoc, collection, addDoc
-} from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+// Firestore (modular CDN)
+import { doc, getDoc, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+// Storage (modular CDN)
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js';
 
-// Storage (modular CDN OK)
-import {
-  ref as storageRef, uploadBytes, getDownloadURL
-} from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js';
-
-// ---- Guard: only run on login page if the key elements exist ----
 document.addEventListener('DOMContentLoaded', () => {
   const $ = (id) => document.getElementById(id);
 
@@ -21,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletDisp   = $('walletAddress') || $('walletDisplay');
   const kycStatus    = $('kycStatus');
   const tierDisp     = $('tierInfo');
-  const priceDisp    = $('lvbtnPrice'); // we'll show SYNCM label
+  const priceDisp    = $('lvbtnPrice');   // shows SYNCM label for now
   const walletStatus = $('walletStatus');
 
   const beforeInput  = $('beforePhoto');
@@ -37,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletSummary= $('walletSummary');
   const afterPhotosBox = $('afterPhotosBox');
 
-  // If the core controls aren't on the page, bail out quietly
+  // Guard: only run when core controls exist
   if (!connectBtn || !beforeInput || !afterInput || !startBtn || !stopBtn) return;
 
   // ---------- State ----------
@@ -48,32 +42,51 @@ document.addEventListener('DOMContentLoaded', () => {
   let position = { latitude: null, longitude: null };
 
   // ---------- Helpers ----------
-  async function fetchTierLevel(addr) {
+  async function fetchKycTierAndStatus(addr) {
     try {
-      const userRef = doc(db, 'users', addr);
-      const snap = await getDoc(userRef);
-      return snap.exists() ? (snap.data().tier ?? 1) : 1;
+      // 1) verifiedKYC/<wallet> (exact)
+      let snap = await getDoc(doc(db, 'verifiedKYC', addr));
+      if (!snap.exists()) {
+        // lowercase fallback if some docs saved that way
+        snap = await getDoc(doc(db, 'verifiedKYC', (addr || '').toLowerCase()));
+      }
+      if (snap.exists()) {
+        const d = snap.data() || {};
+        const approved = String(d.status || '').toLowerCase() === 'approved';
+        const tier = Number(d.tier ?? (approved ? 2 : 1)) || 1;
+        return { tier, approved };
+      }
+
+      // 2) legacy users/<wallet>
+      const userSnap = await getDoc(doc(db, 'users', addr));
+      if (userSnap.exists()) {
+        const u = userSnap.data() || {};
+        const tier = Number(u.tier ?? 1) || 1;
+        const approved = Boolean(u.kycApproved ?? (tier > 1));
+        return { tier, approved };
+      }
+
+      return { tier: 1, approved: false };
     } catch (e) {
-      console.error('fetchTierLevel failed:', e);
-      return 1;
+      console.error('fetchKycTierAndStatus failed:', e);
+      return { tier: 1, approved: false };
     }
   }
 
   function getHourlySyncm(tier) {
-    if (tier === 3) return 15;   // SYNCM/hr (Tier 3)
-    if (tier === 2) return 10;   // SYNCM/hr (Tier 2)
-    return 5;                    // SYNCM/hr (Tier 1)
+    if (tier === 3) return 15; // SYNCM/hr
+    if (tier === 2) return 10;
+    return 5;
   }
 
   async function getGeolocation() {
     return new Promise((resolve, reject) => {
       if (!('geolocation' in navigator)) {
-        reject(new Error('Geolocation not supported'));
-        return;
+        reject(new Error('Geolocation not supported')); return;
       }
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          position.latitude  = pos.coords.latitude;
+          position.latitude = pos.coords.latitude;
           position.longitude = pos.coords.longitude;
           resolve();
         },
@@ -83,36 +96,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Placeholder until you wire a real live price; internal $0.25 for SYNCM
-  async function fetchLiveSyncmPriceUSD() {
-    return 0.25;
-  }
+  async function fetchLiveSyncmPriceUSD() { return 0.25; } // placeholder
 
   function paintWallet(addr) {
     const short = addr ? `${addr.slice(0,4)}…${addr.slice(-4)}` : '';
-    if (walletDisp)   walletDisp.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
+    if (walletDisp)   walletDisp.textContent   = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
     if (walletStatus) walletStatus.textContent = addr ? '✅ Wallet Connected' : 'Wallet not connected';
   }
 
   function setGating({ canStart, canStop, beforeEnabled, afterEnabled }) {
-    if (startBtn)   startBtn.disabled   = !canStart;
-    if (stopBtn)    stopBtn.disabled    = !canStop;
-    if (beforeInput)beforeInput.disabled= !beforeEnabled;
-    if (afterInput) afterInput.disabled = !afterEnabled;
+    startBtn.disabled  = !canStart;
+    stopBtn.disabled   = !canStop;
+    beforeInput.disabled = !beforeEnabled;
+    afterInput.disabled  = !afterEnabled;
   }
 
   // ---------- Initial UI ----------
-  if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
+  if (priceDisp)  priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
   paintWallet(null);
-  if (tierDisp)  tierDisp.textContent = 'Tier: ';
-  if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
+  if (tierDisp)   tierDisp.textContent  = 'Tier: ';
+  if (kycStatus)  kycStatus.textContent = 'KYC: Check After Connecting Wallet';
   setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
 
   // ---------- Wallet Connect ----------
   connectBtn.addEventListener('click', async () => {
-    const resp = await handleConnect(); // opens Phantom; sets window.appWallet; fires events
+    const resp = await handleConnect(); // opens Phantom
     const addr = resp?.publicKey?.toString?.() || window.appWallet?.publicKey || null;
-    if (!addr) return; // user cancelled
+    if (!addr) return;
     await onWalletConnected(addr);
   });
 
@@ -120,16 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
     walletAddress = addr;
     paintWallet(addr);
 
-    // Load tier + show statuses
-    tierLevel = await fetchTierLevel(addr);
+    const { tier, approved } = await fetchKycTierAndStatus(addr);
+    tierLevel = tier;
     if (tierDisp)  tierDisp.textContent  = `Tier: ${tierLevel}`;
-    if (kycStatus) kycStatus.textContent = tierLevel > 1 ? 'KYC: ✅ Approved' : 'KYC: ⏳ Pending';
+    if (kycStatus) kycStatus.textContent = approved ? 'KYC: ✅ Approved' : 'KYC: ⏳ Pending';
 
-    // Allow BEFORE photo now that wallet is connected
+    // After connect: enable BEFORE photo
     setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
   }
 
-  // React to global wallet events (e.g., account switch, reconnect)
+  // Global wallet events
   document.addEventListener('wallet:connected', async (e) => {
     const addr = e.detail?.publicKey;
     if (!addr) return;
@@ -144,27 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
   });
 
-  // ---------- Photo change → enable buttons at the right time ----------
+  // ---------- Photo change → enable buttons ----------
   beforeInput.addEventListener('change', () => {
-    // Enable Start only when wallet is connected AND before photo chosen
     const ok = !!walletAddress && beforeInput.files && beforeInput.files[0];
-    setGating({
-      canStart: ok,
-      canStop: false,
-      beforeEnabled: true,
-      afterEnabled: false
-    });
+    setGating({ canStart: ok, canStop: false, beforeEnabled: true, afterEnabled: false });
   });
 
   afterInput.addEventListener('change', () => {
-    // Enable Stop only during an active session and after after-photo chosen
     const ok = !!sessionStart && afterInput.files && afterInput.files[0];
-    setGating({
-      canStart: false,
-      canStop: ok,
-      beforeEnabled: false,
-      afterEnabled: true
-    });
+    setGating({ canStart: false, canStop: ok, beforeEnabled: false, afterEnabled: true });
   });
 
   // ---------- Start Volunteering ----------
@@ -172,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const file = beforeInput?.files?.[0];
       if (!walletAddress) { alert('Please connect your wallet first.'); return; }
-      if (!file) { alert('Please upload your BEFORE photo.'); return; }
+      if (!file)          { alert('Please upload your BEFORE photo.'); return; }
 
       await getGeolocation();
 
@@ -182,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
       startPhotoUrl = await getDownloadURL(bRef);
 
       sessionStart = new Date();
-      // After starting: freeze before, unlock after
+
       beforeInput.value = '';
       setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:true });
 
@@ -201,19 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!file) { alert('Please upload your AFTER photo.'); return; }
 
       const end = new Date();
-
       const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_');
       const aRef = storageRef(storage, `afterPhotos/${safeAddr}_${Date.now()}`);
       await uploadBytes(aRef, file);
       const afterPhotoUrl = await getDownloadURL(aRef);
 
       const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
-
-      // Token math: SYNCM per hour by tier (5/10/15).
       const hourly = getHourlySyncm(tierLevel);
       const tokens = +(durationHours * hourly).toFixed(2);
 
-      // Dollar value (placeholder)
       const price = await fetchLiveSyncmPriceUSD();
       const usd = +(tokens * price).toFixed(2);
 
@@ -223,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startTime: sessionStart.toISOString(),
         endTime: end.toISOString(),
         hours: +durationHours.toFixed(3),
-        tokensEarned: tokens,           // SYNCM earned this session
+        tokensEarned: tokens,   // SYNCM
         usdValue: usd,
         startPhotoUrl,
         endPhotoUrl: afterPhotoUrl,
@@ -231,14 +225,12 @@ document.addEventListener('DOMContentLoaded', () => {
         timestamp: new Date().toISOString()
       });
 
-      // Render summary
-      if (summaryBox) summaryBox.style.display = 'block';
+      if (summaryBox)  summaryBox.style.display = 'block';
       if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
       if (tokensEarned) tokensEarned.textContent = `✅ SYNCM Earned: ${tokens}`;
-      if (totalLVBTN) totalLVBTN.textContent = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
-      if (usdValue) usdValue.textContent = `💰 USD Value (est): $${usd}`;
+      if (totalLVBTN)   totalLVBTN.textContent   = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
+      if (usdValue)     usdValue.textContent     = `💰 USD Value (est): $${usd}`;
       if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
-
       if (afterPhotosBox) {
         const img = document.createElement('img');
         img.src = afterPhotoUrl;
@@ -248,19 +240,15 @@ document.addEventListener('DOMContentLoaded', () => {
         afterPhotosBox.appendChild(img);
       }
 
-      // Reset gating after end
       afterInput.value = '';
       setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
-
     } catch (e) {
       console.error('Stop volunteering failed', e);
       alert('Could not finish session. Please try again.');
     }
   });
 
-  // ---------- If already connected on load (returning visitor) ----------
+  // ---------- If already connected on load ----------
   const preAddr = window.appWallet?.publicKey || (window.solana?.publicKey?.toString?.());
-  if (preAddr) {
-    onWalletConnected(preAddr);
-  }
+  if (preAddr) { onWalletConnected(preAddr); }
 });
