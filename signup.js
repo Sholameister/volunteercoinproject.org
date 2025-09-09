@@ -1,7 +1,8 @@
 // signup.js — wallet connect + KYC/tier display
-
 import { handleConnect } from './connectWallet.js';
 import { db, doc, getDoc } from './firebaseConfig.js';
+// Firebase Auth (anonymous sign-in so Storage rules can allow writes later, if needed)
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // run only if the expected signup elements exist
@@ -69,6 +70,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (kycStatus) kycStatus.textContent = `KYC: ${approved ? '✅ Approved' : '⏳ Pending'}`;
   }
 
+  async function ensureAnonAuth() {
+    const auth = getAuth();
+    try {
+      await signInAnonymously(auth);
+      // console.log('Anonymous sign-in OK');
+    } catch (e) {
+      console.error('Anonymous sign-in failed:', e); // enable Anonymous in Firebase Auth → Sign-in method
+    }
+  }
+
   // Connect button
   if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
@@ -76,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const addr = resp?.publicKey?.toString?.() || window.appWallet?.publicKey || null;
       if (!addr) return;
       paintWallet(addr);
+      await ensureAnonAuth();   // 🔑 makes request.auth != null for Storage rules
       await loadProfile(addr);
     });
   }
@@ -85,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addr = e.detail?.publicKey;
     if (!addr) return;
     paintWallet(addr);
+    await ensureAnonAuth();
     await loadProfile(addr);
   });
 
@@ -98,10 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const preAddr = window.appWallet?.publicKey || (window.solana?.publicKey?.toString?.());
   if (preAddr) {
     paintWallet(preAddr);
-    loadProfile(preAddr);
+    ensureAnonAuth().finally(() => loadProfile(preAddr));
   } else {
     paintWallet(null);
     paintTier(1);
     if (kycStatus) kycStatus.textContent = 'KYC: ⏳ Pending';
   }
 });
+
