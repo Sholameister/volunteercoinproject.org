@@ -30,6 +30,103 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletSummary  = $('walletSummary');
   const afterPhotosBox = $('afterPhotosBox');
 
+document.addEventListener('DOMContentLoaded', () => {
+  const startBtn = document.getElementById('startBtn');
+  const beforeFile = document.getElementById('beforePhoto');   // adjust to your actual id
+  const afterFile  = document.getElementById('afterPhoto');    // adjust
+  const statusBox  = document.getElementById('statusBox') || document.body; // simple fallback
+
+  const isWalletConnected = () => window.currentWalletAddress && typeof window.currentWalletAddress === 'string';
+
+  // Enable start when wallet connected + a before-photo is chosen
+  const gateStart = () => {
+    const ok = isWalletConnected() && beforeFile && beforeFile.files && beforeFile.files.length > 0;
+    startBtn.disabled = !ok;
+  };
+
+  // Call this from your wallet connect success callback too:
+  window.addEventListener('wallet-connected', gateStart);
+
+  if (beforeFile) {
+    beforeFile.addEventListener('change', gateStart);
+  }
+
+  // iOS: bind both click and touchend (harmless elsewhere)
+  ['click','touchend'].forEach(evt =>
+    startBtn.addEventListener(evt, async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (startBtn.disabled) return;
+
+      startBtn.disabled = true;
+      startBtn.textContent = 'Starting…';
+
+      const show = (msg) => {
+        console.log('[Start]', msg);
+        const note = document.createElement('div');
+        note.style.margin = '8px 0';
+        note.textContent = msg;
+        statusBox.appendChild(note);
+      };
+
+      try {
+        // 1) Re-validate inputs
+        if (!isWalletConnected()) throw new Error('Wallet not connected.');
+        if (!beforeFile || !beforeFile.files || beforeFile.files.length === 0) {
+          throw new Error('Please select a before photo.');
+        }
+
+        // 2) Geolocation with hard timeout (iOS can hang)
+        const getPosition = () => new Promise((resolve) => {
+          let done = false;
+          const timer = setTimeout(() => { if (!done) resolve(null); }, 8000); // continue without geo after 8s
+          if (!navigator.geolocation) { resolve(null); return; }
+          navigator.geolocation.getCurrentPosition(
+            (pos) => { done = true; clearTimeout(timer); resolve(pos); },
+            () => { done = true; clearTimeout(timer); resolve(null); },
+            { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
+          );
+        });
+        const pos = await getPosition();
+        const coords = pos ? { lat: pos.coords.latitude, lng: pos.coords.longitude } : null;
+
+        // 3) Upload before photo (Firebase Storage bucket: lvbtn-bucket.appspot.com)
+        const file = beforeFile.files[0];
+        const uid  = window.currentWalletAddress; // or your user uid
+        const ts   = Date.now();
+
+        // Use your existing Firebase refs; example:
+        // const storage = getStorage(app, "gs://lvbtn-bucket.appspot.com");
+        // const path = `volunteerSessions/${uid}/${ts}-before.jpg`;
+        // const url = await uploadBytesAndGetDownloadURL(storageRef(storage, path), file);
+
+        // 4) Write session start to Firestore
+        // await addDoc(collection(db, 'volunteerSessions'), {
+        //   wallet: uid, startedAt: ts, beforePhotoUrl: url, coords, status: 'started'
+        // });
+
+        // 5) UI confirmations
+        alert('You have begun volunteering for Volunteer Coin Project Foundation!'); // iOS-friendly
+        show(`Session started at ${new Date(ts).toLocaleString()} ${coords ? `@ ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}` : '(no GPS)'}`);
+
+        // Lock the before input, enable after-photo & Stop
+        if (beforeFile) beforeFile.disabled = true;
+        if (afterFile)  afterFile.disabled  = false;
+
+      } catch (err) {
+        console.error(err);
+        alert(`Could not start: ${err.message || err}`); // visible on iOS
+      } finally {
+        startBtn.textContent = 'Start Volunteering';
+        startBtn.disabled = false; // or keep disabled until after-photo if that’s your flow
+      }
+    }, { passive: false })
+  );
+});
+
+
+  
+
   // Guard
   if (!connectBtn || !beforeInput || !afterInput || !startBtn || !stopBtn) return;
 
