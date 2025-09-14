@@ -5,19 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Volunteer Logger</title>
   <style>
-    body { background:#fffdfd; font-family:'Segoe UI',sans-serif; padding:20px; text-align:center }
-    button, input[type="file"] { display:block; margin:10px auto; padding:12px; border-radius:6px; width:90%; max-width:400px; font-size:16px }
-    button { background:#e60073; color:#fff; border:none; cursor:pointer }
+    body {
+      background:#fffdfd;
+      font-family:'Segoe UI',sans-serif;
+      padding:20px;
+      text-align:center
+    }
+    button, input[type="file"] {
+      display:block;
+      margin:10px auto;
+      padding:12px;
+      border-radius:6px;
+      width:90%;
+      max-width:400px;
+      font-size:16px
+    }
+    button {
+      background:#e60073;
+      color:#fff;
+      border:none;
+      cursor:pointer
+    }
     button:hover { background:#cc005f }
-    #summaryBox { margin-top:20px; padding:10px; border:1px solid #ddd; border-radius:8px; background:#fafafa; display:none }
-    #afterPhotosBox img { max-width:100px; margin:5px; border-radius:6px }
-    .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
+    #summaryBox {
+      margin-top:20px;
+      padding:10px;
+      border:1px solid #ddd;
+      border-radius:8px;
+      background:#fafafa;
+      display:none
+    }
+    #afterPhotosBox img {
+      max-width:100px;
+      margin:5px;
+      border-radius:6px
+    }
+    .nav-button {
+      display:inline-block;
+      margin:8px;
+      padding:10px 14px;
+      border-radius:6px;
+      background:#f3f4f6;
+      text-decoration:none;
+      color:#111827;
+      font-size:14px;
+    }
   </style>
 </head>
 <body>
   <h1>Volunteer Session Logger</h1>
 
-  <button id="connectWalletBtn">Connect Phantom Wallet to Proceed</button>
+  <button id="connectWalletBtn" type="button">Connect Phantom Wallet to Proceed</button>
+
   <p id="walletAddress">Wallet: Not Connected</p>
   <p id="kycStatus">KYC: Check After Connecting Wallet</p>
   <p id="tierInfo">Tier: </p>
@@ -27,11 +66,13 @@
 
   <h3>Before Volunteering: Take and Upload Photo</h3>
   <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
-  <button id="startVolunteeringBtn" disabled>Start Volunteering</button>
+  <!-- ✅ added type="button" -->
+  <button id="startVolunteeringBtn" type="button" disabled>Start Volunteering</button>
 
   <h3>After Volunteering: Take and Upload Photo</h3>
   <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
-  <button id="stopVolunteeringBtn" disabled>Stop Volunteering</button>
+  <!-- ✅ added type="button" -->
+  <button id="stopVolunteeringBtn" type="button" disabled>Stop Volunteering</button>
 
   <div id="summaryBox">
     <h3>Volunteer Summary</h3>
@@ -46,11 +87,20 @@
   <div id="afterPhotosBox" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
 
   <!-- Nav -->
-  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
-  <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
-  <a href="./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">Go to 501(c)(3) approval</a>
+  <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
+  <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
+  <a href="http://./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">Go to 501(c)(3) approval</a>
 
-  <div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
+  <!-- ✅ Added an on-screen statusBox logger -->
+  <div id="statusBox" style="font:12px/1.35 system-ui; background:#eef6ff; border:1px solid #b6d4fe; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
+  <script>
+    (function(){
+      const box = document.getElementById('statusBox');
+      const log = (m)=>{ const d=document.createElement('div'); d.textContent=m; box.appendChild(d); };
+      window.addEventListener('error', e=>{ box.style.display='block'; log('Error: ' + (e.message||e.error)); });
+      window.addEventListener('unhandledrejection', e=>{ box.style.display='block'; log('Promise: ' + (e.reason && e.reason.message || e.reason)); });
+    })();
+  </script>
 
   <!-- Scripts -->
   <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
