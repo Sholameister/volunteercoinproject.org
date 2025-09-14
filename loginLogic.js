@@ -10,6 +10,16 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gsta
 // Auth (modular CDN)
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
 
+// ---- Mobile diag logger ----
+function diag(msg){
+  try{
+    const box = document.getElementById('statusBox');
+    if (box){ box.style.display='block'; const d=document.createElement('div'); d.textContent=msg; box.appendChild(d); }
+    console.log('[DIAG]', msg);
+  }catch{}
+}
+diag('loginLogic.js loaded');
+
 document.addEventListener('DOMContentLoaded', () => {
   const $ = (id) => document.getElementById(id);
 
