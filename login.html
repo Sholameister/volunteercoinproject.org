@@ -108,183 +108,126 @@
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
 
-  <script>
-/* ---------- Multi-wallet connector (Phantom, Solflare, Backpack, Glow) ---------- */
-(function () {
+ <!-- 🚨 iPhone Wallet Browser Notice with Deep-Link Fix -->
+<script>
+// Basic iOS check
+function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+// Heuristic: already inside a wallet's in-app browser?
+function inWalletWebView() {
+  const ua = navigator.userAgent || '';
+  return /Phantom|Solflare|Backpack|Glow/i.test(ua);
+}
+
+function openInPhantom() {
+  const url = window.location.href;
+  const appScheme = 'phantom://browse/' + encodeURIComponent(url);
+  const ulFallback = 'https://phantom.app/ul/browse/' + encodeURIComponent(url);
+
+  // Must be called on a user gesture (click/tap) for iOS to allow scheme
+  // Try app scheme first
+  let jumped = false;
+  const now = Date.now();
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = appScheme;
+  document.body.appendChild(iframe);
+
+  // After ~800ms, if we didn't switch apps, go to universal link fallback
+  setTimeout(() => {
+    // If the timestamp hasn't progressed (very rough), assume no switch
+    if (!jumped) window.location.href = ulFallback;
+  }, 800);
+
+  // A second timer to clean the iframe
+  setTimeout(() => {
+    try { document.body.removeChild(iframe); } catch(_) {}
+  }, 3000);
+}
+
+function openInSolflare() {
+  const url = window.location.href;
+  // App scheme first
+  const appScheme = 'solflare://browser?url=' + encodeURIComponent(url);
+  // Universal link fallback
+  const ulFallback = 'https://solflare.com/ul/v1/browse?url=' + encodeURIComponent(url);
+
+  let jumped = false;
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = appScheme;
+  document.body.appendChild(iframe);
+
+  setTimeout(() => {
+    if (!jumped) window.location.href = ulFallback;
+  }, 800);
+
+  setTimeout(() => {
+    try { document.body.removeChild(iframe); } catch(_) {}
+  }, 3000);
+}
+
+function copyURL() {
+  const url = window.location.href;
+  navigator.clipboard?.writeText(url).then(() => {
+    const btn = document.getElementById('copyUrlBtn');
+    if (btn) { btn.textContent = 'Copied ✓'; setTimeout(() => btn.textContent = 'Copy URL', 1500); }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!isIOS() || inWalletWebView()) return; // Only show to iOS Safari/Chrome users
+
+  const box = document.createElement('div');
+  box.style.margin = '20px';
+  box.style.padding = '20px';
+  box.style.border = '3px solid #e53935';
+  box.style.borderRadius = '10px';
+  box.style.background = '#fff3f3';
+  box.style.color = '#b71c1c';
+  box.style.fontFamily = 'Segoe UI, sans-serif';
+  box.style.fontSize = '16px';
+  box.style.fontWeight = '600';
+  box.style.textAlign = 'center';
+  box.style.boxShadow = '0 4px 10px rgba(0,0,0,0.1)';
+
+  box.innerHTML = `
+    <p style="font-size:18px; font-weight:bold; margin-bottom:8px;">🚨 iPhone Users 🚨</p>
+    <p style="font-size:15px; margin-bottom:16px;">
+      To log in & volunteer, open this page <strong>inside a wallet app</strong>.
+    </p>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button id="openPhantomBtn" style="padding:12px 16px; border-radius:6px; border:none; background:#e53935; color:#fff; font-weight:700; cursor:pointer;">
+        👉 Open in Phantom
+      </button>
+      <button id="openSolflareBtn" style="padding:12px 16px; border-radius:6px; border:2px solid #e53935; background:#fff; color:#e53935; font-weight:700; cursor:pointer;">
+        Open in Solflare
+      </button>
+      <button id="copyUrlBtn" style="padding:12px 16px; border-radius:6px; border:1px solid #bbb; background:#fff; color:#333; font-weight:600; cursor:pointer;">
+        Copy URL
+      </button>
+    </div>
+    <p style="font-size:13px; font-weight:500; color:#7a1a1a; margin-top:12px;">
+      Tip: If you see an install page, tap “Open” at the top. Or open your wallet app,
+      use its Browser tab, and paste the URL.
+    </p>
+  `;
+
+  document.body.prepend(box);
+
+  // Wire up buttons (user gesture required for deep links)
+  document.getElementById('openPhantomBtn')?.addEventListener('click', openInPhantom);
+  document.getElementById('openSolflareBtn')?.addEventListener('click', openInSolflare);
+  document.getElementById('copyUrlBtn')?.addEventListener('click', copyURL);
+
+  // Optional: hide the connect button on iOS Safari to avoid confusion
   const connectBtn = document.getElementById('connectWalletBtn');
-
-  // Inject a simple wallet selector next to the connect button
-  const selector = document.createElement('select');
-  selector.id = 'walletSelect';
-  selector.style.display = 'block';
-  selector.style.margin = '6px auto 2px';
-  selector.style.padding = '8px';
-  selector.style.borderRadius = '6px';
-  selector.style.maxWidth = '400px';
-  selector.style.width = '90%';
-  selector.title = 'Choose a wallet';
-
-  const wallets = [
-    {
-      key: 'phantom',
-      name: 'Phantom',
-      get: () => (window.phantom && window.phantom.solana) || (window.solana?.isPhantom ? window.solana : null),
-      is: (p) => !!p && p.isPhantom === true
-    },
-    {
-      key: 'solflare',
-      name: 'Solflare',
-      get: () => window.solflare || window.solflare?.solana || null,
-      is: (p) => !!p && (p.isSolflare === true || (p.constructor && p.constructor.name === 'Solflare'))
-    },
-    {
-      key: 'backpack',
-      name: 'Backpack',
-      get: () => (window.backpack && window.backpack.solana) || null,
-      is: (p) => !!p && p.isBackpack === true
-    },
-    {
-      key: 'glow',
-      name: 'Glow',
-      get: () => (window.glow && window.glow.solana) || null,
-      is: (p) => !!p && p.isGlow === true
-    }
-  ];
-
-  function detectAvailable() {
-    const found = [];
-    for (const w of wallets) {
-      const provider = w.get();
-      if (w.is(provider)) found.push({ key: w.key, name: w.name, provider });
-    }
-    return found;
+  if (connectBtn) {
+    connectBtn.disabled = true;
+    connectBtn.style.opacity = '0.5';
+    connectBtn.title = 'Open this page inside a wallet app to connect';
   }
-
-  function populateSelector(avail) {
-    selector.innerHTML = '';
-    if (avail.length === 0) {
-      const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = 'No wallet detected (install Phantom/Solflare/Backpack/Glow)';
-      selector.appendChild(opt);
-      selector.disabled = true;
-    } else {
-      for (const w of avail) {
-        const opt = document.createElement('option');
-        opt.value = w.key;
-        opt.textContent = w.name;
-        selector.appendChild(opt);
-      }
-      selector.disabled = false;
-    }
-  }
-
-  // Expose a single global function you can call from the button
-  window.multiWalletConnect = async function () {
-    try {
-      const avail = detectAvailable();
-      if (avail.length === 0) {
-        alert('No Solana wallet detected. On iPhone, open this page inside your wallet app (Phantom/Solflare/Backpack).');
-        return;
-      }
-      const selectedKey = selector.value || avail[0].key;
-      const chosen = avail.find(w => w.key === selectedKey) || avail[0];
-      const provider = chosen.provider;
-
-      // Unify provider so existing code works:
-      // - set window.solana to the chosen provider if not already
-      if (!window.solana || window.solana !== provider) {
-        window.solana = provider;
-      }
-
-      // Connect
-      const res = await provider.connect?.();
-      const pubkey = (provider.publicKey || res?.publicKey);
-      const address = pubkey ? pubkey.toString() : '(unknown)';
-
-      // Update your existing DOM
-      const wa = document.getElementById('walletAddress');
-      if (wa) wa.textContent = 'Wallet: ' + address;
-
-      // Fire a custom event others can listen for
-      window.dispatchEvent(new CustomEvent('wallet-connected', { detail: { address, providerName: chosen.name } }));
-
-      // Optional: show success
-      const status = document.getElementById('statusBox');
-      if (status) {
-        status.style.display = 'block';
-        status.innerHTML += `<div>Connected via ${chosen.name}: ${address}</div>`;
-      }
-    } catch (err) {
-      const status = document.getElementById('statusBox');
-      if (status) {
-        status.style.display = 'block';
-        status.innerHTML += `<div>Connect error: ${err && (err.message || err)}</div>`;
-      } else {
-        alert('Connect error: ' + (err && (err.message || err)));
-      }
-    }
-  };
-
-  // Mount selector under the Connect button
-  if (connectBtn && connectBtn.parentNode) {
-    connectBtn.insertAdjacentElement('afterend', selector);
-  }
-
-  // Initial detection
-  populateSelector(detectAvailable());
-
-  // Re-detect if page visibility changes (e.g., after opening in wallet app)
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) populateSelector(detectAvailable());
-  });
-})();
+});
 </script>
-
-
-<!-- 🚨 iPhone Phantom Notice -->
-  <script>
-  // Detect if user is on iPhone/iPad
-  function isIOS() {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  }
-
-  // Show Phantom open link if iOS user
-  document.addEventListener("DOMContentLoaded", () => {
-    if (isIOS()) {
-      const container = document.createElement("div");
-      container.style.margin = "20px";
-      container.style.padding = "20px";
-      container.style.border = "3px solid #e53935";
-      container.style.borderRadius = "10px";
-      container.style.background = "#fff3f3";
-      container.style.color = "#b71c1c";
-      container.style.fontFamily = "Segoe UI, sans-serif";
-      container.style.fontSize = "16px";
-      container.style.fontWeight = "600";
-      container.style.textAlign = "center";
-      container.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
-
-      container.innerHTML = `
-        <p style="font-size:18px; font-weight:bold; margin-bottom:8px;">
-          🚨 iPhone Users 🚨
-        </p>
-        <p style="font-size:15px; margin-bottom:15px;">
-          To log in and volunteer, you must open this site <strong>inside the Phantom app</strong>.
-        </p>
-        <a href="https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}" 
-           style="display:inline-block; margin-top:10px; padding:14px 22px; 
-                  background:#e53935; color:#fff; text-decoration:none; border-radius:6px; 
-                  font-size:16px; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.2);" target="_blank" rel="noopener">
-          👉 Open in Phantom
-        </a>
-      `;
-
-      // Insert at the very top of the page
-      document.body.prepend(container);
-    }
-  });
-  </script>
 </body>
 </html>
 
