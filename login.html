@@ -54,7 +54,6 @@
 </head>
 <body>
   <h1>Volunteer Session Logger</h1>
-
   <button id="connectWalletBtn" type="button">Connect Phantom Wallet to Proceed</button>
 
   <p id="walletAddress">Wallet: Not Connected</p>
@@ -108,5 +107,44 @@
   <script type="module" src="./kycUtils.js"></script>
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
+
+<script>
+// Detect if user is on iPhone/iPad
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+// Show Phantom open link if iOS user
+document.addEventListener("DOMContentLoaded", () => {
+  if (isIOS()) {
+    const container = document.createElement("div");
+    container.style.margin = "20px";
+    container.style.padding = "15px";
+    container.style.border = "2px solid #9c27b0";
+    container.style.borderRadius = "8px";
+    container.style.background = "#fdf8ff";
+    container.style.textAlign = "center";
+
+    container.innerHTML = `
+      <p style="font-size:16px; font-weight:bold; color:#333;">
+        iPhone Users:
+      </p>
+      <p style="font-size:14px; color:#555;">
+        You must open this site inside the Phantom app browser to log in and volunteer.
+      </p>
+      <a href="https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}" 
+         style="display:inline-block; margin-top:10px; padding:12px 20px; 
+                background:#9c27b0; color:#fff; text-decoration:none; border-radius:6px; 
+                font-size:15px; font-weight:bold;" target="_blank" rel="noopener">
+        Open in Phantom
+      </a>
+    `;
+
+    // Insert at the top of the page
+    document.body.prepend(container);
+  }
+});
+</script>
+  
 </body>
 </html>
