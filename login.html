@@ -108,48 +108,51 @@
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
 
-<script>
-// Detect if user is on iPhone/iPad
-function isIOS() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
-
-// Show Phantom open link if iOS user
-document.addEventListener("DOMContentLoaded", () => {
-  if (isIOS()) {
-    const container = document.createElement("div");
-    container.style.margin = "20px";
-    container.style.padding = "20px";
-    container.style.border = "3px solid #e53935";
-    container.style.borderRadius = "10px";
-    container.style.background = "#fff3f3";
-    container.style.color = "#b71c1c";
-    container.style.fontFamily = "Segoe UI, sans-serif";
-    container.style.fontSize = "16px";
-    container.style.fontWeight = "600";
-    container.style.textAlign = "center";
-    container.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
-
-    container.innerHTML = `
-      <p style="font-size:18px; font-weight:bold; margin-bottom:8px;">
-        🚨 iPhone Users 🚨
-      </p>
-      <p style="font-size:15px; margin-bottom:15px;">
-        To log in and volunteer, you must open this site <strong>inside the Phantom app</strong>.
-      </p>
-      <a href="https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}" 
-         style="display:inline-block; margin-top:10px; padding:14px 22px; 
-                background:#e53935; color:#fff; text-decoration:none; border-radius:6px; 
-                font-size:16px; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.2);" target="_blank" rel="noopener">
-        👉 Open in Phantom
-      </a>
-    `;
-
-    // Insert at the top of the page
-    document.body.prepend(container);
+<!-- 🚨 iPhone Phantom Notice -->
+  <script>
+  // Detect if user is on iPhone/iPad
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   }
-});
-</script>
+
+  // Show Phantom open link if iOS user
+  document.addEventListener("DOMContentLoaded", () => {
+    if (isIOS()) {
+      const container = document.createElement("div");
+      container.style.margin = "20px";
+      container.style.padding = "20px";
+      container.style.border = "3px solid #e53935";
+      container.style.borderRadius = "10px";
+      container.style.background = "#fff3f3";
+      container.style.color = "#b71c1c";
+      container.style.fontFamily = "Segoe UI, sans-serif";
+      container.style.fontSize = "16px";
+      container.style.fontWeight = "600";
+      container.style.textAlign = "center";
+      container.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+
+      container.innerHTML = `
+        <p style="font-size:18px; font-weight:bold; margin-bottom:8px;">
+          🚨 iPhone Users 🚨
+        </p>
+        <p style="font-size:15px; margin-bottom:15px;">
+          To log in and volunteer, you must open this site <strong>inside the Phantom app</strong>.
+        </p>
+        <a href="https://phantom.app/ul/browse/${encodeURIComponent(window.location.href)}" 
+           style="display:inline-block; margin-top:10px; padding:14px 22px; 
+                  background:#e53935; color:#fff; text-decoration:none; border-radius:6px; 
+                  font-size:16px; font-weight:bold; box-shadow:0 2px 6px rgba(0,0,0,0.2);" target="_blank" rel="noopener">
+          👉 Open in Phantom
+        </a>
+      `;
+
+      // Insert at the very top of the page
+      document.body.prepend(container);
+    }
+  });
+  </script>
+</body>
+</html>
 
   
 </body>
