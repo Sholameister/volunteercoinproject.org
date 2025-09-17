@@ -1,5 +1,5 @@
 //setupKycDom.js
-import { setKycDomElements } from './js/kycUtils.js';
+import { setKycDomElements } from './kycUtils.js';
 
 function onReady(fn) {
   if (document.readyState === 'loading') {
