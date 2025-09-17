@@ -1,5 +1,5 @@
 // sw.js — VCPF service worker (root)
-const CACHE_NAME = "lvbtn-cache-v10"; // bump to force update
+const CACHE_NAME = "lvbtn-cache-v11"; // bump to force update
 const RUNTIME_CACHE = `${CACHE_NAME}-rt`;
 
 const PRE_CACHE = [
