@@ -27,4 +27,3 @@ const storage = getStorage(app);
 
 // Named exports
 export { db, storage };
-
