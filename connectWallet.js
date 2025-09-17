@@ -117,9 +117,6 @@ async function handleConnect() {
 function setupConnectButton() {
   const btn = document.getElementById('connectWalletBtn');
   if (!btn) return;
-
-  btn.addEventListener('click', () => {
-    handleConnect();
   });
 
   // If Phantom is already connected (returning visitor), reflect UI
