@@ -1,5 +1,4 @@
 // loginLogic.js — mobile-safe, single handler version
-
 import { handleConnect } from './connectWallet.js';
 import { db, storage } from './firebaseConfig.js';
 
@@ -14,7 +13,12 @@ import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/9
 function diag(msg){
   try{
     const box = document.getElementById('statusBox');
-    if (box){ box.style.display='block'; const d=document.createElement('div'); d.textContent=msg; box.appendChild(d); }
+    if (box){
+      box.style.display='block';
+      const d=document.createElement('div');
+      d.textContent=msg;
+      box.appendChild(d);
+    }
     console.log('[DIAG]', msg);
   }catch{}
 }
@@ -30,12 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const tierDisp     = $('tierInfo');
   const priceDisp    = $('lvbtnPrice');
   const walletStatus = $('walletStatus');
-
   const beforeInput  = $('beforePhoto');
   const afterInput   = $('afterPhoto');
-  const startBtn     = $('startVolunteeringBtn');   // <button id="startVolunteeringBtn" type="button">
-  const stopBtn      = $('stopVolunteeringBtn');    // <button id="stopVolunteeringBtn" type="button">
-
+  const startBtn     = $('startVolunteeringBtn');
+  const stopBtn      = $('stopVolunteeringBtn');
   const summaryBox   = $('summaryBox');
   const sessionTimes = $('sessionTimes');
   const tokensEarned = $('tokensEarned');
@@ -60,15 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Helpers ----
   const paintWallet = (addr) => {
     const short = addr ? `${addr.slice(0,4)}…${addr.slice(-4)}` : '';
-    if (walletDisp)   walletDisp.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
+    if (walletDisp) walletDisp.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
     if (walletStatus) walletStatus.textContent = addr ? '✅ Wallet Connected' : 'Wallet not connected';
   };
 
   const setGating = ({ canStart, canStop, beforeEnabled, afterEnabled }) => {
     startBtn.disabled = !canStart;
-    stopBtn.disabled  = !canStop;
+    stopBtn.disabled = !canStop;
     beforeInput.disabled = !beforeEnabled;
-    afterInput.disabled  = !afterEnabled;
+    afterInput.disabled = !afterEnabled;
   };
 
   async function fetchKycTierAndStatus(addr) {
@@ -88,7 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const approved = Boolean(u.kycApproved ?? (tier > 1));
         return { tier, approved };
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
     return { tier: 1, approved: false };
   }
 
@@ -111,13 +115,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function fetchLiveSyncmPriceUSD() { return 0.25; } // placeholder
+  async function fetchLiveSyncmPriceUSD() {
+    return 0.25; // placeholder
+  }
 
   // ---- Initial UI ----
   if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
   paintWallet(null);
-  if (tierDisp)   tierDisp.textContent = 'Tier: ';
-  if (kycStatus)  kycStatus.textContent = 'KYC: Check After Connecting Wallet';
+  if (tierDisp) tierDisp.textContent = 'Tier: ';
+  if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
   setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
 
   // ---- Wallet Connect ----
@@ -132,22 +138,31 @@ document.addEventListener('DOMContentLoaded', () => {
     walletAddress = addr;
     paintWallet(addr);
 
-    // Ensure Firebase Storage access
+    // Ensure Firebase Storage access (anonymous)
     try { await signInAnonymously(getAuth()); } catch (e) { console.error('Anon auth failed', e); }
 
     const { tier, approved } = await fetchKycTierAndStatus(addr);
     tierLevel = tier;
-    if (tierDisp)  tierDisp.textContent = `Tier: ${tierLevel}`;
+    if (tierDisp)  tierDisp.textContent  = `Tier: ${tierLevel}`;
     if (kycStatus) kycStatus.textContent = approved ? 'KYC: ✅ Approved' : 'KYC: ⏳ Pending';
 
+    // Enable BEFORE photo input regardless (so under-18/testers can proceed)
     setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
+    // extra safety to fight stale disabled attributes/styles
+    if (beforeInput) {
+      beforeInput.disabled = false;
+      beforeInput.removeAttribute('disabled');
+      beforeInput.style.pointerEvents = 'auto';
+      beforeInput.style.opacity = '1';
+    }
   }
 
-  // Single wallet event name
+  // provider events from connectWallet.js
   document.addEventListener('wallet:connected', async (e) => {
     const addr = e.detail?.publicKey;
     if (addr) await onWalletConnected(addr);
   });
+
   document.addEventListener('wallet:disconnected', () => {
     walletAddress = null;
     paintWallet(null);
@@ -161,14 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const ok = !!walletAddress && beforeInput.files && beforeInput.files[0];
     setGating({ canStart: ok, canStop: false, beforeEnabled: true, afterEnabled: false });
   });
+
   afterInput.addEventListener('change', () => {
     const ok = !!sessionStart && afterInput.files && afterInput.files[0];
     setGating({ canStart: false, canStop: ok, beforeEnabled: false, afterEnabled: true });
   });
 
-  // ---- Start Volunteering (iOS-safe: click + touchend) ----
+  // ---- Start Volunteering ----
   const startHandler = async (e) => {
-    e.preventDefault(); e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
     if (startBtn.disabled) return;
 
     try {
@@ -176,11 +193,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const file = beforeInput?.files?.[0];
       if (!file) { alert('Please upload your BEFORE photo.'); return; }
 
-      startBtn.disabled = true; startBtn.textContent = 'Starting…';
+      startBtn.disabled = true;
+      startBtn.textContent = 'Starting…';
 
       const pos = await getGeolocationWithTimeout(8000);
       if (pos) {
-        position.latitude  = pos.coords.latitude;
+        position.latitude = pos.coords.latitude;
         position.longitude = pos.coords.longitude;
       }
 
@@ -191,16 +209,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       sessionStart = new Date();
       beforeInput.value = '';
+
       setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:true });
 
-      alert(`You have begun volunteering for Volunteer Coin Project Foundation!
-${position.latitude ? `📍 ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}` : '(no GPS)'}`);
+      alert(`You have begun volunteering for Volunteer Coin Project Foundation! ${
+        position.latitude ? `📍 ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}` : '(no GPS)'
+      }`);
     } catch (err) {
       console.error('Start volunteering failed', err);
       alert(`Could not start: ${err.message || err}`);
     } finally {
       startBtn.textContent = 'Start Volunteering';
-      // keep disabled until after-photo if you prefer; here we let gating control it
       setGating({
         canStart: !!walletAddress && !!beforeInput.files && !!beforeInput.files[0],
         canStop: !!sessionStart && !!afterInput.files && !!afterInput.files[0],
@@ -225,13 +244,14 @@ ${position.latitude ? `📍 ${position.latitude.toFixed(6)}, ${position.longitud
       const afterPhotoUrl = await getDownloadURL(aRef);
 
       const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
-      const hourly = getHourlySyncm(tierLevel);
-      const tokens = +(durationHours * hourly).toFixed(2);
-      const price = await fetchLiveSyncmPriceUSD();
-      const usd = +(tokens * price).toFixed(2);
+      const hourly  = getHourlySyncm(tierLevel);
+      const tokens  = +(durationHours * hourly).toFixed(2);
+      const price   = await fetchLiveSyncmPriceUSD();
+      const usd     = +(tokens * price).toFixed(2);
 
       await addDoc(collection(db, 'volunteerSessions'), {
-        walletAddress, tierLevel,
+        walletAddress,
+        tierLevel,
         startTime: sessionStart.toISOString(),
         endTime: end.toISOString(),
         hours: +durationHours.toFixed(3),
@@ -249,10 +269,13 @@ ${position.latitude ? `📍 ${position.latitude.toFixed(6)}, ${position.longitud
       if (totalLVBTN)    totalLVBTN.textContent    = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
       if (usdValue)      usdValue.textContent      = `💰 USD Value (est): $${usd}`;
       if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
+
       if (afterPhotosBox) {
         const img = document.createElement('img');
-        img.src = afterPhotoUrl; img.alt = 'After Photo';
-        img.style.maxWidth = '100%'; img.style.marginTop = '10px';
+        img.src = afterPhotoUrl;
+        img.alt = 'After Photo';
+        img.style.maxWidth = '100%';
+        img.style.marginTop = '10px';
         afterPhotosBox.appendChild(img);
       }
 
