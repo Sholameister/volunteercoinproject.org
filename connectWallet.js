@@ -1,4 +1,4 @@
-// connectWallet.js  (ES module; no HTML in here)
+// connectWallet.js (ES module; no HTML in here)
 
 // Utility: create the Phantom hint banner lazily
 function ensureHintBanner() {
@@ -7,13 +7,11 @@ function ensureHintBanner() {
 
   hint = document.createElement('div');
   hint.id = 'phantomHint';
-  hint.style.cssText =
-    'display:none;padding:12px;margin:10px;border:1px solid #eee;border-radius:8px;background:#fff4f8;max-width:480px;margin-inline:auto';
-
+  hint.style.cssText = 'display:none;padding:12px;margin:10px;border:1px solid #eee;border-radius:8px;background:#fff4f8;max-width:480px;margin-inline:auto';
   hint.innerHTML = `
     <div style="font-weight:600;margin-bottom:8px;">Wallet optional</div>
     <div style="margin-bottom:10px;">
-      You can browse without connecting. If you want to use wallet features, open this site in the Phantom app.
+      You can browse without connecting. If you want to use wallet features, open this site in a wallet app.
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
       <button id="openInPhantom" style="padding:10px 14px;border-radius:6px;border:none;background:#e60073;color:#fff;cursor:pointer">Open in Phantom</button>
@@ -21,7 +19,6 @@ function ensureHintBanner() {
       <button id="continueNoWallet" style="padding:10px 14px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer">Continue without wallet</button>
     </div>
   `;
-  // Put near top of page content
   const body = document.body || document.documentElement;
   body.insertBefore(hint, body.firstChild);
   return hint;
@@ -33,26 +30,33 @@ const isIOS = /iP(hone|od|ad)/.test(ua);
 const isAndroid = /Android/.test(ua);
 const isMobile = isIOS || isAndroid;
 
-// Solana provider (from the IIFE bundle you load on the page)
+// Solana provider (if injected)
 const provider = window?.solana;
+
+// Deep-link helper for Phantom (scheme first, then universal link)
+function openPhantomDeepLink() {
+  const url = location.href;
+  const scheme = 'phantom://browse/' + encodeURIComponent(url);
+  const fallback = 'https://phantom.app/ul/browse/' + encodeURIComponent(url);
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = scheme;
+  document.body.appendChild(iframe);
+  setTimeout(() => { location.href = fallback; }, 800);
+  setTimeout(() => { try { document.body.removeChild(iframe); } catch(_){} }, 3000);
+}
 
 // Hook up the hint banner if mobile & Phantom not present
 function maybeShowHint() {
   if (isMobile && !(provider && provider.isPhantom)) {
     const hint = ensureHintBanner();
     hint.style.display = 'block';
-
-    // Wire buttons
     const btnOpen = hint.querySelector('#openInPhantom');
     const btnGet = hint.querySelector('#getPhantom');
     const btnContinue = hint.querySelector('#continueNoWallet');
 
-    if (btnOpen) {
-      btnOpen.onclick = () => {
-        const target = 'https://phantom.app/ul/browse?url=' + encodeURIComponent(location.href);
-        location.href = target;
-      };
-    }
+    if (btnOpen) btnOpen.onclick = openPhantomDeepLink;
     if (btnGet) {
       btnGet.onclick = () => {
         if (isIOS) location.href = 'https://apps.apple.com/app/phantom-crypto-wallet/id1598432977';
@@ -60,9 +64,7 @@ function maybeShowHint() {
         else location.href = 'https://phantom.app/download';
       };
     }
-    if (btnContinue) {
-      btnContinue.onclick = () => { hint.style.display = 'none'; };
-    }
+    if (btnContinue) btnContinue.onclick = () => { hint.style.display = 'none'; };
   }
 }
 
@@ -70,22 +72,12 @@ function maybeShowHint() {
 function paintWalletUi(pubkeyBase58) {
   const short = pubkeyBase58 ? pubkeyBase58.slice(0, 4) + '…' + pubkeyBase58.slice(-4) : '';
   const byId = (id) => document.getElementById(id);
-
   const walletAddress = byId('walletAddress');
-  const walletStatus  = byId('walletStatus');
-  const signupDisp    = byId('signupWalletDisplay');
-
-  if (walletAddress) walletAddress.textContent = pubkeyBase58
-    ? `Wallet: ${short}`
-    : 'Wallet: Not Connected';
-
-  if (signupDisp) signupDisp.textContent = pubkeyBase58
-    ? `Connected: ${short}`
-    : '';
-
-  if (walletStatus) walletStatus.textContent = pubkeyBase58
-    ? 'Wallet connected'
-    : 'Wallet not connected';
+  const walletStatus = byId('walletStatus');
+  const signupDisp = byId('signupWalletDisplay');
+  if (walletAddress) walletAddress.textContent = pubkeyBase58 ? `Wallet: ${short}` : 'Wallet: Not Connected';
+  if (signupDisp) signupDisp.textContent = pubkeyBase58 ? `Connected: ${short}` : '';
+  if (walletStatus) walletStatus.textContent = pubkeyBase58 ? 'Wallet connected' : 'Wallet not connected';
 }
 
 // Main connect handler (call on button click)
@@ -99,9 +91,8 @@ async function handleConnect() {
     const resp = await provider.connect(); // prompts user
     const pubkey = resp?.publicKey?.toString?.();
     if (pubkey) {
-      window.appWallet = { publicKey: pubkey }; // make available to other modules
+      window.appWallet = { publicKey: pubkey };
       paintWalletUi(pubkey);
-      // Broadcast a custom event so loginLogic/signup can react
       document.dispatchEvent(new CustomEvent('wallet:connected', { detail: { publicKey: pubkey } }));
     }
     return resp;
@@ -113,13 +104,12 @@ async function handleConnect() {
   }
 }
 
-// Auto-bind any connect button present on the page
+// Auto-bind: DO NOT add a click listener here (loginLogic.js will handle it)
 function setupConnectButton() {
   const btn = document.getElementById('connectWalletBtn');
   if (!btn) return;
-  });
 
-  // If Phantom is already connected (returning visitor), reflect UI
+  // Reflect current connection state in the UI
   const provider = window?.solana;
   if (provider?.isConnected && provider.publicKey) {
     const pubkey = provider.publicKey.toString();
@@ -134,6 +124,7 @@ function setupConnectButton() {
 function wireProviderEvents() {
   const provider = window?.solana;
   if (!provider) return;
+
   provider.on?.('accountChanged', (pk) => {
     const pubkey = pk ? pk.toString() : null;
     if (pubkey) {
@@ -146,6 +137,7 @@ function wireProviderEvents() {
       document.dispatchEvent(new CustomEvent('wallet:disconnected'));
     }
   });
+
   provider.on?.('disconnect', () => {
     window.appWallet = null;
     paintWalletUi(null);
@@ -157,7 +149,6 @@ function wireProviderEvents() {
 document.addEventListener('DOMContentLoaded', () => {
   setupConnectButton();
   wireProviderEvents();
-  // Show hint proactively on mobile with no Phantom
   maybeShowHint();
 });
 
