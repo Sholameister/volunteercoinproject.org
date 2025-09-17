@@ -1,13 +1,14 @@
 // connectWallet.js (ES module; no HTML in here)
 
-// Utility: create the Phantom hint banner lazily
+// Utility: create the wallet hint banner lazily
 function ensureHintBanner() {
   let hint = document.getElementById('phantomHint');
   if (hint) return hint;
 
   hint = document.createElement('div');
   hint.id = 'phantomHint';
-  hint.style.cssText = 'display:none;padding:12px;margin:10px;border:1px solid #eee;border-radius:8px;background:#fff4f8;max-width:480px;margin-inline:auto';
+  hint.style.cssText =
+    'display:none;padding:12px;margin:10px;border:1px solid #eee;border-radius:8px;background:#fff4f8;max-width:480px;margin-inline:auto';
   hint.innerHTML = `
     <div style="font-weight:600;margin-bottom:8px;">Wallet optional</div>
     <div style="margin-bottom:10px;">
@@ -24,7 +25,7 @@ function ensureHintBanner() {
   return hint;
 }
 
-// Basic env detection
+// Env detection
 const ua = navigator.userAgent || '';
 const isIOS = /iP(hone|od|ad)/.test(ua);
 const isAndroid = /Android/.test(ua);
@@ -43,15 +44,17 @@ function openPhantomDeepLink() {
   iframe.style.display = 'none';
   iframe.src = scheme;
   document.body.appendChild(iframe);
+
   setTimeout(() => { location.href = fallback; }, 800);
   setTimeout(() => { try { document.body.removeChild(iframe); } catch(_){} }, 3000);
 }
 
-// Hook up the hint banner if mobile & Phantom not present
+// Show hint banner on mobile if Phantom not present
 function maybeShowHint() {
   if (isMobile && !(provider && provider.isPhantom)) {
     const hint = ensureHintBanner();
     hint.style.display = 'block';
+
     const btnOpen = hint.querySelector('#openInPhantom');
     const btnGet = hint.querySelector('#getPhantom');
     const btnContinue = hint.querySelector('#continueNoWallet');
@@ -68,7 +71,7 @@ function maybeShowHint() {
   }
 }
 
-// Update any UI labels if present
+// Paint wallet UI if those elements exist
 function paintWalletUi(pubkeyBase58) {
   const short = pubkeyBase58 ? pubkeyBase58.slice(0, 4) + '…' + pubkeyBase58.slice(-4) : '';
   const byId = (id) => document.getElementById(id);
@@ -80,7 +83,7 @@ function paintWalletUi(pubkeyBase58) {
   if (walletStatus) walletStatus.textContent = pubkeyBase58 ? 'Wallet connected' : 'Wallet not connected';
 }
 
-// Main connect handler (call on button click)
+// Main connect handler (called by loginLogic.js)
 async function handleConnect() {
   const provider = window?.solana;
   if (!(provider && provider.isPhantom)) {
@@ -88,11 +91,12 @@ async function handleConnect() {
     return null;
   }
   try {
-    const resp = await provider.connect(); // prompts user
+    const resp = await provider.connect(); // prompts user once
     const pubkey = resp?.publicKey?.toString?.();
     if (pubkey) {
       window.appWallet = { publicKey: pubkey };
       paintWalletUi(pubkey);
+      // Let other modules know (loginLogic.js listens for this)
       document.dispatchEvent(new CustomEvent('wallet:connected', { detail: { publicKey: pubkey } }));
     }
     return resp;
@@ -104,12 +108,12 @@ async function handleConnect() {
   }
 }
 
-// Auto-bind: DO NOT add a click listener here (loginLogic.js will handle it)
+// Reflect state if already connected
 function setupConnectButton() {
   const btn = document.getElementById('connectWalletBtn');
   if (!btn) return;
 
-  // Reflect current connection state in the UI
+  // IMPORTANT: no click listener here — loginLogic.js is the single binder.
   const provider = window?.solana;
   if (provider?.isConnected && provider.publicKey) {
     const pubkey = provider.publicKey.toString();
@@ -120,7 +124,7 @@ function setupConnectButton() {
   }
 }
 
-// Listen for Phantom account changes & disconnects
+// Provider events
 function wireProviderEvents() {
   const provider = window?.solana;
   if (!provider) return;
@@ -145,7 +149,7 @@ function wireProviderEvents() {
   });
 }
 
-// Initialize on DOM ready
+// Init
 document.addEventListener('DOMContentLoaded', () => {
   setupConnectButton();
   wireProviderEvents();
