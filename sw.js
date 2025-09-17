@@ -1,6 +1,7 @@
 // sw.js — VCPF service worker (root)
-const CACHE_NAME = "lvbtn-cache-v8";          // bump to force update
+const CACHE_NAME = "lvbtn-cache-v10"; // bump to force update
 const RUNTIME_CACHE = `${CACHE_NAME}-rt`;
+
 const PRE_CACHE = [
   "/",
   "/index.html",
@@ -44,8 +45,6 @@ self.addEventListener("activate", (event) => {
 // Fetch: cache-first for same-origin GET; network fallback and runtime-cache it
 self.addEventListener("fetch", (event) => {
   const req = event.request;
-
-  // Only handle GET requests
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
@@ -53,13 +52,10 @@ self.addEventListener("fetch", (event) => {
 
   if (!isSameOrigin) {
     // For cross-origin (Firebase, CDNs), just try network, fall back to cache if any
-    event.respondWith(
-      fetch(req).catch(() => caches.match(req))
-    );
+    event.respondWith(fetch(req).catch(() => caches.match(req)));
     return;
   }
 
-  // Same-origin: try cache, else network and put in runtime cache
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
@@ -70,7 +66,6 @@ self.addEventListener("fetch", (event) => {
           return resp;
         })
         .catch(() => {
-          // If offline and asking for a page, serve index.html
           if (req.destination === "document") return caches.match("/index.html");
           return new Response("⚠️ Offline – resource not cached.", { status: 504 });
         });
