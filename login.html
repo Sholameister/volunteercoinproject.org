@@ -5,21 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Volunteer Logger</title>
   <style>
-    body { background:#fffdfd; font-family:'Segoe UI',sans-serif; padding:20px; text-align:center }
-    button, input[type="file"] { display:block; margin:10px auto; padding:12px; border-radius:6px; width:90%; max-width:400px; font-size:16px }
-    button { background:#e60073; color:#fff; border:none; cursor:pointer }
+    body {
+      background:#fffdfd; font-family:'Segoe UI',sans-serif;
+      padding:20px; text-align:center
+    }
+    button, input[type="file"] {
+      display:block; margin:10px auto; padding:12px; border-radius:6px;
+      width:90%; max-width:400px; font-size:16px
+    }
+    button {
+      background:#e60073; color:#fff; border:none; cursor:pointer
+    }
     button:hover { background:#cc005f }
-    #summaryBox { margin-top:20px; padding:10px; border:1px solid #ddd; border-radius:8px; background:#fafafa; display:none }
+    #summaryBox {
+      margin-top:20px; padding:10px; border:1px solid #ddd; border-radius:8px;
+      background:#fafafa; display:none
+    }
     #afterPhotosBox img { max-width:100px; margin:5px; border-radius:6px }
-    .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
+    .nav-button {
+      display:inline-block; margin:8px; padding:10px 14px; border-radius:6px;
+      background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px;
+    }
+    /* 🔥 Hide Start/Stop buttons (kept in DOM so JS still finds them) */
+    #startVolunteeringBtn, #stopVolunteeringBtn {
+      display:none !important;
+    }
   </style>
 </head>
 <body>
   <h1>Volunteer Session Logger</h1>
 
-  <!-- FIXED: removed onclick="multiWalletConnect()" -->
+  <!-- Wallet -->
   <button id="connectWalletBtn" type="button">Connect Wallet to Proceed</button>
-
   <p id="walletAddress">Wallet: Not Connected</p>
   <p id="kycStatus">KYC: Check After Connecting Wallet</p>
   <p id="tierInfo">Tier: </p>
@@ -27,6 +44,7 @@
   <p id="walletStatus"></p>
   <div id="usdTotalValue">Total USD Value: </div>
 
+  <!-- Volunteering flow -->
   <h3>Before Volunteering: Take and Upload Photo</h3>
   <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
   <button id="startVolunteeringBtn" type="button" disabled>Start Volunteering</button>
@@ -35,6 +53,7 @@
   <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
   <button id="stopVolunteeringBtn" type="button" disabled>Stop Volunteering</button>
 
+  <!-- Summary -->
   <div id="summaryBox">
     <h3>Volunteer Summary</h3>
     <p id="sessionTimes"></p>
@@ -44,21 +63,31 @@
     <p id="walletSummary"></p>
   </div>
 
+  <!-- Gallery -->
   <h4>Past Volunteering Experiences</h4>
   <div id="afterPhotosBox" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
 
+  <!-- Nav -->
   <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
   <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
   <a href="http://./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">Go to 501(c)(3) approval</a>
 
   <!-- On-screen status logger -->
-  <div id="statusBox" style="font:12px/1.35 system-ui; background:#eef6ff; border:1px solid #b6d4fe; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
+  <div id="statusBox"
+       style="font:12px/1.35 system-ui; background:#eef6ff; border:1px solid #b6d4fe;
+              padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
+
+  <!-- Error capture -->
   <script>
     (function(){
       const box = document.getElementById('statusBox');
       const log = (m)=>{ const d=document.createElement('div'); d.textContent=m; box.appendChild(d); };
-      window.addEventListener('error', e=>{ box.style.display='block'; log('Error: ' + (e.message||e.error)); });
-      window.addEventListener('unhandledrejection', e=>{ box.style.display='block'; log('Promise: ' + (e.reason && e.reason.message || e.reason)); });
+      window.addEventListener('error', e=>{
+        box.style.display='block'; log('Error: ' + (e.message||e.error));
+      });
+      window.addEventListener('unhandledrejection', e=>{
+        box.style.display='block'; log('Promise: ' + (e.reason && e.reason.message || e.reason));
+      });
     })();
   </script>
 
@@ -69,77 +98,78 @@
   <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
 
-  <!-- SAFETY SHIM: ensure Before Photo unlocks on wallet connect -->
+  <!-- Unlock beforePhoto on wallet connect -->
   <script>
     document.addEventListener('wallet:connected', () => {
       const el = document.getElementById('beforePhoto');
-      if (el) { el.disabled = false; el.removeAttribute('disabled'); el.style.pointerEvents='auto'; el.style.opacity='1'; }
+      if (el) {
+        el.disabled = false;
+        el.removeAttribute('disabled');
+        el.style.pointerEvents='auto';
+        el.style.opacity='1';
+      }
     });
   </script>
 
-  <!-- 🚨 iPhone Wallet Browser Notice with Deep-Link Fix -->
+  <!-- iOS Wallet Browser Notice -->
   <script>
-  function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
-  function inWalletWebView(){ const ua = navigator.userAgent || ''; return /Phantom|Solflare|Backpack|Glow/i.test(ua); }
-
-  function openInPhantom(){
-    const url = window.location.href;
-    const appScheme = 'phantom://browse/' + encodeURIComponent(url);
-    const ulFallback = 'https://phantom.app/ul/browse/' + encodeURIComponent(url);
-    const iframe = document.createElement('iframe'); iframe.style.display='none'; iframe.src = appScheme; document.body.appendChild(iframe);
-    setTimeout(()=>{ window.location.href = ulFallback; }, 800);
-    setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
-  }
-
-  function openInSolflare(){
-    const url = window.location.href;
-    const appScheme = 'solflare://browser?url=' + encodeURIComponent(url);
-    const ulFallback = 'https://solflare.com/ul/v1/browse?url=' + encodeURIComponent(url);
-    const iframe = document.createElement('iframe'); iframe.style.display='none'; iframe.src = appScheme; document.body.appendChild(iframe);
-    setTimeout(()=>{ window.location.href = ulFallback; }, 800);
-    setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
-  }
-
-  function copyURL(){
-    const url = window.location.href;
-    navigator.clipboard?.writeText(url).then(()=>{
-      const btn = document.getElementById('copyUrlBtn');
-      if (btn){ btn.textContent='Copied ✓'; setTimeout(()=> btn.textContent='Copy URL', 1500); }
+    function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+    function inWalletWebView(){ const ua = navigator.userAgent || ''; return /Phantom|Solflare|Backpack|Glow/i.test(ua); }
+    function openInPhantom(){
+      const url = window.location.href;
+      const appScheme = 'phantom://browse/' + encodeURIComponent(url);
+      const ulFallback = 'https://phantom.app/ul/browse/' + encodeURIComponent(url);
+      const iframe = document.createElement('iframe');
+      iframe.style.display='none'; iframe.src = appScheme; document.body.appendChild(iframe);
+      setTimeout(()=>{ window.location.href = ulFallback; }, 800);
+      setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
+    }
+    function openInSolflare(){
+      const url = window.location.href;
+      const appScheme = 'solflare://browser?url=' + encodeURIComponent(url);
+      const ulFallback = 'https://solflare.com/ul/v1/browse?url=' + encodeURIComponent(url);
+      const iframe = document.createElement('iframe');
+      iframe.style.display='none'; iframe.src = appScheme; document.body.appendChild(iframe);
+      setTimeout(()=>{ window.location.href = ulFallback; }, 800);
+      setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
+    }
+    function copyURL(){
+      const url = window.location.href;
+      navigator.clipboard?.writeText(url).then(()=>{
+        const btn = document.getElementById('copyUrlBtn');
+        if (btn){ btn.textContent='Copied ✓'; setTimeout(()=> btn.textContent='Copy URL', 1500); }
+      });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!isIOS() || inWalletWebView()) return;
+      const box = document.createElement('div');
+      box.style.margin='20px'; box.style.padding='20px';
+      box.style.border='3px solid #e53935'; box.style.borderRadius='10px';
+      box.style.background='#fff3f3'; box.style.color='#b71c1c';
+      box.style.fontFamily='Segoe UI, sans-serif'; box.style.fontSize='16px'; box.style.fontWeight='600'; box.style.textAlign='center';
+      box.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';
+      box.innerHTML = `
+        <p style="font-size:18px; font-weight:bold; margin-bottom:8px;">🚨 iPhone Users 🚨</p>
+        <p style="font-size:15px; margin-bottom:16px;">To log in & volunteer, open this page <strong>inside a wallet app</strong>.</p>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button id="openPhantomBtn" style="padding:12px 16px; border-radius:6px; border:none; background:#e53935; color:#fff; font-weight:700; cursor:pointer;">👉 Open in Phantom</button>
+          <button id="openSolflareBtn" style="padding:12px 16px; border-radius:6px; border:2px solid #e53935; background:#fff; color:#e53935; font-weight:700; cursor:pointer;">Open in Solflare</button>
+          <button id="copyUrlBtn" style="padding:12px 16px; border-radius:6px; border:1px solid #bbb; background:#fff; color:#333; font-weight:600; cursor:pointer;">Copy URL</button>
+        </div>
+        <p style="font-size:13px; font-weight:500; color:#7a1a1a; margin-top:12px;">
+          Tip: If you see an install page, tap “Open” at the top. Or open your wallet app, use its Browser tab, and paste the URL.
+        </p>`;
+      document.body.prepend(box);
+      document.getElementById('openPhantomBtn')?.addEventListener('click', openInPhantom);
+      document.getElementById('openSolflareBtn')?.addEventListener('click', openInSolflare);
+      document.getElementById('copyUrlBtn')?.addEventListener('click', copyURL);
+      const connectBtn = document.getElementById('connectWalletBtn');
+      if (connectBtn){
+        connectBtn.disabled = true;
+        connectBtn.style.opacity='0.5';
+        connectBtn.title='Open this page inside a wallet app to connect';
+      }
     });
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    if (!isIOS() || inWalletWebView()) return; // iOS Safari/Chrome only
-
-    const box = document.createElement('div');
-    box.style.margin='20px'; box.style.padding='20px'; box.style.border='3px solid #e53935';
-    box.style.borderRadius='10px'; box.style.background='#fff3f3'; box.style.color='#b71c1c';
-    box.style.fontFamily='Segoe UI, sans-serif'; box.style.fontSize='16px'; box.style.fontWeight='600';
-    box.style.textAlign='center'; box.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';
-
-    box.innerHTML = `
-      <p style="font-size:18px; font-weight:bold; margin-bottom:8px;">🚨 iPhone Users 🚨</p>
-      <p style="font-size:15px; margin-bottom:16px;">To log in & volunteer, open this page <strong>inside a wallet app</strong>.</p>
-      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button id="openPhantomBtn" style="padding:12px 16px; border-radius:6px; border:none; background:#e53935; color:#fff; font-weight:700; cursor:pointer;">👉 Open in Phantom</button>
-        <button id="openSolflareBtn" style="padding:12px 16px; border-radius:6px; border:2px solid #e53935; background:#fff; color:#e53935; font-weight:700; cursor:pointer;">Open in Solflare</button>
-        <button id="copyUrlBtn" style="padding:12px 16px; border-radius:6px; border:1px solid #bbb; background:#fff; color:#333; font-weight:600; cursor:pointer;">Copy URL</button>
-      </div>
-      <p style="font-size:13px; font-weight:500; color:#7a1a1a; margin-top:12px;">
-        Tip: If you see an install page, tap “Open” at the top. Or open your wallet app, use its Browser tab, and paste the URL.
-      </p>
-    `;
-    document.body.prepend(box);
-
-    document.getElementById('openPhantomBtn')?.addEventListener('click', openInPhantom);
-    document.getElementById('openSolflareBtn')?.addEventListener('click', openInSolflare);
-    document.getElementById('copyUrlBtn')?.addEventListener('click', copyURL);
-
-    // Hide connect button on iOS Safari to avoid confusion
-    const connectBtn = document.getElementById('connectWalletBtn');
-    if (connectBtn){ connectBtn.disabled = true; connectBtn.style.opacity='0.5'; connectBtn.title='Open this page inside a wallet app to connect'; }
-  });
   </script>
 </body>
 </html>
-
