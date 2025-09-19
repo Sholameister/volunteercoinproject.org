@@ -1,4 +1,4 @@
-// signup.js — wallet connect + KYC/tier display
+// signup.js — wallet connect + KYC/tier display + auto-redirect to login on approval
 import { handleConnect } from './connectWallet.js';
 import { db, doc, getDoc } from './firebaseConfig.js';
 import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
@@ -11,13 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!looksLikeSignup) return;
 
   const $ = (id) => document.getElementById(id);
-  const connectBtn = $('connectWalletBtn');
+  const connectBtn        = $('connectWalletBtn');
   const walletAddressSlot = $('walletAddress') || $('signupWalletDisplay');
-  const walletStatus = $('walletStatus');
-  const kycStatus = $('kycStatus');
-  const tierInfo = $('tierInfo');
-  const kycBlock = $('kycBlock'); // 🔥 wrapper for Blockpass button
+  const walletStatus      = $('walletStatus');
+  const kycStatus         = $('kycStatus');
+  const tierInfo          = $('tierInfo');
+  const kycBlock          = $('kycBlock'); // wrapper for Blockpass button
+  const LOGIN_URL         = './login.html';
 
+  let walletAddr = null;
+  let pollingTimer = null;
+
+  // ------- helpers -------
   function paintTier(tier) {
     const t = Number(tier) || 1;
     tierInfo.textContent = `Tier: ${t}`;
@@ -26,23 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function paintWallet(addr) {
-    const short = addr ? `${addr.slice(0, 4)}…${addr.slice(-4)}` : '';
-    if (walletAddressSlot)
-      walletAddressSlot.textContent = addr
-        ? `Wallet: ${short}`
-        : 'Wallet: Not Connected';
-    if (walletStatus)
-      walletStatus.textContent = addr
-        ? '✅ Wallet Connected'
-        : 'Wallet not connected';
+    const short = addr ? `${addr.slice(0,4)}…${addr.slice(-4)}` : '';
+    if (walletAddressSlot) walletAddressSlot.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
+    if (walletStatus)      walletStatus.textContent      = addr ? '✅ Wallet Connected' : 'Wallet not connected';
+  }
+
+  async function ensureAnonAuth() {
+    const auth = getAuth();
+    try { await signInAnonymously(auth); }
+    catch (e) { console.error('Anonymous sign-in failed:', e); }
   }
 
   async function fetchKycTierAndStatus(addr) {
     try {
-      // 1) verifiedKYC/<wallet> (exact)
+      // 1) verifiedKYC/<wallet>
       let snap = await getDoc(doc(db, 'verifiedKYC', addr));
       if (!snap.exists()) {
-        // lowercase fallback
         snap = await getDoc(doc(db, 'verifiedKYC', (addr || '').toLowerCase()));
       }
       if (snap.exists()) {
@@ -66,65 +70,91 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function loadProfile(addr) {
+  function toast(msg){
+    const t = document.createElement('div');
+    t.innerText = msg;
+    t.style = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 14px;border-radius:8px;z-index:9999';
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 1800);
+  }
+
+  async function refreshKycNow(addr, {announce=false} = {}) {
     const { approved, tier } = await fetchKycTierAndStatus(addr);
     paintTier(tier);
+    if (kycStatus) kycStatus.textContent = `KYC: ${approved ? '✅ Approved' : '⏳ Pending'}`;
 
-    if (kycStatus)
-      kycStatus.textContent = `KYC: ${
-        approved ? '✅ Approved' : '⏳ Pending'
-      }`;
+    // Hide/show Blockpass button
+    if (kycBlock) kycBlock.style.display = approved ? 'none' : 'block';
 
-    // 🔥 Hide Blockpass button if already approved
-    if (kycBlock) {
-      kycBlock.style.display = approved ? 'none' : 'block';
+    if (approved) {
+      if (announce) toast('KYC Approved — taking you to the volunteer page…');
+      // short pause so the checkmark is visible
+      setTimeout(() => { window.location.href = LOGIN_URL; }, 800);
     }
   }
 
-  async function ensureAnonAuth() {
-    const auth = getAuth();
-    try {
-      await signInAnonymously(auth);
-    } catch (e) {
-      console.error('Anonymous sign-in failed:', e);
-    }
+  function startKycPolling(addr, ms=4000, maxMs=120000) {
+    stopKycPolling();
+    const started = Date.now();
+    pollingTimer = setInterval(async () => {
+      if (Date.now() - started > maxMs) return stopKycPolling();
+      await refreshKycNow(addr);
+    }, ms);
+  }
+  function stopKycPolling() {
+    if (pollingTimer) clearInterval(pollingTimer);
+    pollingTimer = null;
   }
 
-  // Connect button
+  // ------- connect button -------
   if (connectBtn) {
     connectBtn.addEventListener('click', async () => {
-      const resp = await handleConnect(); // opens Phantom
-      const addr =
-        resp?.publicKey?.toString?.() || window.appWallet?.publicKey || null;
+      const resp = await handleConnect(); // wallet connect (Phantom, etc. via your adapter)
+      const addr = resp?.publicKey?.toString?.() || window.appWallet?.publicKey || window.solana?.publicKey?.toString?.() || null;
       if (!addr) return;
+      walletAddr = addr;
       paintWallet(addr);
       await ensureAnonAuth();
-      await loadProfile(addr);
+      await refreshKycNow(addr, {announce:true});
+      startKycPolling(addr);
     });
   }
 
-  // Global wallet events
+  // ------- global wallet events -------
   document.addEventListener('wallet:connected', async (e) => {
     const addr = e.detail?.publicKey;
     if (!addr) return;
+    walletAddr = addr;
     paintWallet(addr);
     await ensureAnonAuth();
-    await loadProfile(addr);
+    await refreshKycNow(addr, {announce:true});
+    startKycPolling(addr);
   });
 
   document.addEventListener('wallet:disconnected', () => {
+    walletAddr = null;
     paintWallet(null);
     paintTier(1);
     if (kycStatus) kycStatus.textContent = 'KYC: ⏳ Pending';
     if (kycBlock) kycBlock.style.display = 'block';
+    stopKycPolling();
   });
 
-  // If already connected on load
-  const preAddr =
-    window.appWallet?.publicKey || window.solana?.publicKey?.toString?.();
+  // ------- focus/visibility re-check (user returns from Blockpass) -------
+  window.addEventListener('focus', () => { if (walletAddr) refreshKycNow(walletAddr); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && walletAddr) refreshKycNow(walletAddr);
+  });
+
+  // ------- already connected on load -------
+  const preAddr = window.appWallet?.publicKey || (window.solana?.publicKey?.toString?.());
   if (preAddr) {
+    walletAddr = preAddr;
     paintWallet(preAddr);
-    ensureAnonAuth().finally(() => loadProfile(preAddr));
+    ensureAnonAuth().finally(() => {
+      refreshKycNow(preAddr);     // will redirect if already approved
+      startKycPolling(preAddr);
+    });
   } else {
     paintWallet(null);
     paintTier(1);
@@ -132,4 +162,3 @@ document.addEventListener('DOMContentLoaded', () => {
     if (kycBlock) kycBlock.style.display = 'block';
   }
 });
-
