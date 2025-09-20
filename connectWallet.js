@@ -108,6 +108,14 @@ async function handleConnect() {
   }
 }
 
+// After Phantom / Solflare connection confirmed
+gtag('event', 'wallet_connected', {
+  wallet_address: walletAddress,
+  wallet_type: walletType, // Phantom, Solflare, Backpack
+  user_id: walletAddress
+});
+
+
 // Reflect state if already connected
 function setupConnectButton() {
   const btn = document.getElementById('connectWalletBtn');
