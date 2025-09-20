@@ -78,6 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(()=>t.remove(), 1800);
   }
 
+// After signup success (user added to Firestore, KYC tier assigned)
+gtag('event', 'signup_completed', {
+  method: signupMethod, // "email", "wallet", etc.
+  user_id: userWalletAddress || userEmail,
+  tier_level: kycTier || 'unknown'
+});
+  
   async function refreshKycNow(addr, {announce=false} = {}) {
     const { approved, tier } = await fetchKycTierAndStatus(addr);
     paintTier(tier);
