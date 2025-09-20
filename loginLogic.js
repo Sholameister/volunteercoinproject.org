@@ -186,6 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
     await startFlow(file);  // <— no button click needed
   });
 
+gtag('event', 'volunteering_start', {
+  wallet: walletAddress,
+  timestamp: new Date().toISOString(),
+  geolocation: `${lat},${lng}`
+});
+
+  
   // 2) AFTER photo upload → auto STOP
   afterInput.addEventListener('change', async () => {
     const file = afterInput.files && afterInput.files[0];
