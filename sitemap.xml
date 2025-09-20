@@ -25,4 +25,61 @@
     <priority>0.7</priority>
   </url>
 
+  <url>
+    <loc>https://volunteercoinproject.org/founder.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/exchange-rate.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/burn-ledger.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/dashboard.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/how-to.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/faq.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/individual-pricing.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/btc-sol-gold-backing.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://volunteercoinproject.org/404.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <priority>0.1</priority>
+  </url>
+
+  <!-- Add the rest of your ~28 pages here following the same format -->
+  <!-- Just copy a <url> block, change the filename, and adjust priority if needed -->
+
 </urlset>
