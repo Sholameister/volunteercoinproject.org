@@ -314,6 +314,12 @@ gtag('event', 'volunteering_start', {
         afterPhotosBox.appendChild(img);
       }
 
+      gtag('event', 'volunteering_complete', {
+  wallet: walletAddress,
+  tokens_earned: sessionTokens,
+  usd_value: sessionTokens * 2.5,
+  duration_minutes: sessionDuration
+});
       // Reset for next time
       afterInput.value = '';
       sessionStart = null;
