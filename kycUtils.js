@@ -31,6 +31,13 @@ export async function checkKYCStatus(wallet) {
   }
 }
 
+// When KYC is verified
+if (approved) {
+gtag('event', 'kyc_verified', {
+  user_id: walletAddress || 'unknown',
+  tier_level: kycTier
+});
+}
 // Update DOM with tier info
 export function updateKycDom({ tier, approved }) {
   const tierDisplay = document.getElementById('tierInfo');
