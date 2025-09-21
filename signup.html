@@ -1,149 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
+  </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LVBTN Signup & KYC</title>
+  <title>Volunteer Logger</title>
   <style>
-    body { background:#fdf2f8; font-family:'Segoe UI',sans-serif; text-align:center; padding:20px; }
-    h2 { margin: 0 0 8px; }
-    p { margin: 8px 0; }
-    button { background:#e60073; color:#fff; padding:12px 20px; border:none; border-radius:6px; font-size:16px; margin:10px; cursor:pointer; }
-    button:hover { background:#cc005f; }
-    #walletAddress,#walletStatus,#kycStatus,#tierInfo,#signupWalletDisplay { font-weight:bold; margin:10px 0; }
-    ul { list-style:none; text-align:left; max-width:420px; margin:20px auto; padding:0; }
-    ul li { margin:6px 0; }
-    .tier-badge { padding:4px 10px; border-radius:4px; font-weight:bold; display:inline-block; }
-    .tier-1 { background:#ffe0e0; color:#c0392b }
-    .tier-2 { background:#fff3cd; color:#856404 }
-    .tier-3 { background:#d4edda; color:#155724 }
+    body { background:#fffdfd; font-family:'Segoe UI',sans-serif; padding:20px; text-align:center }
+    button, input[type="file"] { display:block; margin:10px auto; padding:12px; border-radius:6px; width:90%; max-width:420px; font-size:16px }
+    button { background:#e60073; color:#fff; border:none; cursor:pointer }
+    button:hover { background:#cc005f }
+    .muted { color:#555; font-size:14px }
+    #summaryBox { margin-top:20px; padding:12px; border:1px solid #ddd; border-radius:8px; background:#fafafa; display:none }
+    #afterPhotosBox img { max-width:100px; margin:5px; border-radius:6px }
     .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
+
+    /* Keep buttons in DOM for scripts, but hidden in UI */
+    #startVolunteeringBtn, #stopVolunteeringBtn { display:none !important; }
+
+    /* iOS wallet notice */
+    #iosWalletNotice { display:none; margin:20px auto; padding:16px; max-width:520px; border:3px solid #e53935; border-radius:10px; background:#fff3f3; color:#b71c1c; font-weight:600; }
   </style>
 </head>
 <body>
-  <h2>Sign Up & KYC Verification</h2>
-  <p style="font-style:italic;color:#333;">
-    To unlock volunteer rewards, please complete the KYC process below. The more verified you are, the more access and token rewards you’ll earn!
-  </p>
+  <h1>Volunteer Session Logger</h1>
 
-  <!-- Wallet -->
-  <button id="connectWalletBtn">Connect Wallet</button>
-  <p id="signupWalletDisplay"></p>
-  <p id="walletAddress"></p>
-  <p id="walletStatus"></p>
+  <!-- Status / gating -->
+  <button id="connectWalletBtn" type="button">Connect Wallet</button>
+  <p id="walletAddress">Wallet: Not Connected</p>
+  <p id="kycStatus">KYC: —</p>
+  <p id="tierInfo">Tier: —</p>
+  <p id="tierNote" class="muted"></p>
+  <p id="walletStatus" class="muted"></p>
 
-  <!-- KYC / Tier -->
-  <p id="kycStatus">KYC: ⏳ Pending</p>
-  <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
-
-  <!-- Blockpass -->
-  <div style="margin-top:12px;">
-    <a href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" rel="noopener">
-      <button>Start KYC</button>
-    </a>
+  <!-- iOS guidance (shown only if on iPhone and not already in wallet browser) -->
+  <div id="iosWalletNotice">
+    🚨 iPhone users: for camera uploads & wallet connect, open this page inside your wallet app (Phantom/Solflare) or use the buttons below.
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px;">
+      <button id="openPhantomBtn" type="button" style="padding:10px 14px; border-radius:6px; border:none; background:#6c2bd9; color:#fff; font-weight:700;">Open in Phantom</button>
+      <button id="openSolflareBtn" type="button" style="padding:10px 14px; border-radius:6px; border:2px solid #ff6a00; background:#fff; color:#ff6a00; font-weight:700;">Open in Solflare</button>
+      <button id="copyUrlBtn" type="button" style="padding:10px 14px; border-radius:6px; border:1px solid #bbb; background:#fff; color:#333; font-weight:600;">Copy URL</button>
+    </div>
   </div>
 
-  <!-- Rewards blurb -->
-  <ul>
-    <li>💗 LVBTN Token Earnings (example):</li>
-    <li>• Tier 1 – 1 LVBTN/hr (basic signup)</li>
-    <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
-    <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + 25+ hours)</li>
-  </ul>
+  <!-- Volunteering flow -->
+  <h3>Before Volunteering: Take & Upload Photo</h3>
+  <input type="file" id="beforePhoto" accept="image/*" capture="environment" disabled />
+  <button id="startVolunteeringBtn" type="button" disabled>Start Volunteering</button>
+
+  <h3>After Volunteering: Take & Upload Photo</h3>
+  <input type="file" id="afterPhoto" accept="image/*" capture="environment" disabled />
+  <button id="stopVolunteeringBtn" type="button" disabled>Stop Volunteering</button>
+
+  <!-- Summary -->
+  <div id="summaryBox">
+    <h3>Volunteer Summary</h3>
+    <p id="sessionTimes"></p>
+    <p id="tokensEarned"></p>
+    <p id="totalLVBTN"></p>
+    <p id="usdValue"></p>
+    <p id="walletSummary"></p>
+  </div>
+
+  <!-- Gallery -->
+  <h4>Past Volunteering Experiences</h4>
+  <div id="afterPhotosBox" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
 
   <!-- Nav -->
-  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
-  <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
+  <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
+  <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
+  <a href="http://./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">501(c)(3) Approval</a>
 
-<div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
-<script>
-  (function(){
-    const d = document.getElementById('walletDebug');
-    const detected = {
-      phantom: !!(window?.phantom?.solana && window.phantom.solana.isPhantom) || !!(window?.solana?.isPhantom),
-      solflare: !!window?.solflare?.isSolflare,
-      backpack: !!window?.backpack?.solana,
-      glow: !!window?.glow?.solana,
-      exodus: !!window?.exodus?.solana,
-      trust: !!window?.trustwallet?.solana
-    };
-    const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
-    d.innerText = 'Wallet detect → ' + JSON.stringify(detected) + ' | HTTPS/localhost: ' + httpsOK + ' | UA: ' + navigator.userAgent;
-    d.style.display = 'block';
-  })();
-</script>
+  <!-- On-screen error/status log (optional) -->
+  <div id="statusBox" style="font:12px/1.35 system-ui; background:#eef6ff; border:1px solid #b6d4fe; padding:8px; border-radius:6px; margin:10px auto; max-width:520px; display:none"></div>
+  <script>
+    (function(){
+      const box = document.getElementById('statusBox');
+      const log = (m)=>{ const d=document.createElement('div'); d.textContent=m; box.appendChild(d); };
+      window.addEventListener('error', e=>{ box.style.display='block'; log('Error: ' + (e.message||e.error)); });
+      window.addEventListener('unhandledrejection', e=>{ box.style.display='block'; log('Promise: ' + (e.reason && e.reason.message || e.reason)); });
+    })();
+  </script>
 
-  <!-- SAFETY-NET: ensures Connect Wallet button actually does something -->
-<script type="module">
-  // 1) Load the multi-wallet connector
-  import { connectWallet } from './js/connectWallet.js';
-
-  // 2) Grab the button (both pages use the same id)
-  const btn = document.getElementById('connectWalletBtn');
-
-  // 3) Minimal wallet detection (for user-friendly hints)
-  const walletsDetected = Boolean(
-    (window?.phantom?.solana && window.phantom.solana.isPhantom) ||
-    (window?.solana?.isPhantom) ||
-    (window?.solflare?.isSolflare) ||
-    (window?.backpack?.solana) ||
-    (window?.glow?.solana) ||
-    (window?.exodus?.solana) ||
-    (window?.trustwallet?.solana)
-  );
-  const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
-
-  // 4) Add a small one-time helper if nothing is injected
-  const helperId = 'walletHelpInline';
-  if (!walletsDetected) {
-    const div = document.createElement('div');
-    div.id = helperId;
-    div.style.cssText = 'max-width:420px;margin:10px auto;padding:10px;border:1px solid #f2d388;background:#fff8c5;border-radius:6px;font:13px system-ui';
-    div.innerHTML = `
-      <b>No wallet detected here.</b><br>
-      Desktop: use Chrome/Brave with Phantom or Solflare extension installed.<br>
-      Mobile: open this site inside your wallet app’s browser (Phantom → Browser tab).
-    `;
-    document.body.appendChild(div);
-  }
-
-  // 5) Ensure the button exists and bind a guaranteed click handler
-  if (btn) {
-    // Remove any previous listeners (if a stale SW kept an old script)
-    btn.replaceWith(btn.cloneNode(true));
-    const wiredBtn = document.getElementById('connectWalletBtn');
-
-    wiredBtn.addEventListener('click', async () => {
-      try {
-        if (!httpsOK) {
-          alert('Wallet requires HTTPS or localhost.');
-          return;
-        }
-        const addr = await connectWallet();
-        if (addr) {
-          alert('✅ Connected: ' + addr);
-        } else {
-          alert('⚠️ Connect failed (no address returned).');
-        }
-      } catch (e) {
-        console.error('Connect error:', e);
-        alert('❌ Wallet connect error: ' + (e?.message || e));
-      }
-    });
-  } else {
-    console.warn('Connect button #connectWalletBtn not found on this page.');
-  }
-</script>
-<body>
-  <!-- Page content -->
-
-  <!-- Solana web3.js -->
+  <!-- Scripts -->
   <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
-  <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./kycUtils.js"></script>
-  <script type="module" src="./signup.js"></script>
+  <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./loginLogic.js"></script>
+
+  <!-- Gate by KYC tier: Tier 1 can “practice” w/o wallet; Tier 2+ must connect -->
+  <script type="module">
+    import { db } from './firebaseConfig.js';
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    const beforePhoto   = document.getElementById('beforePhoto');
+    const afterPhoto    = document.getElementById('afterPhoto');
+    const kycStatusEl   = document.getElementById('kycStatus');
+    const tierInfoEl    = document.getElementById('tierInfo');
+    const tierNoteEl    = document.getElementById('tierNote');
+    const walletAddrEl  = document.getElementById('walletAddress');
+
+    let walletAddress = null;
+
+    // Listen for wallet connection event from connectWallet.js
+    document.addEventListener('wallet:connected', (ev) => {
+      walletAddress = (ev.detail && ev.detail.address) || null;
+      walletAddrEl.textContent = walletAddress ? `Wallet: ${walletAddress}` : 'Wallet: Not Connected';
+
+      // If Tier 2+, unlock beforePhoto only when wallet is connected
+      if (tierInfoEl.dataset.tier && Number(tierInfoEl.dataset.tier) >= 2) {
+        beforePhoto.disabled = !walletAddress;
+        beforePhoto.style.opacity = walletAddress ? '1' : '0.6';
+      }
+    });
+
+    onAuthStateChanged(getAuth(), async (user) => {
+      if (!user) {
+        kycStatusEl.textContent = 'KYC: Sign in first (email/password)';
+        tierInfoEl.textContent  = 'Tier: —';
+        tierInfoEl.dataset.tier = '0';
+        beforePhoto.disabled = true;
+        afterPhoto.disabled  = true;
+        return;
+      }
+
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      const data = snap.data() || {};
+      const tier = Number(data.kycTier || 1);
+      tierInfoEl.dataset.tier = String(tier);
+
+      // Update UI labels
+      if (tier >= 2) { kycStatusEl.textContent = 'KYC: ✅ Verified'; }
+      else { kycStatusEl.textContent = 'KYC: ⏳ Pending'; }
+
+      tierInfoEl.textContent = `Tier: ${tier}`;
+
+      // Gating rules:
+      // Tier 1: allow practice logging without wallet (unlock beforePhoto immediately)
+      // Tier 2+: require wallet connect first to unlock beforePhoto
+      if (tier < 2) {
+        tierNoteEl.textContent = 'Tier 1: You can try the logger now. Earnings queue until you connect a wallet later.';
+        beforePhoto.disabled = false;
+        beforePhoto.style.opacity = '1';
+      } else {
+        tierNoteEl.textContent = 'Tier 2+: Connect a wallet to unlock the camera and earn live rewards.';
+        beforePhoto.disabled = !walletAddress;
+        beforePhoto.style.opacity = walletAddress ? '1' : '0.6';
+      }
+    });
+  </script>
+
+  <!-- iOS wallet-browser helper -->
+  <script>
+    (function(){
+      const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const inWalletWebView = () => /Phantom|Solflare|Backpack|Glow/i.test(navigator.userAgent||'');
+
+      function openInPhantom(){
+        const url = window.location.href;
+        const scheme = 'phantom://browse/' + encodeURIComponent(url);
+        const ulFallback = 'https://phantom.app/ul/browse/' + encodeURIComponent(url);
+        const iframe = document.createElement('iframe'); iframe.style.display='none'; iframe.src = scheme; document.body.appendChild(iframe);
+        setTimeout(()=>{ window.location.href = ulFallback; }, 800);
+        setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
+      }
+      function openInSolflare(){
+        const url = window.location.href;
+        const scheme = 'solflare://browser?url=' + encodeURIComponent(url);
+        const ulFallback = 'https://solflare.com/ul/v1/browse?url=' + encodeURIComponent(url);
+        const iframe = document.createElement('iframe'); iframe.style.display='none'; iframe.src = scheme; document.body.appendChild(iframe);
+        setTimeout(()=>{ window.location.href = ulFallback; }, 800);
+        setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
+      }
+      function copyURL(){
+        const url = window.location.href;
+        navigator.clipboard?.writeText(url).then(()=>{
+          const btn = document.getElementById('copyUrlBtn');
+          if (btn){ btn.textContent='Copied ✓'; setTimeout(()=> btn.textContent='Copy URL', 1500); }
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const notice = document.getElementById('iosWalletNotice');
+        if (isIOS() && !inWalletWebView()) notice.style.display = 'block';
+        document.getElementById('openPhantomBtn')?.addEventListener('click', openInPhantom);
+        document.getElementById('openSolflareBtn')?.addEventListener('click', openInSolflare);
+        document.getElementById('copyUrlBtn')?.addEventListener('click', copyURL);
+      });
+    })();
+  </script>
 </body>
 </html>
-
