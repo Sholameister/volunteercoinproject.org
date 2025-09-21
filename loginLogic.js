@@ -246,8 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_'); 
-      const aRef = storage.ref(`beforePhotos/${safeAddr}_${Date.now()}.jpg`);
-      await aRef.put(file);
+      const bRef = storage.ref(`beforePhotos/${safeAddr}_${Date.now()}.jpg`);
+      await bRef.put(file);
       startPhotoUrl = await bRef.getDownloadURL();
 
       sessionStart = new Date();
