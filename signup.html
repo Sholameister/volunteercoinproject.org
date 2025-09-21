@@ -1,190 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
-  </script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KYC Check & Signup</title>
+  <title>LVBTN Signup & KYC</title>
   <style>
-    body{background:#fdf2f8;font-family:'Segoe UI',sans-serif;text-align:center;padding:20px}
-    h2{margin:0 0 8px} p{margin:8px 0}
-    button,a.btn{background:#e60073;color:#fff;padding:12px 20px;border:none;border-radius:6px;font-size:16px;margin:10px;cursor:pointer;display:inline-block;text-decoration:none}
-    button:hover,a.btn:hover{background:#cc005f}
-    #kycStatus,#tierInfo{font-weight:700;margin:10px 0}
-    .tier-badge{padding:4px 10px;border-radius:4px;font-weight:700;display:inline-block}
-    .tier-1{background:#ffe0e0;color:#c0392b}.tier-2{background:#fff3cd;color:#856404}.tier-3{background:#d4edda;color:#155724}
-    .nav-button{display:inline-block;margin:8px;padding:10px 14px;border-radius:6px;background:#f3f4f6;text-decoration:none;color:#111827;font-size:14px}
-    #walletSuggest{margin:18px auto;padding:14px;max-width:520px;background:#fff;border:1px solid #eee;border-radius:10px}
-    .wallet-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-    .wallet-buttons a{border-radius:6px;padding:12px 16px;font-weight:700}
-    .btn-phantom{background:#6c2bd9}.btn-solflare{background:#ff6a00}
-    ul{list-style:none;text-align:left;max-width:520px;margin:20px auto;padding:0} ul li{margin:6px 0}
-    /* Intake form */
-    #intakeSection{margin:22px auto;max-width:720px;background:#fff;border:1px solid #eee;border-radius:12px;padding:18px;text-align:left}
-    #intakeForm{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    #intakeForm input, #intakeForm select{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px}
-    #intakeMsg{font-weight:700}
+    body { background:#fdf2f8; font-family:'Segoe UI',sans-serif; text-align:center; padding:20px; }
+    h2 { margin: 0 0 8px; }
+    p { margin: 8px 0; }
+    button { background:#e60073; color:#fff; padding:12px 20px; border:none; border-radius:6px; font-size:16px; margin:10px; cursor:pointer; }
+    button:hover { background:#cc005f; }
+    #walletAddress,#walletStatus,#kycStatus,#tierInfo,#signupWalletDisplay { font-weight:bold; margin:10px 0; }
+    ul { list-style:none; text-align:left; max-width:420px; margin:20px auto; padding:0; }
+    ul li { margin:6px 0; }
+    .tier-badge { padding:4px 10px; border-radius:4px; font-weight:bold; display:inline-block; }
+    .tier-1 { background:#ffe0e0; color:#c0392b }
+    .tier-2 { background:#fff3cd; color:#856404 }
+    .tier-3 { background:#d4edda; color:#155724 }
+    .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
   </style>
 </head>
 <body>
-  <h2>KYC Check & Signup</h2>
-  <p style="font-style:italic;color:#333">Complete KYC below. You can link a wallet later in the Volunteer Logger.</p>
+  <h2>Sign Up & KYC Verification</h2>
+  <p style="font-style:italic;color:#333;">
+    To unlock volunteer rewards, please complete the KYC process below. The more verified you are, the more access and token rewards you’ll earn!
+  </p>
 
-  <!-- KYC -->
+  <!-- Wallet -->
+  <button id="connectWalletBtn">Connect Wallet</button>
+  <p id="signupWalletDisplay"></p>
+  <p id="walletAddress"></p>
+  <p id="walletStatus"></p>
+
+  <!-- KYC / Tier -->
   <p id="kycStatus">KYC: ⏳ Pending</p>
   <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
-  <div id="kycBlock" style="margin-top:12px;">
-    <a id="startKycLink" href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" rel="noopener">
-      <button id="startKycBtn">Start / Continue KYC</button>
+
+  <!-- Blockpass -->
+  <div style="margin-top:12px;">
+    <a href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" rel="noopener">
+      <button>Start KYC</button>
     </a>
-  </div>
-
-  <!-- Official Intake Form -->
-  <section id="intakeSection">
-    <h3 style="margin-top:0">Volunteer Intake Form (Required for Rewards)</h3>
-    <p>Please complete this form. You may print/save as PDF for your records. Registration must be on file to receive rewards.</p>
-
-    <form id="intakeForm">
-      <div style="grid-column:1/-1">
-        <label>Legal Full Name *</label><br/>
-        <input id="fullName" required>
-      </div>
-      <div>
-        <label>Phone *</label><br/>
-        <input id="phone" type="tel" required placeholder="(555) 555-5555">
-      </div>
-      <div>
-        <label>Email *</label><br/>
-        <input id="email" type="email" required>
-      </div>
-      <div style="grid-column:1/-1">
-        <label>Street Address *</label><br/>
-        <input id="addr1" required>
-      </div>
-      <div>
-        <label>City *</label><br/>
-        <input id="city" required>
-      </div>
-      <div>
-        <label>State/Province *</label><br/>
-        <input id="state" required>
-      </div>
-      <div>
-        <label>ZIP/Postal *</label><br/>
-        <input id="zip" required>
-      </div>
-      <div style="grid-column:1/-1">
-        <label>Solana Wallet Address (optional)</label><br/>
-        <input id="walletAddr" placeholder="5z4Q...FSF">
-        <div style="font-size:12px;color:#666;margin-top:4px">You can also add/change your wallet later in the Logger.</div>
-      </div>
-      <div style="grid-column:1/-1">
-        <label>Emergency Contact (Name & Phone)</label><br/>
-        <input id="emergency" placeholder="Jane Doe — (555) 555-5555">
-      </div>
-      <div style="grid-column:1/-1;margin-top:6px">
-        <label style="display:flex;gap:8px;align-items:flex-start">
-          <input id="consentTruth" type="checkbox" required> <span>I certify the information provided is true and correct.</span>
-        </label>
-        <label style="display:flex;gap:8px;align-items:flex-start;margin-top:6px">
-          <input id="consentPolicy" type="checkbox" required> <span>I agree to VCPF policies and understand this Intake must be on file to receive rewards.</span>
-        </label>
-      </div>
-      <div>
-        <label>Type Your Name as Signature *</label><br/>
-        <input id="sig" required placeholder="Full Name">
-      </div>
-      <div>
-        <label>Date *</label><br/>
-        <input id="sigDate" type="date" required>
-      </div>
-      <div style="grid-column:1/-1">
-        <label>Upload signed copy (optional)</label><br/>
-        <input id="signedUpload" type="file" accept=".pdf,image/*" style="padding:8px;border:1px dashed #bbb;background:#fafafa">
-      </div>
-      <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
-        <button id="submitIntakeBtn" type="button">Submit to VCPF</button>
-        <button id="printIntakeBtn" type="button" style="background:#6b7280">Print / Save as PDF</button>
-      </div>
-      <div id="intakeMsg" style="grid-column:1/-1;margin-top:10px"></div>
-    </form>
-  </section>
-
-  <!-- Optional wallet app install (info only) -->
-  <div id="walletSuggest">
-    <div style="font-weight:700;margin-bottom:8px">Planning to connect a wallet later?</div>
-    <div style="font-size:14px;color:#444;margin-bottom:10px">Install a wallet now so you’re ready after KYC. (Optional at signup.)</div>
-    <div class="wallet-buttons">
-      <a class="btn btn-phantom" href="https://phantom.app/download" target="_blank" rel="noopener">Get Phantom</a>
-      <a class="btn btn-solflare" href="https://solflare.com/download" target="_blank" rel="noopener">Get Solflare</a>
-      <a id="copyUrlBtn" class="btn" style="background:#fff;color:#333;border:1px solid #bbb" href="javascript:void(0)">Copy this page URL</a>
-    </div>
   </div>
 
   <!-- Rewards blurb -->
   <ul>
-    <li>💗 SYNCM Rewards (example):</li>
-    <li>• Tier 1 – 5 SYNCM/hr (basic signup)</li>
-    <li>• Tier 2 – 10 SYNCM/hr (KYC + driver)</li>
-    <li>• Tier 3 – 15 SYNCM/hr (KYC + 2 refs + 25+ hours)</li>
+    <li>💗 LVBTN Token Earnings (example):</li>
+    <li>• Tier 1 – 1 LVBTN/hr (basic signup)</li>
+    <li>• Tier 2 – 1.25 LVBTN/hr (KYC + driver)</li>
+    <li>• Tier 3 – 1.5 LVBTN/hr (KYC + 2 refs + 25+ hours)</li>
   </ul>
 
   <!-- Nav -->
   <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
   <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
 
-  <!-- Modules -->
+<div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
+<script>
+  (function(){
+    const d = document.getElementById('walletDebug');
+    const detected = {
+      phantom: !!(window?.phantom?.solana && window.phantom.solana.isPhantom) || !!(window?.solana?.isPhantom),
+      solflare: !!window?.solflare?.isSolflare,
+      backpack: !!window?.backpack?.solana,
+      glow: !!window?.glow?.solana,
+      exodus: !!window?.exodus?.solana,
+      trust: !!window?.trustwallet?.solana
+    };
+    const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
+    d.innerText = 'Wallet detect → ' + JSON.stringify(detected) + ' | HTTPS/localhost: ' + httpsOK + ' | UA: ' + navigator.userAgent;
+    d.style.display = 'block';
+  })();
+</script>
+
+  <!-- SAFETY-NET: ensures Connect Wallet button actually does something -->
+<script type="module">
+  // 1) Load the multi-wallet connector
+  import { connectWallet } from './js/connectWallet.js';
+
+  // 2) Grab the button (both pages use the same id)
+  const btn = document.getElementById('connectWalletBtn');
+
+  // 3) Minimal wallet detection (for user-friendly hints)
+  const walletsDetected = Boolean(
+    (window?.phantom?.solana && window.phantom.solana.isPhantom) ||
+    (window?.solana?.isPhantom) ||
+    (window?.solflare?.isSolflare) ||
+    (window?.backpack?.solana) ||
+    (window?.glow?.solana) ||
+    (window?.exodus?.solana) ||
+    (window?.trustwallet?.solana)
+  );
+  const httpsOK = location.protocol === 'https:' || ['localhost','127.0.0.1'].includes(location.hostname);
+
+  // 4) Add a small one-time helper if nothing is injected
+  const helperId = 'walletHelpInline';
+  if (!walletsDetected) {
+    const div = document.createElement('div');
+    div.id = helperId;
+    div.style.cssText = 'max-width:420px;margin:10px auto;padding:10px;border:1px solid #f2d388;background:#fff8c5;border-radius:6px;font:13px system-ui';
+    div.innerHTML = `
+      <b>No wallet detected here.</b><br>
+      Desktop: use Chrome/Brave with Phantom or Solflare extension installed.<br>
+      Mobile: open this site inside your wallet app’s browser (Phantom → Browser tab).
+    `;
+    document.body.appendChild(div);
+  }
+
+  // 5) Ensure the button exists and bind a guaranteed click handler
+  if (btn) {
+    // Remove any previous listeners (if a stale SW kept an old script)
+    btn.replaceWith(btn.cloneNode(true));
+    const wiredBtn = document.getElementById('connectWalletBtn');
+
+    wiredBtn.addEventListener('click', async () => {
+      try {
+        if (!httpsOK) {
+          alert('Wallet requires HTTPS or localhost.');
+          return;
+        }
+        const addr = await connectWallet();
+        if (addr) {
+          alert('✅ Connected: ' + addr);
+        } else {
+          alert('⚠️ Connect failed (no address returned).');
+        }
+      } catch (e) {
+        console.error('Connect error:', e);
+        alert('❌ Wallet connect error: ' + (e?.message || e));
+      }
+    });
+  } else {
+    console.warn('Connect button #connectWalletBtn not found on this page.');
+  }
+</script>
+<body>
+  <!-- Page content -->
+
+  <!-- Solana web3.js -->
+  <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+  <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./kycUtils.js"></script>
-
-  <!-- Copy URL + Intake submit -->
-  <script type="module">
-    import { db, storage } from './firebaseConfig.js';
-    const $ = (id)=>document.getElementById(id);
-    $('printIntakeBtn')?.addEventListener('click', ()=>window.print());
-    $('copyUrlBtn')?.addEventListener('click', ()=>{
-      const btn=$('copyUrlBtn'); navigator.clipboard?.writeText(location.href).then(()=>{btn.textContent='Copied ✓'; setTimeout(()=>btn.textContent='Copy this page URL',1500);});
-    });
-
-    $('submitIntakeBtn')?.addEventListener('click', async ()=>{
-      const msg=$('intakeMsg');
-      try{
-        msg.style.color='#111'; msg.textContent='Submitting…';
-        const data={
-          fullName:$('fullName').value.trim(), phone:$('phone').value.trim(), email:$('email').value.trim(),
-          addr1:$('addr1').value.trim(), city:$('city').value.trim(), state:$('state').value.trim(), zip:$('zip').value.trim(),
-          walletAddr:$('walletAddr').value.trim(), emergency:$('emergency').value.trim(),
-          consentTruth:$('consentTruth').checked, consentPolicy:$('consentPolicy').checked,
-          sig:$('sig').value.trim(), sigDate:$('sigDate').value, createdAt:new Date().toISOString()
-        };
-        const required=['fullName','phone','email','addr1','city','state','zip','sig','sigDate'];
-        for(const k of required){ if(!data[k]){ msg.style.color='#b71c1c'; msg.textContent='Please complete all required fields.'; return; } }
-        if(!data.consentTruth||!data.consentPolicy){ msg.style.color='#b71c1c'; msg.textContent='Please accept the required consents.'; return; }
-
-        const docRef = await db.collection('intakeForms').add({ ...data, status:'submitted' });
-
-        const file = $('signedUpload')?.files?.[0] || null;
-        if(file){
-          const ref = storage.ref(`intakeForms/${docRef.id}/${file.name}`);
-          await ref.put(file); const url = await ref.getDownloadURL();
-          await docRef.update({ signedUploadUrl:url });
-        }
-        msg.style.color='#0b7a0b'; msg.textContent='✅ Intake submitted. You can print/save a copy for your records.';
-      }catch(e){ console.error(e); msg.style.color='#b71c1c'; msg.textContent='Submission failed. Please try again.'; }
-    });
-  </script>
-
-  <!-- Print style -->
-  <style media="print">
-    .nav-button, #walletSuggest, #startKycBtn{display:none!important}
-    body{background:#fff!important}
-    #intakeSection{border:none}
-  </style>
+  <script type="module" src="./signup.js"></script>
+  <script type="module" src="./loginLogic.js"></script>
 </body>
 </html>
+
