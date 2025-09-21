@@ -29,4 +29,11 @@ const storage = firebase.storage();
 
 // ESM exports (for your module pages like loginLogic.js)
 export { app, db, storage };
-
+// Ensure request.auth != null for Storage Rules
+firebase.auth().onAuthStateChanged(async (u) => {
+  try {
+    if (!u) await firebase.auth().signInAnonymously();
+  } catch (e) {
+    console.error('Anon auth failed:', e);
+  }
+});
