@@ -21,15 +21,12 @@ export async function checkKYCStatusByWallet(wallet) {
 
       // Safe analytics (no PII)
       try { window.gtag?.('event', 'kyc_lookup', { by: 'wallet', approved, tier }); } catch {}
-
       // Optional: fire verified event (safe fields only)
       if (approved) {
         try { window.gtag?.('event', 'kyc_verified', { by: 'wallet', tier }); } catch {}
       }
-
       return { tier, approved, source: 'verifiedKYC' };
     }
-
     return { tier: 1, approved: false, source: 'none' };
   } catch (e) {
     console.error('checkKYCStatusByWallet failed:', e);
@@ -44,7 +41,6 @@ export async function checkKYCStatusByWallet(wallet) {
 export async function checkKYCStatusByUid(uid) {
   try {
     if (!uid) return { tier: 1, approved: false, source: 'none' };
-
     const snap = await db.collection('users').doc(uid).get();
     if (snap.exists) {
       const u = snap.data() || {};
@@ -52,13 +48,10 @@ export async function checkKYCStatusByUid(uid) {
       const approved = Boolean(u.kycApproved ?? (tier > 1));
 
       try { window.gtag?.('event', 'kyc_lookup', { by: 'uid', approved, tier }); } catch {}
-      if (approved) {
-        try { window.gtag?.('event', 'kyc_verified', { by: 'uid', tier }); } catch {}
-      }
+      if (approved) { try { window.gtag?.('event', 'kyc_verified', { by: 'uid', tier }); } catch {} }
 
       return { tier, approved, source: 'users' };
     }
-
     return { tier: 1, approved: false, source: 'none' };
   } catch (e) {
     console.error('checkKYCStatusByUid failed:', e);
