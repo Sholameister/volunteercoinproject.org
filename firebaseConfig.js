@@ -15,7 +15,7 @@ import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js';
 
 // Your Firebase config (bucket per your setup)
 const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
+  apiKey: "6LflFNArAAAAACERAJI4nDTJtsKgsfjWN8DTKNVe",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
   storageBucket: "lovebutton-heaven.appspot.com", // keep as you use today
