@@ -245,9 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
         position.longitude = pos.coords.longitude;
       }
 
-      const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_');
-      const bRef = storage.ref(`beforePhotos/${safeAddr}_${Date.now()}.jpg`);
-      await bRef.put(file);
+      const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_'); 
+      const aRef = storage.ref(`beforePhotos/${safeAddr}_${Date.now()}.jpg`);
+      await aRef.put(file);
       startPhotoUrl = await bRef.getDownloadURL();
 
       sessionStart = new Date();
