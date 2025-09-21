@@ -6,7 +6,12 @@ import { handleConnect } from './connectWallet.js';
 function diag(msg){
   try{
     const box = document.getElementById('statusBox');
-    if (box){ box.style.display='block'; const d=document.createElement('div'); d.textContent=msg; box.appendChild(d); }
+    if (box){
+      box.style.display='block';
+      const d=document.createElement('div');
+      d.textContent=msg;
+      box.appendChild(d);
+    }
     console.log('[DIAG]', msg);
   }catch{}
 }
@@ -16,17 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = (id) => document.getElementById(id);
 
   // ---- DOM ----
-  const connectBtn   = $('connectWalletBtn');
-  const walletDisp   = $('walletAddress') || $('walletDisplay');
-  const kycStatus    = $('kycStatus');
-  const tierDisp     = $('tierInfo');
-  const priceDisp    = $('lvbtnPrice');
+  const connectBtn = $('connectWalletBtn');
+  const walletDisp = $('walletAddress') || $('walletDisplay');
+  const kycStatus = $('kycStatus');
+  const tierDisp = $('tierInfo');
+  const priceDisp = $('lvbtnPrice');
   const walletStatus = $('walletStatus');
 
-  const beforeInput  = $('beforePhoto');
-  const afterInput   = $('afterPhoto');
-  const startBtn     = $('startVolunteeringBtn'); // kept (hidden) for fallback
-  const stopBtn      = $('stopVolunteeringBtn');  // kept (hidden) for fallback
+  const beforeInput = $('beforePhoto');
+  const afterInput = $('afterPhoto');
+  const startBtn = $('startVolunteeringBtn'); // kept (hidden) for fallback
+  const stopBtn  = $('stopVolunteeringBtn');  // kept (hidden) for fallback
 
   const summaryBox   = $('summaryBox');
   const sessionTimes = $('sessionTimes');
@@ -51,17 +56,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Helpers ----
   const paintWallet = (addr) => {
     const short = addr ? `${addr.slice(0,4)}…${addr.slice(-4)}` : '';
-    if (walletDisp)   walletDisp.textContent   = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
+    if (walletDisp) walletDisp.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
     if (walletStatus) walletStatus.textContent = addr ? '✅ Wallet Connected' : 'Wallet not connected';
   };
 
   const setGating = ({ canStart, canStop, beforeEnabled, afterEnabled }) => {
-    startBtn.disabled  = !canStart;
-    stopBtn.disabled   = !canStop;
+    startBtn.disabled = !canStart;
+    stopBtn.disabled = !canStop;
     beforeInput.disabled = !beforeEnabled;
-    afterInput.disabled  = !afterEnabled;
+    afterInput.disabled = !afterEnabled;
     beforeInput.style.opacity = beforeEnabled ? '1' : '0.6';
-    afterInput.style.opacity  = afterEnabled ? '1' : '0.6';
+    afterInput.style.opacity = afterEnabled ? '1' : '0.6';
   };
 
   async function fetchKycTierAndStatus(addr) {
@@ -69,12 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // Preferred: verifiedKYC/{wallet}
       let snap = await db.collection('verifiedKYC').doc(addr).get();
       if (!snap.exists) snap = await db.collection('verifiedKYC').doc(addr.toLowerCase()).get();
+
       if (snap.exists) {
         const d = snap.data() || {};
         const approved = String(d.status || '').toLowerCase() === 'approved';
         const tier = Number(d.tier ?? (approved ? 2 : 1)) || 1;
         return { tier, approved };
       }
+
       // Fallback: users/{wallet}
       const userSnap = await db.collection('users').doc(addr).get();
       if (userSnap.exists) {
@@ -99,16 +106,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!navigator.geolocation) return null;
     return new Promise((resolve) => {
       let done = false;
-      const timer = setTimeout(() => { if (!done) resolve(null); }, ms);
+      const timer = setTimeout(() => {
+        if (!done) resolve(null);
+      }, ms);
+
       navigator.geolocation.getCurrentPosition(
-        (pos) => { done = true; clearTimeout(timer); resolve(pos); },
-        ()    => { done = true; clearTimeout(timer); resolve(null); },
+        (pos) => {
+          done = true;
+          clearTimeout(timer);
+          resolve(pos);
+        },
+        () => {
+          done = true;
+          clearTimeout(timer);
+          resolve(null);
+        },
         { enableHighAccuracy: true, timeout: ms - 1000, maximumAge: 0 }
       );
     });
   }
 
-  async function fetchLiveSyncmPriceUSD() { return 0.25; } // placeholder
+  async function fetchLiveSyncmPriceUSD() {
+    return 0.25; // placeholder
+  }
 
   // ---- Initial UI ----
   if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
@@ -120,11 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Wallet Connect (single binder) ----
   connectBtn.addEventListener('click', async () => {
     const resp = await handleConnect(); // Phantom/Solflare connect
-    const addr =
-      resp?.publicKey?.toString?.() ||
-      window.appWallet?.publicKey ||
-      window.solana?.publicKey?.toString?.() ||
-      null;
+    const addr = resp?.publicKey?.toString?.()
+              || window.appWallet?.publicKey
+              || window.solana?.publicKey?.toString?.()
+              || null;
     if (addr) await onWalletConnected(addr);
   });
 
@@ -133,10 +152,15 @@ document.addEventListener('DOMContentLoaded', () => {
     paintWallet(addr);
 
     // Ensure Firebase Auth exists (compat) for Storage rules (anonymous ok)
-    try { await firebase.auth().signInAnonymously(); } catch (e) { console.error('Anon auth failed', e); }
+    try {
+      await firebase.auth().signInAnonymously();
+    } catch (e) {
+      console.error('Anon auth failed', e);
+    }
 
     const { tier, approved } = await fetchKycTierAndStatus(addr);
     tierLevel = tier;
+
     if (tierDisp) tierDisp.textContent = `Tier: ${tierLevel}`;
     if (kycStatus) kycStatus.textContent = approved ? 'KYC: ✅ Approved' : 'KYC: ⏳ Pending';
 
@@ -155,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const addr = e.detail?.publicKey;
     if (addr) await onWalletConnected(addr);
   });
-
   document.addEventListener('wallet:disconnected', () => {
     walletAddress = null;
     paintWallet(null);
@@ -167,12 +190,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================
   // 🚀 AUTO-START / AUTO-STOP
   // =========================
-
   // BEFORE photo upload → auto START
   beforeInput.addEventListener('change', async () => {
     const file = beforeInput.files && beforeInput.files[0];
     if (!file) return;
-    if (!walletAddress) { alert('Please connect your wallet first.'); beforeInput.value = ''; return; }
+    if (!walletAddress) {
+      alert('Please connect your wallet first.');
+      beforeInput.value = '';
+      return;
+    }
     await startFlow(file);
   });
 
@@ -180,18 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
   afterInput.addEventListener('change', async () => {
     const file = afterInput.files && afterInput.files[0];
     if (!file) return;
-    if (!sessionStart) { alert('No active session found. Please upload a BEFORE photo first.'); afterInput.value = ''; return; }
+    if (!sessionStart) {
+      alert('No active session found. Please upload a BEFORE photo first.');
+      afterInput.value = '';
+      return;
+    }
     await stopFlow(file);
   });
 
   // Fallback buttons (kept hidden in UI)
   ['click','touchend'].forEach(evt => startBtn.addEventListener(evt, async (e) => {
-    e.preventDefault(); e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
     const file = beforeInput?.files?.[0];
     if (!file) return alert('Please upload your BEFORE photo.');
     await startFlow(file);
   }, { passive:false }));
-
   stopBtn.addEventListener('click', async () => {
     const file = afterInput?.files?.[0];
     if (!file) return alert('Please upload your AFTER photo.');
@@ -201,14 +231,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- START FLOW (auto on BEFORE) ----
   async function startFlow(file){
     try {
-      if (!walletAddress) { alert('Please connect your wallet first.'); return; }
+      if (!walletAddress) {
+        alert('Please connect your wallet first.');
+        return;
+      }
 
       startBtn.disabled = true;
       startBtn.textContent = 'Starting…';
 
       const pos = await getGeolocationWithTimeout(8000);
       if (pos) {
-        position.latitude  = pos.coords.latitude;
+        position.latitude = pos.coords.latitude;
         position.longitude = pos.coords.longitude;
       }
 
@@ -219,14 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       sessionStart = new Date();
       beforeInput.value = '';
-
       setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:true });
 
       // Analytics (safe values)
       try {
-        const geo = (position.latitude && position.longitude)
-          ? `${position.latitude.toFixed(6)},${position.longitude.toFixed(6)}`
-          : '(no GPS)';
+        const geo = (position.latitude && position.longitude) ? `${position.latitude.toFixed(6)},${position.longitude.toFixed(6)}` : '(no GPS)';
         window.gtag?.('event', 'volunteering_start', {
           wallet_last4: walletAddress.slice(-4),
           timestamp: sessionStart.toISOString(),
@@ -234,8 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       } catch {}
 
-      toast(`You have begun volunteering for Volunteer Coin Project Foundation!` +
-            (position.latitude ? ` 📍 ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}` : ''));
+      toast(`You have begun volunteering for Volunteer Coin Project Foundation!` + (position.latitude ? ` 📍 ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}` : ''));
     } catch (err) {
       console.error('Start volunteering failed', err);
       alert(`Could not start: ${err?.message || err}`);
@@ -247,10 +276,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- STOP FLOW (auto on AFTER) ----
   async function stopFlow(file){
     try {
-      if (!sessionStart) { alert('No active session found.'); return; }
+      if (!sessionStart) {
+        alert('No active session found.');
+        return;
+      }
+
       stopBtn.disabled = true;
 
       const end = new Date();
+
       const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_');
       const aRef = storage.ref(`afterPhotos/${safeAddr}_${Date.now()}.jpg`);
       await aRef.put(file);
@@ -259,8 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
       const hourly = getHourlySyncm(tierLevel);
       const tokens = +(durationHours * hourly).toFixed(2);
-      const price  = await fetchLiveSyncmPriceUSD();
-      const usd    = +(tokens * price).toFixed(2);
+      const price = await fetchLiveSyncmPriceUSD();
+      const usd = +(tokens * price).toFixed(2);
 
       await db.collection('volunteerSessions').add({
         walletAddress,
@@ -279,8 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (summaryBox) summaryBox.style.display = 'block';
       if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
       if (tokensEarned) tokensEarned.textContent = `✅ SYNCM Earned: ${tokens}`;
-      if (totalLVBTN) totalLVBTN.textContent     = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
-      if (usdValue) usdValue.textContent         = `💰 USD Value (est): $${usd}`;
+      if (totalLVBTN) totalLVBTN.textContent = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
+      if (usdValue) usdValue.textContent = `💰 USD Value (est): $${usd}`;
       if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
 
       if (afterPhotosBox) {
