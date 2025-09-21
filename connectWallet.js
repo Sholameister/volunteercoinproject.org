@@ -4,6 +4,7 @@
 function ensureHintBanner() {
   let hint = document.getElementById('phantomHint');
   if (hint) return hint;
+
   hint = document.createElement('div');
   hint.id = 'phantomHint';
   hint.style.cssText = 'display:none;padding:12px;margin:10px;border:1px solid #eee;border-radius:8px;background:#fff4f8;max-width:480px;margin-inline:auto';
@@ -50,7 +51,9 @@ function maybeShowHint() {
       else if (isAndroid) location.href = 'https://play.google.com/store/apps/details?id=app.phantom';
       else location.href = 'https://phantom.app/download';
     });
-    hint.querySelector('#continueNoWallet')?.addEventListener('click', () => { hint.style.display = 'none'; });
+    hint.querySelector('#continueNoWallet')?.addEventListener('click', () => {
+      hint.style.display = 'none';
+    });
   }
 }
 
@@ -58,11 +61,12 @@ function paintWalletUi(pubkeyBase58) {
   const short = pubkeyBase58 ? pubkeyBase58.slice(0, 4) + '…' + pubkeyBase58.slice(-4) : '';
   const byId = (id) => document.getElementById(id);
   const walletAddress = byId('walletAddress');
-  const walletStatus  = byId('walletStatus');
-  const signupDisp    = byId('signupWalletDisplay');
+  const walletStatus = byId('walletStatus');
+  const signupDisp = byId('signupWalletDisplay');
+
   if (walletAddress) walletAddress.textContent = pubkeyBase58 ? `Wallet: ${short}` : 'Wallet: Not Connected';
-  if (signupDisp) signupDisp.textContent       = pubkeyBase58 ? `Connected: ${short}` : '';
-  if (walletStatus) walletStatus.textContent   = pubkeyBase58 ? 'Wallet connected' : 'Wallet not connected';
+  if (signupDisp)    signupDisp.textContent   = pubkeyBase58 ? `Connected: ${short}` : '';
+  if (walletStatus)  walletStatus.textContent = pubkeyBase58 ? 'Wallet connected' : 'Wallet not connected';
 }
 
 // Get best available provider + label
@@ -72,17 +76,19 @@ function getWalletProvider() {
   // Solflare injects window.solflare
   if (window?.solflare?.isSolflare) return { type: 'Solflare', provider: window.solflare };
   // Backpack (optional)
-  if (window?.backpack?.solana) return { type: 'Backpack', provider: window.backpack.solana };
+  if (window?.backpack?.solana)     return { type: 'Backpack', provider: window.backpack.solana };
   // Fallback to any window.solana
-  if (window?.solana) return { type: 'Solana', provider: window.solana };
+  if (window?.solana)               return { type: 'Solana', provider: window.solana };
   return { type: null, provider: null };
 }
 
 // ----- Main connect -----
 async function handleConnect() {
   const { type, provider } = getWalletProvider();
-  if (!provider) { maybeShowHint(); return null; }
-
+  if (!provider) {
+    maybeShowHint();
+    return null;
+  }
   try {
     // Phantom/Solflare compatible ‘connect’
     const resp = await provider.connect();
@@ -107,7 +113,9 @@ async function handleConnect() {
 
 function setupConnectButton() {
   const btn = document.getElementById('connectWalletBtn');
-  if (!btn) return; // loginLogic.js binds the click
+  if (!btn) return;
+
+  // loginLogic.js binds the click
   const { provider } = getWalletProvider();
   if (provider?.isConnected && provider.publicKey) {
     const pubkey = provider.publicKey.toString();
@@ -135,6 +143,7 @@ function wireProviderEvents() {
       document.dispatchEvent(new CustomEvent('wallet:disconnected'));
     }
   });
+
   provider.on?.('disconnect', () => {
     window.appWallet = null;
     paintWalletUi(null);
