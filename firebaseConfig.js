@@ -1,21 +1,22 @@
-// firebaseConfig.js — v9 COMPAT + ESM bridge
-// One config for all pages: classic firebase.* AND <script type="module"> imports.
-import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js';
-
-// Optional for testing (remove in prod):
-// self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-
-const appCheck = firebase.appCheck();
-appCheck.activate('YOUR_RECAPTCHA_V3_SITE_KEY', true);
-
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js';
+import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js';
-import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js';
+import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js';
+
+firebase.initializeApp({ /* ... */ storageBucket: "lovebutton-heaven.appspot.com" });
+
+const appCheck = firebase.appCheck();
+// self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // (optional while testing)
+appCheck.activate('6LflFNArAAAAACERAJI4nDTJtsKgsfjWN8DTKNVe', true); // auto-refresh
+
+firebase.auth().onAuthStateChanged(async (u) => {
+  if (!u) await firebase.auth().signInAnonymously().catch(console.error);
+});
 
 // Your Firebase config (bucket per your setup)
 const firebaseConfig = {
-  apiKey: "6LflFNArAAAAACERAJI4nDTJtsKgsfjWN8DTKNVe",
+  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
   storageBucket: "lovebutton-heaven.appspot.com", // keep as you use today
