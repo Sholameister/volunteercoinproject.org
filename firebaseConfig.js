@@ -11,7 +11,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
-  storageBucket: "lovebutton-heaven.firebasestorage.app", // keep as you use today
+  storageBucket: "lovebutton-heaven.appspot.com", // keep as you use today
   messagingSenderId: "1079456151721",
   appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
   measurementId: "G-0261HYV08P"
