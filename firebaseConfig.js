@@ -1,5 +1,12 @@
 // firebaseConfig.js — v9 COMPAT + ESM bridge
 // One config for all pages: classic firebase.* AND <script type="module"> imports.
+import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js';
+
+// Optional for testing (remove in prod):
+// self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+
+const appCheck = firebase.appCheck();
+appCheck.activate('YOUR_RECAPTCHA_V3_SITE_KEY', true);
 
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js';
