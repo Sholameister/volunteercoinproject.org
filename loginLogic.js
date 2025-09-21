@@ -1,17 +1,12 @@
-// loginLogic.js — Firebase v9 COMPAT (congruent with your firebaseConfig.js)
-import { db, storage } from './firebaseConfig.js';       // compat Firestore & Storage
-import { handleConnect } from './connectWallet.js';      // wallet connect (no double-bind)
+// loginLogic.js — Firebase v9 COMPAT (matches your firebaseConfig.js compat exports)
+import { db, storage } from './firebaseConfig.js';
+import { handleConnect } from './connectWallet.js';
 
 // ---- Mobile diag logger ----
 function diag(msg){
   try{
     const box = document.getElementById('statusBox');
-    if (box){
-      box.style.display='block';
-      const d=document.createElement('div');
-      d.textContent=msg;
-      box.appendChild(d);
-    }
+    if (box){ box.style.display='block'; const d=document.createElement('div'); d.textContent=msg; box.appendChild(d); }
     console.log('[DIAG]', msg);
   }catch{}
 }
@@ -30,9 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const beforeInput  = $('beforePhoto');
   const afterInput   = $('afterPhoto');
-
-  const startBtn     = $('startVolunteeringBtn'); // kept as fallback
-  const stopBtn      = $('stopVolunteeringBtn');  // kept as fallback
+  const startBtn     = $('startVolunteeringBtn'); // kept (hidden) for fallback
+  const stopBtn      = $('stopVolunteeringBtn');  // kept (hidden) for fallback
 
   const summaryBox   = $('summaryBox');
   const sessionTimes = $('sessionTimes');
@@ -57,20 +51,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Helpers ----
   const paintWallet = (addr) => {
     const short = addr ? `${addr.slice(0,4)}…${addr.slice(-4)}` : '';
-    if (walletDisp)   walletDisp.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
+    if (walletDisp)   walletDisp.textContent   = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
     if (walletStatus) walletStatus.textContent = addr ? '✅ Wallet Connected' : 'Wallet not connected';
   };
 
   const setGating = ({ canStart, canStop, beforeEnabled, afterEnabled }) => {
-    startBtn.disabled = !canStart;
-    stopBtn.disabled  = !canStop;
+    startBtn.disabled  = !canStart;
+    stopBtn.disabled   = !canStop;
     beforeInput.disabled = !beforeEnabled;
     afterInput.disabled  = !afterEnabled;
+    beforeInput.style.opacity = beforeEnabled ? '1' : '0.6';
+    afterInput.style.opacity  = afterEnabled ? '1' : '0.6';
   };
 
   async function fetchKycTierAndStatus(addr) {
     try {
-      // verifiedKYC/{addr}
+      // Preferred: verifiedKYC/{wallet}
       let snap = await db.collection('verifiedKYC').doc(addr).get();
       if (!snap.exists) snap = await db.collection('verifiedKYC').doc(addr.toLowerCase()).get();
       if (snap.exists) {
@@ -79,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tier = Number(d.tier ?? (approved ? 2 : 1)) || 1;
         return { tier, approved };
       }
-      // users/{addr} (fallback)
+      // Fallback: users/{wallet}
       const userSnap = await db.collection('users').doc(addr).get();
       if (userSnap.exists) {
         const u = userSnap.data() || {};
@@ -112,24 +108,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function fetchLiveSyncmPriceUSD() {
-    return 0.25; // placeholder
-  }
+  async function fetchLiveSyncmPriceUSD() { return 0.25; } // placeholder
 
   // ---- Initial UI ----
   if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
   paintWallet(null);
-  if (tierDisp)  tierDisp.textContent = 'Tier: ';
+  if (tierDisp) tierDisp.textContent = 'Tier: ';
   if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
   setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
 
-  // ---- Wallet Connect (single source of truth) ----
+  // ---- Wallet Connect (single binder) ----
   connectBtn.addEventListener('click', async () => {
-    const resp = await handleConnect(); // triggers Phantom connect prompt (or other, per your connectWallet.js)
-    const addr = resp?.publicKey?.toString?.()
-      || window.appWallet?.publicKey
-      || window.solana?.publicKey?.toString?.()
-      || null;
+    const resp = await handleConnect(); // Phantom/Solflare connect
+    const addr =
+      resp?.publicKey?.toString?.() ||
+      window.appWallet?.publicKey ||
+      window.solana?.publicKey?.toString?.() ||
+      null;
     if (addr) await onWalletConnected(addr);
   });
 
@@ -137,33 +132,34 @@ document.addEventListener('DOMContentLoaded', () => {
     walletAddress = addr;
     paintWallet(addr);
 
-    // Ensure Auth (compat) is available for Storage rules
-    try { await firebase.auth().signInAnonymously(); }
-    catch (e) { console.error('Anon auth failed', e); }
+    // Ensure Firebase Auth exists (compat) for Storage rules (anonymous ok)
+    try { await firebase.auth().signInAnonymously(); } catch (e) { console.error('Anon auth failed', e); }
 
     const { tier, approved } = await fetchKycTierAndStatus(addr);
     tierLevel = tier;
-    if (tierDisp)  tierDisp.textContent  = `Tier: ${tierLevel}`;
+    if (tierDisp) tierDisp.textContent = `Tier: ${tierLevel}`;
     if (kycStatus) kycStatus.textContent = approved ? 'KYC: ✅ Approved' : 'KYC: ⏳ Pending';
 
-    // Enable BEFORE photo input immediately (lets testers/minors at least log)
-    beforeInput.disabled = false;
-    beforeInput.removeAttribute('disabled');
-    beforeInput.style.pointerEvents = 'auto';
-    beforeInput.style.opacity = '1';
-
-    setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
+    // Gating:
+    // Tier 1: allow “practice” — BEFORE enabled immediately (earnings queued by backend)
+    // Tier 2+: require wallet (already connected) to enable BEFORE input
+    if (tierLevel < 2) {
+      setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
+    } else {
+      setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
+    }
   }
 
-  // From connectWallet.js (provider events)
+  // Provider events from connectWallet.js
   document.addEventListener('wallet:connected', async (e) => {
     const addr = e.detail?.publicKey;
     if (addr) await onWalletConnected(addr);
   });
+
   document.addEventListener('wallet:disconnected', () => {
     walletAddress = null;
     paintWallet(null);
-    if (tierDisp)  tierDisp.textContent = 'Tier: ';
+    if (tierDisp) tierDisp.textContent = 'Tier: ';
     if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
     setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
   });
@@ -172,48 +168,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🚀 AUTO-START / AUTO-STOP
   // =========================
 
-  // 1) BEFORE photo upload → auto START
+  // BEFORE photo upload → auto START
   beforeInput.addEventListener('change', async () => {
     const file = beforeInput.files && beforeInput.files[0];
     if (!file) return;
-
-    if (!walletAddress) {
-      alert('Please connect your wallet first.');
-      beforeInput.value = '';
-      return;
-    }
-
-    await startFlow(file);  // <— no button click needed
+    if (!walletAddress) { alert('Please connect your wallet first.'); beforeInput.value = ''; return; }
+    await startFlow(file);
   });
 
-gtag('event', 'volunteering_start', {
-  wallet: walletAddress,
-  timestamp: new Date().toISOString(),
-  geolocation: `${lat},${lng}`
-});
-
-  
-  // 2) AFTER photo upload → auto STOP
+  // AFTER photo upload → auto STOP
   afterInput.addEventListener('change', async () => {
     const file = afterInput.files && afterInput.files[0];
     if (!file) return;
-
-    if (!sessionStart) {
-      alert('No active session found. Please upload a BEFORE photo first.');
-      afterInput.value = '';
-      return;
-    }
-
-    await stopFlow(file);   // <— no button click needed
+    if (!sessionStart) { alert('No active session found. Please upload a BEFORE photo first.'); afterInput.value = ''; return; }
+    await stopFlow(file);
   });
 
-  // Keep buttons as a fallback (optional)
+  // Fallback buttons (kept hidden in UI)
   ['click','touchend'].forEach(evt => startBtn.addEventListener(evt, async (e) => {
     e.preventDefault(); e.stopPropagation();
     const file = beforeInput?.files?.[0];
     if (!file) return alert('Please upload your BEFORE photo.');
     await startFlow(file);
   }, { passive:false }));
+
   stopBtn.addEventListener('click', async () => {
     const file = afterInput?.files?.[0];
     if (!file) return alert('Please upload your AFTER photo.');
@@ -223,12 +201,9 @@ gtag('event', 'volunteering_start', {
   // ---- START FLOW (auto on BEFORE) ----
   async function startFlow(file){
     try {
-      if (!walletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
+      if (!walletAddress) { alert('Please connect your wallet first.'); return; }
 
-      startBtn.disabled = true; // in case user also taps it
+      startBtn.disabled = true;
       startBtn.textContent = 'Starting…';
 
       const pos = await getGeolocationWithTimeout(8000);
@@ -245,15 +220,22 @@ gtag('event', 'volunteering_start', {
       sessionStart = new Date();
       beforeInput.value = '';
 
-      // Gate to AFTER only
       setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:true });
 
-      // Friendly confirmation (no extra clicks)
-      const locStr = position.latitude
-        ? `📍 ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}`
-        : '(no GPS)';
-      toast(`You have begun volunteering for Volunteer Coin Project Foundation! ${locStr}`);
+      // Analytics (safe values)
+      try {
+        const geo = (position.latitude && position.longitude)
+          ? `${position.latitude.toFixed(6)},${position.longitude.toFixed(6)}`
+          : '(no GPS)';
+        window.gtag?.('event', 'volunteering_start', {
+          wallet_last4: walletAddress.slice(-4),
+          timestamp: sessionStart.toISOString(),
+          geolocation: geo
+        });
+      } catch {}
 
+      toast(`You have begun volunteering for Volunteer Coin Project Foundation!` +
+            (position.latitude ? ` 📍 ${position.latitude.toFixed(6)}, ${position.longitude.toFixed(6)}` : ''));
     } catch (err) {
       console.error('Start volunteering failed', err);
       alert(`Could not start: ${err?.message || err}`);
@@ -265,11 +247,7 @@ gtag('event', 'volunteering_start', {
   // ---- STOP FLOW (auto on AFTER) ----
   async function stopFlow(file){
     try {
-      if (!sessionStart) {
-        alert('No active session found.');
-        return;
-      }
-
+      if (!sessionStart) { alert('No active session found.'); return; }
       stopBtn.disabled = true;
 
       const end = new Date();
@@ -288,10 +266,10 @@ gtag('event', 'volunteering_start', {
         walletAddress,
         tierLevel,
         startTime: sessionStart.toISOString(),
-        endTime:   end.toISOString(),
-        hours:     +durationHours.toFixed(3),
+        endTime: end.toISOString(),
+        hours: +durationHours.toFixed(3),
         tokensEarned: tokens,
-        usdValue:  usd,
+        usdValue: usd,
         startPhotoUrl,
         endPhotoUrl: afterPhotoUrl,
         geolocation: position,
@@ -299,11 +277,11 @@ gtag('event', 'volunteering_start', {
       });
 
       if (summaryBox) summaryBox.style.display = 'block';
-      if (sessionTimes)  sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
-      if (tokensEarned)  tokensEarned.textContent = `✅ SYNCM Earned: ${tokens}`;
-      if (totalLVBTN)    totalLVBTN.textContent   = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
-      if (usdValue)      usdValue.textContent     = `💰 USD Value (est): $${usd}`;
-      if (walletSummary) walletSummary.textContent= `📌 Wallet: ${walletAddress}`;
+      if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
+      if (tokensEarned) tokensEarned.textContent = `✅ SYNCM Earned: ${tokens}`;
+      if (totalLVBTN) totalLVBTN.textContent     = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
+      if (usdValue) usdValue.textContent         = `💰 USD Value (est): $${usd}`;
+      if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
 
       if (afterPhotosBox) {
         const img = document.createElement('img');
@@ -314,13 +292,17 @@ gtag('event', 'volunteering_start', {
         afterPhotosBox.appendChild(img);
       }
 
-      gtag('event', 'volunteering_complete', {
-  wallet: walletAddress,
-  tokens_earned: sessionTokens,
-  usd_value: sessionTokens * 2.5,
-  duration_minutes: sessionDuration
-});
-      // Reset for next time
+      // Analytics (safe)
+      try {
+        window.gtag?.('event', 'volunteering_complete', {
+          wallet_last4: walletAddress.slice(-4),
+          tokens_earned: tokens,
+          usd_value: usd,
+          duration_minutes: +((end - sessionStart)/60000).toFixed(1)
+        });
+      } catch {}
+
+      // Reset for next session
       afterInput.value = '';
       sessionStart = null;
       startPhotoUrl = null;
@@ -328,7 +310,6 @@ gtag('event', 'volunteering_start', {
       setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
 
       toast('Session recorded — thank you for serving!');
-
     } catch (e) {
       console.error('Stop volunteering failed', e);
       alert('Could not finish session. Please try again.');
@@ -346,7 +327,7 @@ gtag('event', 'volunteering_start', {
     setTimeout(()=>t.remove(), 2500);
   }
 
-  // ---- If wallet already connected on load ----
+  // If wallet already connected on load
   const preAddr = window.appWallet?.publicKey || (window.solana?.publicKey?.toString?.());
   if (preAddr) onWalletConnected(preAddr);
 });
