@@ -5,89 +5,126 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
+    function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
   </script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KYC Check & Signup</title>
   <style>
-    body { background:#fdf2f8; font-family:'Segoe UI',sans-serif; text-align:center; padding:20px; }
-    h2 { margin: 0 0 8px; }
-    p { margin: 8px 0; }
-    button, a.btn { background:#e60073; color:#fff; padding:12px 20px; border:none; border-radius:6px; font-size:16px; margin:10px; cursor:pointer; display:inline-block; text-decoration:none; }
-    button:hover, a.btn:hover { background:#cc005f; }
-    #kycStatus,#tierInfo { font-weight:bold; margin:10px 0; }
-
-    .tier-badge { padding:4px 10px; border-radius:4px; font-weight:bold; display:inline-block; }
-    .tier-1 { background:#ffe0e0; color:#c0392b }
-    .tier-2 { background:#fff3cd; color:#856404 }
-    .tier-3 { background:#d4edda; color:#155724 }
-
-    .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
-
-    /* iPhone note box */
-    #iosNote { display:none; margin:20px auto; padding:14px; max-width:480px; border:2px solid #e53935; border-radius:8px; background:#fff3f3; color:#b71c1c; font-weight:600; font-size:15px; }
-
-    /* Wallet: suggest install (optional for later) */
-    #walletSuggest { margin:18px auto; padding:14px; max-width:520px; background:#fff; border:1px solid #eee; border-radius:10px; }
-    .wallet-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-    .wallet-buttons a { border-radius:6px; padding:12px 16px; font-weight:700; }
-    .btn-phantom { background:#6c2bd9; color:#fff; }
-    .btn-solflare { background:#ff6a00; color:#fff; }
-    .btn-outline { background:#fff; color:#333; border:1px solid #bbb; }
-
-    ul { list-style:none; text-align:left; max-width:520px; margin:20px auto; padding:0; }
-    ul li { margin:6px 0; }
+    body{background:#fdf2f8;font-family:'Segoe UI',sans-serif;text-align:center;padding:20px}
+    h2{margin:0 0 8px} p{margin:8px 0}
+    button,a.btn{background:#e60073;color:#fff;padding:12px 20px;border:none;border-radius:6px;font-size:16px;margin:10px;cursor:pointer;display:inline-block;text-decoration:none}
+    button:hover,a.btn:hover{background:#cc005f}
+    #kycStatus,#tierInfo{font-weight:700;margin:10px 0}
+    .tier-badge{padding:4px 10px;border-radius:4px;font-weight:700;display:inline-block}
+    .tier-1{background:#ffe0e0;color:#c0392b}.tier-2{background:#fff3cd;color:#856404}.tier-3{background:#d4edda;color:#155724}
+    .nav-button{display:inline-block;margin:8px;padding:10px 14px;border-radius:6px;background:#f3f4f6;text-decoration:none;color:#111827;font-size:14px}
+    #walletSuggest{margin:18px auto;padding:14px;max-width:520px;background:#fff;border:1px solid #eee;border-radius:10px}
+    .wallet-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .wallet-buttons a{border-radius:6px;padding:12px 16px;font-weight:700}
+    .btn-phantom{background:#6c2bd9}.btn-solflare{background:#ff6a00}
+    ul{list-style:none;text-align:left;max-width:520px;margin:20px auto;padding:0} ul li{margin:6px 0}
+    /* Intake form */
+    #intakeSection{margin:22px auto;max-width:720px;background:#fff;border:1px solid #eee;border-radius:12px;padding:18px;text-align:left}
+    #intakeForm{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    #intakeForm input, #intakeForm select{width:100%;padding:10px;border:1px solid #ccc;border-radius:6px}
+    #intakeMsg{font-weight:700}
   </style>
 </head>
 <body>
-  <h2>Sign Up & KYC Verification</h2>
-  <p style="font-style:italic;color:#333;">
-    To unlock volunteer rewards, complete the KYC below. You can link a wallet later inside the volunteer logger.
-  </p>
+  <h2>KYC Check & Signup</h2>
+  <p style="font-style:italic;color:#333">Complete KYC below. You can link a wallet later in the Volunteer Logger.</p>
 
-  <!-- KYC / Tier -->
+  <!-- KYC -->
   <p id="kycStatus">KYC: ⏳ Pending</p>
   <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
-
-  <!-- Blockpass (kept at top; opens in new tab) -->
   <div id="kycBlock" style="margin-top:12px;">
-    <a id="startKycLink"
-       href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b"
-       target="_blank" rel="noopener">
+    <a id="startKycLink" href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" rel="noopener">
       <button id="startKycBtn">Start / Continue KYC</button>
     </a>
   </div>
 
-  <!-- Optional wallet suggestions (NOT required for signup) -->
-  <div id="walletSuggest">
-    <div style="font-weight:700; margin-bottom:8px;">Planning to connect a wallet later?</div>
-    <div style="font-size:14px; color:#444; margin-bottom:10px;">
-      Install a wallet now so you’re ready to receive rewards after KYC. (Optional at signup.)
-    </div>
-    <div class="wallet-buttons">
-      <!-- iOS / Android app links -->
-      <a class="btn btn-phantom"
-         href="https://phantom.app/download"
-         target="_blank" rel="noopener">Get Phantom</a>
-      <a class="btn btn-solflare"
-         href="https://solflare.com/download"
-         target="_blank" rel="noopener">Get Solflare</a>
-      <!-- Copy URL helper (if you want to open this page inside wallet later) -->
-      <a id="copyUrlBtn" class="btn btn-outline" href="javascript:void(0)">Copy this page URL</a>
-    </div>
-    <div style="font-size:12px; color:#666; margin-top:8px;">
-      Tip: On iPhone, you can open our site inside your wallet app’s built-in browser when you’re ready to log volunteer hours.
-    </div>
-  </div>
+  <!-- Official Intake Form -->
+  <section id="intakeSection">
+    <h3 style="margin-top:0">Volunteer Intake Form (Required for Rewards)</h3>
+    <p>Please complete this form. You may print/save as PDF for your records. Registration must be on file to receive rewards.</p>
 
-  <!-- 📱 iPhone Safari note -->
-  <div id="iosNote">
-    📱 <strong>iPhone Users:</strong><br/>
-    You can complete KYC in <strong>Safari</strong> today. Later, for the volunteer logger and camera uploads,
-    you may open our site inside your wallet’s browser (Phantom/Solflare).
+    <form id="intakeForm">
+      <div style="grid-column:1/-1">
+        <label>Legal Full Name *</label><br/>
+        <input id="fullName" required>
+      </div>
+      <div>
+        <label>Phone *</label><br/>
+        <input id="phone" type="tel" required placeholder="(555) 555-5555">
+      </div>
+      <div>
+        <label>Email *</label><br/>
+        <input id="email" type="email" required>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Street Address *</label><br/>
+        <input id="addr1" required>
+      </div>
+      <div>
+        <label>City *</label><br/>
+        <input id="city" required>
+      </div>
+      <div>
+        <label>State/Province *</label><br/>
+        <input id="state" required>
+      </div>
+      <div>
+        <label>ZIP/Postal *</label><br/>
+        <input id="zip" required>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Solana Wallet Address (optional)</label><br/>
+        <input id="walletAddr" placeholder="5z4Q...FSF">
+        <div style="font-size:12px;color:#666;margin-top:4px">You can also add/change your wallet later in the Logger.</div>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Emergency Contact (Name & Phone)</label><br/>
+        <input id="emergency" placeholder="Jane Doe — (555) 555-5555">
+      </div>
+      <div style="grid-column:1/-1;margin-top:6px">
+        <label style="display:flex;gap:8px;align-items:flex-start">
+          <input id="consentTruth" type="checkbox" required> <span>I certify the information provided is true and correct.</span>
+        </label>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin-top:6px">
+          <input id="consentPolicy" type="checkbox" required> <span>I agree to VCPF policies and understand this Intake must be on file to receive rewards.</span>
+        </label>
+      </div>
+      <div>
+        <label>Type Your Name as Signature *</label><br/>
+        <input id="sig" required placeholder="Full Name">
+      </div>
+      <div>
+        <label>Date *</label><br/>
+        <input id="sigDate" type="date" required>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Upload signed copy (optional)</label><br/>
+        <input id="signedUpload" type="file" accept=".pdf,image/*" style="padding:8px;border:1px dashed #bbb;background:#fafafa">
+      </div>
+      <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button id="submitIntakeBtn" type="button">Submit to VCPF</button>
+        <button id="printIntakeBtn" type="button" style="background:#6b7280">Print / Save as PDF</button>
+      </div>
+      <div id="intakeMsg" style="grid-column:1/-1;margin-top:10px"></div>
+    </form>
+  </section>
+
+  <!-- Optional wallet app install (info only) -->
+  <div id="walletSuggest">
+    <div style="font-weight:700;margin-bottom:8px">Planning to connect a wallet later?</div>
+    <div style="font-size:14px;color:#444;margin-bottom:10px">Install a wallet now so you’re ready after KYC. (Optional at signup.)</div>
+    <div class="wallet-buttons">
+      <a class="btn btn-phantom" href="https://phantom.app/download" target="_blank" rel="noopener">Get Phantom</a>
+      <a class="btn btn-solflare" href="https://solflare.com/download" target="_blank" rel="noopener">Get Solflare</a>
+      <a id="copyUrlBtn" class="btn" style="background:#fff;color:#333;border:1px solid #bbb" href="javascript:void(0)">Copy this page URL</a>
+    </div>
   </div>
 
   <!-- Rewards blurb -->
@@ -99,64 +136,55 @@
   </ul>
 
   <!-- Nav -->
-  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Login Page</a>
-  <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Home Page</a>
+  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
+  <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
 
-  <!-- Libs / Modules (wallet modules removed on signup) -->
+  <!-- Modules -->
   <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./kycUtils.js"></script>
 
-  <!-- Minimal helper: iOS notice + Copy URL -->
-  <script>
-    (function(){
-      const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      document.addEventListener('DOMContentLoaded', () => {
-        if (isIOS()) document.getElementById('iosNote').style.display = 'block';
-
-        const copyBtn = document.getElementById('copyUrlBtn');
-        copyBtn?.addEventListener('click', () => {
-          const url = window.location.href;
-          navigator.clipboard?.writeText(url).then(()=>{
-            copyBtn.textContent='Copied ✓';
-            setTimeout(()=> copyBtn.textContent='Copy this page URL', 1500);
-          });
-        });
-      });
-    })();
-  </script>
-
-  <!-- Optional: simple KYC polling hook (adjust to your existing kycUtils.js) -->
+  <!-- Copy URL + Intake submit -->
   <script type="module">
-    import { db } from './firebaseConfig.js';
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-    // If your kycUtils.js already handles this, you can remove this block.
+    import { db, storage } from './firebaseConfig.js';
+    const $ = (id)=>document.getElementById(id);
+    $('printIntakeBtn')?.addEventListener('click', ()=>window.print());
+    $('copyUrlBtn')?.addEventListener('click', ()=>{
+      const btn=$('copyUrlBtn'); navigator.clipboard?.writeText(location.href).then(()=>{btn.textContent='Copied ✓'; setTimeout(()=>btn.textContent='Copy this page URL',1500);});
+    });
 
-    const auth = getAuth();
-    const kycStatusEl = document.getElementById('kycStatus');
-    const tierInfoEl = document.getElementById('tierInfo');
+    $('submitIntakeBtn')?.addEventListener('click', async ()=>{
+      const msg=$('intakeMsg');
+      try{
+        msg.style.color='#111'; msg.textContent='Submitting…';
+        const data={
+          fullName:$('fullName').value.trim(), phone:$('phone').value.trim(), email:$('email').value.trim(),
+          addr1:$('addr1').value.trim(), city:$('city').value.trim(), state:$('state').value.trim(), zip:$('zip').value.trim(),
+          walletAddr:$('walletAddr').value.trim(), emergency:$('emergency').value.trim(),
+          consentTruth:$('consentTruth').checked, consentPolicy:$('consentPolicy').checked,
+          sig:$('sig').value.trim(), sigDate:$('sigDate').value, createdAt:new Date().toISOString()
+        };
+        const required=['fullName','phone','email','addr1','city','state','zip','sig','sigDate'];
+        for(const k of required){ if(!data[k]){ msg.style.color='#b71c1c'; msg.textContent='Please complete all required fields.'; return; } }
+        if(!data.consentTruth||!data.consentPolicy){ msg.style.color='#b71c1c'; msg.textContent='Please accept the required consents.'; return; }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { kycStatusEl.textContent = 'KYC: Sign in first (email/password)'; return; }
-      const ref = doc(db, "users", user.uid);
-      const snap = await getDoc(ref);
+        const docRef = await db.collection('intakeForms').add({ ...data, status:'submitted' });
 
-      if (!snap.exists()) {
-        await setDoc(ref, { kycTier: 1, walletAddress: null, updatedAt: serverTimestamp() }, { merge: true });
-        tierInfoEl.className = 'tier-badge tier-1';
-        tierInfoEl.textContent = 'Tier: 1';
-        kycStatusEl.textContent = 'KYC: ⏳ Pending';
-        return;
-      }
-
-      const data = snap.data() || {};
-      const tier = Number(data.kycTier || 1);
-      kycStatusEl.textContent = tier >= 2 ? 'KYC: ✅ Verified' : 'KYC: ⏳ Pending';
-
-      if (tier >= 3) { tierInfoEl.className = 'tier-badge tier-3'; tierInfoEl.textContent = 'Tier: 3'; }
-      else if (tier >= 2) { tierInfoEl.className = 'tier-badge tier-2'; tierInfoEl.textContent = 'Tier: 2'; }
-      else { tierInfoEl.className = 'tier-badge tier-1'; tierInfoEl.textContent = 'Tier: 1'; }
+        const file = $('signedUpload')?.files?.[0] || null;
+        if(file){
+          const ref = storage.ref(`intakeForms/${docRef.id}/${file.name}`);
+          await ref.put(file); const url = await ref.getDownloadURL();
+          await docRef.update({ signedUploadUrl:url });
+        }
+        msg.style.color='#0b7a0b'; msg.textContent='✅ Intake submitted. You can print/save a copy for your records.';
+      }catch(e){ console.error(e); msg.style.color='#b71c1c'; msg.textContent='Submission failed. Please try again.'; }
     });
   </script>
+
+  <!-- Print style -->
+  <style media="print">
+    .nav-button, #walletSuggest, #startKycBtn{display:none!important}
+    body{background:#fff!important}
+    #intakeSection{border:none}
+  </style>
 </body>
 </html>
