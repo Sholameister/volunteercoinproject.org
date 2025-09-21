@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<!-- Google Analytics -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-DF0HYPGY7M');
+    gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
   </script>
-  
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LVBTN Signup & KYC</title>
@@ -18,78 +16,61 @@
     body { background:#fdf2f8; font-family:'Segoe UI',sans-serif; text-align:center; padding:20px; }
     h2 { margin: 0 0 8px; }
     p { margin: 8px 0; }
-    button {
-      background:#e60073; color:#fff; padding:12px 20px; border:none; border-radius:6px;
-      font-size:16px; margin:10px; cursor:pointer;
-    }
-    button:hover { background:#cc005f; }
-    #walletAddress,#walletStatus,#kycStatus,#tierInfo,#signupWalletDisplay { font-weight:bold; margin:10px 0; }
-
-    ul { list-style:none; text-align:left; max-width:420px; margin:20px auto; padding:0; }
-    ul li { margin:6px 0; }
+    button, a.btn { background:#e60073; color:#fff; padding:12px 20px; border:none; border-radius:6px; font-size:16px; margin:10px; cursor:pointer; display:inline-block; text-decoration:none; }
+    button:hover, a.btn:hover { background:#cc005f; }
+    #kycStatus,#tierInfo { font-weight:bold; margin:10px 0; }
 
     .tier-badge { padding:4px 10px; border-radius:4px; font-weight:bold; display:inline-block; }
     .tier-1 { background:#ffe0e0; color:#c0392b }
     .tier-2 { background:#fff3cd; color:#856404 }
     .tier-3 { background:#d4edda; color:#155724 }
 
-    .nav-button {
-      display:inline-block; margin:8px; padding:10px 14px; border-radius:6px;
-      background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px;
-    }
+    .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
 
-    /* iPhone note box */
-    #iosNote {
-      display:none; margin:20px auto; padding:14px;
-      max-width:420px; border:2px solid #e53935; border-radius:8px;
-      background:#fff3f3; color:#b71c1c; font-weight:600; font-size:15px;
-    }
-    #iosWalletBtns { display:none; margin:10px 0 18px; }
-    #iosWalletBtns button {
-      padding:12px 16px; border-radius:6px; font-weight:700; cursor:pointer; margin:6px;
-    }
-    #openPhantomBtn { border:none; background:#6c2bd9; color:#fff; }
-    #openSolflareBtn { border:2px solid #e67e22; background:#fff; color:#e67e22; }
-    #copyUrlBtn { border:1px solid #bbb; background:#fff; color:#333; font-weight:600; }
-    #iosHowTo { font-size:13px;color:#444;margin-top:10px; }
+    /* Optional wallet info box (install only; NOT required) */
+    #walletSuggest { margin:18px auto; padding:14px; max-width:520px; background:#fff; border:1px solid #eee; border-radius:10px; }
+    .wallet-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .wallet-buttons a { border-radius:6px; padding:12px 16px; font-weight:700; }
+    .btn-phantom { background:#6c2bd9; color:#fff; }
+    .btn-solflare { background:#ff6a00; color:#fff; }
+    .btn-outline { background:#fff; color:#333; border:1px solid #bbb; }
+
+    ul { list-style:none; text-align:left; max-width:520px; margin:20px auto; padding:0; }
+    ul li { margin:6px 0; }
   </style>
 </head>
 <body>
   <h2>Sign Up & KYC Verification</h2>
   <p style="font-style:italic;color:#333;">
-    To unlock volunteer rewards, please complete the KYC process below. The more verified you are, the more access and token rewards you’ll earn!
+    To unlock volunteer rewards, complete the KYC below. You can link a wallet later inside the volunteer logger.
   </p>
-
-  <!-- Wallet -->
-  <button id="connectWalletBtn">Connect Wallet</button>
-  <p id="signupWalletDisplay"></p>
-  <p id="walletAddress"></p>
-  <p id="walletStatus"></p>
 
   <!-- KYC / Tier -->
   <p id="kycStatus">KYC: ⏳ Pending</p>
   <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
 
-  <!-- Blockpass (auto-hides if already approved) -->
+  <!-- Blockpass -->
   <div id="kycBlock" style="margin-top:12px;">
-    <a id="startKycLink" href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b" target="_blank" rel="noopener">
-      <button id="startKycBtn">Start KYC</button>
+    <a id="startKycLink"
+       href="https://verify-with.blockpass.org/?clientId=volunteer_coin_project_68f8b"
+       target="_blank" rel="noopener">
+      <button id="startKycBtn">Start / Continue KYC</button>
     </a>
   </div>
 
-  <!-- 📱 iPhone Safari/Wallet Browser Notice -->
-  <div id="iosNote">
-    📱 <strong>iPhone Users:</strong><br/>
-    For camera support, please open this page in <strong>Safari</strong> or inside your wallet app’s built-in browser (Phantom, Solflare, Backpack, etc.).
-  </div>
-
-  <!-- iPhone wallet deep-link buttons -->
-  <div id="iosWalletBtns">
-    <button id="openPhantomBtn">👉 Open in Phantom</button>
-    <button id="openSolflareBtn">Open in Solflare</button>
-    <button id="copyUrlBtn">Copy URL</button>
-    <div id="iosHowTo">
-      Don’t have Phantom/Solflare? You can also open this page in <b>Safari</b> and complete KYC there.
+  <!-- Optional: suggest wallets for later (not required at signup) -->
+  <div id="walletSuggest">
+    <div style="font-weight:700; margin-bottom:8px;">Planning to connect a wallet later?</div>
+    <div style="font-size:14px; color:#444; margin-bottom:10px;">
+      Install a wallet now so you’re ready to receive rewards after KYC. (Optional at signup.)
+    </div>
+    <div class="wallet-buttons">
+      <a class="btn btn-phantom" href="https://phantom.app/download" target="_blank" rel="noopener">Get Phantom</a>
+      <a class="btn btn-solflare" href="https://solflare.com/download" target="_blank" rel="noopener">Get Solflare</a>
+      <a id="copyUrlBtn" class="btn btn-outline" href="javascript:void(0)">Copy this page URL</a>
+    </div>
+    <div style="font-size:12px; color:#666; margin-top:8px;">
+      Tip: On iPhone, you can open our site inside your wallet app’s browser when you’re ready to log volunteer hours.
     </div>
   </div>
 
@@ -105,57 +86,57 @@
   <a href="http://./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
   <a href="http://./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
 
-  <div id="walletDebug" style="font:12px/1.3 system-ui; background:#fff8c5; border:1px solid #f2d388; padding:8px; border-radius:6px; margin:10px auto; max-width:420px; display:none"></div>
-
-  <!-- Libs / Modules -->
-  <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
+  <!-- Modules (no wallet scripts on signup) -->
   <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./kycUtils.js"></script>
-  <script type="module" src="./connectWallet.js"></script>
-  <script type="module" src="./signup.js"></script>
 
-  <!-- iPhone detection + wallet deep links -->
+  <!-- Copy URL helper -->
   <script>
     (function(){
-      function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
-      function show(el){ el && (el.style.display='block'); }
-
-      function openInPhantom(){
-        const url = window.location.href;
-        const appScheme = 'phantom://browse/' + encodeURIComponent(url);
-        const ulFallback = 'https://phantom.app/ul/browse/' + encodeURIComponent(url);
-        const iframe = document.createElement('iframe');
-        iframe.style.display='none'; iframe.src = appScheme; document.body.appendChild(iframe);
-        setTimeout(()=>{ window.location.href = ulFallback; }, 800);
-        setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
-      }
-      function openInSolflare(){
-        const url = window.location.href;
-        const appScheme = 'solflare://browser?url=' + encodeURIComponent(url);
-        const ulFallback = 'https://solflare.com/ul/v1/browse?url=' + encodeURIComponent(url);
-        const iframe = document.createElement('iframe');
-        iframe.style.display='none'; iframe.src = appScheme; document.body.appendChild(iframe);
-        setTimeout(()=>{ window.location.href = ulFallback; }, 800);
-        setTimeout(()=>{ try{ document.body.removeChild(iframe);}catch(_){} }, 3000);
-      }
-      function copyURL(){
-        const url = window.location.href;
-        navigator.clipboard?.writeText(url).then(()=>{
-          const btn = document.getElementById('copyUrlBtn');
-          if (btn){ btn.textContent='Copied ✓'; setTimeout(()=> btn.textContent='Copy URL', 1500); }
-        });
-      }
-
       document.addEventListener('DOMContentLoaded', () => {
-        if (isIOS()) {
-          show(document.getElementById('iosNote'));
-          show(document.getElementById('iosWalletBtns'));
-          document.getElementById('openPhantomBtn')?.addEventListener('click', openInPhantom);
-          document.getElementById('openSolflareBtn')?.addEventListener('click', openInSolflare);
-          document.getElementById('copyUrlBtn')?.addEventListener('click', copyURL);
-        }
+        const copyBtn = document.getElementById('copyUrlBtn');
+        copyBtn?.addEventListener('click', () => {
+          const url = window.location.href;
+          navigator.clipboard?.writeText(url).then(()=>{
+            copyBtn.textContent='Copied ✓';
+            setTimeout(()=> copyBtn.textContent='Copy this page URL', 1500);
+          });
+        });
       });
     })();
+  </script>
+
+  <!-- Optional: simple KYC state hook (remove if kycUtils already handles it) -->
+  <script type="module">
+    import { db } from './firebaseConfig.js';
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    const auth = getAuth();
+    const kycStatusEl = document.getElementById('kycStatus');
+    const tierInfoEl = document.getElementById('tierInfo');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { kycStatusEl.textContent = 'KYC: Sign in first (email/password)'; return; }
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        await setDoc(ref, { kycTier: 1, walletAddress: null, updatedAt: serverTimestamp() }, { merge: true });
+        tierInfoEl.className = 'tier-badge tier-1';
+        tierInfoEl.textContent = 'Tier: 1';
+        kycStatusEl.textContent = 'KYC: ⏳ Pending';
+        return;
+      }
+
+      const data = snap.data() || {};
+      const tier = Number(data.kycTier || 1);
+      kycStatusEl.textContent = tier >= 2 ? 'KYC: ✅ Verified' : 'KYC: ⏳ Pending';
+
+      if (tier >= 3) { tierInfoEl.className = 'tier-badge tier-3'; tierInfoEl.textContent = 'Tier: 3'; }
+      else if (tier >= 2) { tierInfoEl.className = 'tier-badge tier-2'; tierInfoEl.textContent = 'Tier: 2'; }
+      else { tierInfoEl.className = 'tier-badge tier-1'; tierInfoEl.textContent = 'Tier: 1'; }
+    });
   </script>
 </body>
 </html>
