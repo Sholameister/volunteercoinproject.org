@@ -1,75 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VCPF • Tokenomics — Proof of Impact</title>
+<meta name="description" content="Volunteer Coin Project Foundation tokenomics: LVBTN & SYNCM powering worldwide Proof of Impact." />
 
-<!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-DF0HYPGY7M');
-  </script>
-  
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tokenomics | VCPF · LVBTN & SYNCM</title>
-  <meta name="description" content="Volunteer Coin Project Foundation (VCPF) tokenomics for LVBTN and SYNCM."/>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #fff7fa; color: #111; }
-    h1 { color: #ff3366; }
-    h2 { color: #cc2852; margin-top: 28px; }
-    .card { background: #fff; border: 1px solid #ffdce8; padding: 16px; border-radius: 12px; margin: 14px 0; }
-    .pill { display: inline-block; padding: 6px 10px; margin: 4px; border-radius: 999px; background: #fff0f5; border: 1px solid #ffd1e0; font-size: 14px; }
-    .mono { font-family: monospace; }
-    .good { color: green; }
-    .note { font-size: 12px; color: #666; }
-  </style>
+<style>
+  /* ========= VCPF Tokenomics (scoped) ========= */
+  :root{
+    --v-bg:#0b0e14;          /* deep night */
+    --v-card:#121723;        /* panel */
+    --v-ink:#eaf2ff;         /* primary text */
+    --v-muted:#aac0ff;       /* secondary text */
+    --v-accent:#7df3c6;      /* mint accent */
+    --v-gold:#ffd166;        /* gold accent */
+    --v-rose:#ff7aa2;        /* rose accent */
+    --v-line:#23304a;        /* subtle line */
+    --radius:14px;
+    --shadow:0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color:var(--v-ink);
+    background: radial-gradient(1200px 600px at 70% -10%, #1a2233 0%, #0b0e14 50%) no-repeat,
+                radial-gradient(1000px 500px at 0% 100%, #131a28 0%, #0b0e14 50%) no-repeat,
+                var(--v-bg);
+    line-height:1.55;
+  }
+  .vcpf-wrap{max-width:1100px;margin:auto;padding:28px}
+  .hero{
+    text-align:center; padding:28px 10px 10px;
+  }
+  .chip{display:inline-block;padding:6px 12px;border:1px solid var(--v-line);border-radius:999px;color:var(--v-muted);font-size:14px}
+  .h1{font-size: clamp(28px, 4.6vw, 54px); margin:16px 0 12px; letter-spacing:.2px}
+  .sub{color:var(--v-muted); font-size: clamp(15px, 2.8vw, 18px)}
+  .slogan{margin:10px auto 0; font-weight:600; color:var(--v-accent)}
+  .badges{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:18px 0 8px}
+  .badge{border:1px dashed var(--v-line); padding:6px 10px; border-radius:999px; font-size:13px; color:var(--v-muted)}
+  .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:18px 0 8px}
+  .btn{
+    appearance:none; border:0; border-radius:12px; padding:12px 16px; cursor:pointer;
+    background:linear-gradient(180deg, #7df3c6, #57d9ac); color:#062a1f; font-weight:700;
+    box-shadow: var(--shadow); text-decoration:none; display:inline-flex; align-items:center; gap:8px
+  }
+  .btn.sec{background:#1b2333; color:var(--v-ink); border:1px solid var(--v-line); box-shadow:none}
+  .grid{display:grid; grid-template-columns:1fr; gap:16px; margin:26px 0}
+  @media(min-width:880px){ .grid{grid-template-columns:1fr 1fr} }
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)) , var(--v-card);
+    border:1px solid var(--v-line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+  }
+  .tag{font-size:12px; color:#111; font-weight:800; letter-spacing:.5px; padding:6px 10px; border-radius:999px; display:inline-block; margin-bottom:10px}
+  .tag.lvbtn{background:linear-gradient(90deg, var(--v-gold), #ffc84d)}
+  .tag.syncm{background:linear-gradient(90deg, var(--v-rose), #ff9bb9)}
+  .h2{font-size:20px; margin:6px 0 8px}
+  .kpi{display:flex; gap:14px; align-items:baseline; flex-wrap:wrap}
+  .kpi .num{font-size:34px; font-weight:900}
+  .kpi small{color:var(--v-muted)}
+  .list{margin:10px 0 0; padding-left:16px}
+  .list li{margin:6px 0}
+  .divider{height:1px;background:var(--v-line);margin:14px -4px}
+  .bar{height:12px; background:#0e1422; border:1px solid var(--v-line); border-radius:999px; overflow:hidden}
+  .bar > span{display:block; height:100%; background:linear-gradient(90deg, #7df3c6, #57d9ac)}
+  .bar.gold > span{background:linear-gradient(90deg, #ffd166, #ffb703)}
+  .pillrow{display:flex; gap:8px; flex-wrap:wrap}
+  .pill{font-size:12px; color:var(--v-muted); border:1px solid var(--v-line); padding:6px 10px; border-radius:999px}
+  .why{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:760px){ .why{grid-template-columns:1fr 1fr} }
+  .why .point{background:#0e1422;border:1px solid var(--v-line); border-radius:12px; padding:14px}
+  .stamp{font-weight:800; color:var(--v-muted); text-align:center; margin:18px 0 6px}
+  .footnote{color:var(--v-muted); font-size:12px; text-align:center; margin:10px 0 30px}
+  /* simple fade */
+  .reveal{opacity:0; transform:translateY(14px); transition:.6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.on{opacity:1; transform:none}
+  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1; transform:none} }
+  /* FAQ */
+  details{background:#0f1624; border:1px solid var(--v-line); border-radius:12px; padding:12px 14px}
+  summary{cursor:pointer; font-weight:700}
+  details + details{margin-top:10px}
+  a{color:var(--v-accent)}
+</style>
 </head>
+
 <body>
-  <h1>Volunteer Coin Project Foundation — Tokenomics</h1>
-  <p><em>"Proof-of-Impact" . “Transparency is our virtue” · “Your Time, Your Impact, Your Reward” · “Earn by Serving, Grow by Giving”</em></p>
+  <div class="vcpf-wrap">
+    <!-- Hero -->
+    <section class="hero reveal">
+      <span class="chip">Volunteer Coin Project Foundation</span>
+      <h1 class="h1">Two Tokens. One Mission.<br>**Proof of Impact** that people feel.</h1>
+      <p class="sub">Earn <strong>SYNCM</strong> by the hour. Earn <strong>LVBTN</strong> by the month.  
+      <span class="slogan">Your Time, Your Impact, Your Reward.</span></p>
 
-  <div class="card">
-    <h2>LVBTN — LoveButton Token</h2>
-    <p>LVBTN is our in-house impact token used for extra rewards, such as staking incentives, raffles, car rides, and redemptions through VCPF programs.</p>
-    <div class="pill"><strong>Max Supply:</strong> <span class="mono">120,000,000</span></div>
-    <div class="pill"><strong>Internal Valuation:</strong> <span class="mono">$10.00</span></div>
-    <div class="pill"><strong>Network:</strong> Solana</div>
-    <div class="pill"><strong>Drop cadence:</strong> 1st of each month</div>
+      <div class="badges">
+        <span class="badge">“Transparency is our virtue.”</span>
+        <span class="badge">Backed by BTC • SOL • Gold</span>
+        <span class="badge">Global-ready (NGOs • Disaster Relief)</span>
+      </div>
 
-    <h3>Distribution Snapshot</h3>
-    <ul>
-      <li>Locked to two entities: <span class="mono">10,000,000</span></li>
-      <li>Locked for children (10-year lock): <span class="mono">5,000,000</span></li>
-      <li>Treasurer: <span class="mono">4,000,000</span></li>
-      <li>Founder (unlocked wallet): <span class="mono">721,706</span></li>
-      <li>Collaborator wallet: <span class="mono">250,000</span></li>
-      <li>Burned (permanent): <span class="mono good">100,000,000</span></li>
-    </ul>
-    <p class="note">Some allocations include time locks or vesting schedules. Burn totals cap supply at 20,000,000 LVBTN.</p>
+      <div class="cta">
+        <a class="btn" href="http:///signup.html" target="_blank" rel="noopener">Start • Signup & KYC</a>
+        <a class="btn sec" href="http:///login.html" target="_blank" rel="noopener">Log a Volunteer Session</a>
+      </div>
+    </section>
+
+    <!-- Token Cards -->
+    <section class="grid">
+      <!-- LVBTN -->
+      <article class="card reveal" aria-labelledby="lvbtn-title">
+        <span class="tag lvbtn">LVBTN • Premium & Scarce</span>
+        <h2 id="lvbtn-title" class="h2">Only <span class="num" data-counter="20000000">20,000,000</span> exist.</h2>
+        <div class="kpi" aria-label="Supply progress">
+          <div class="num" id="lvbtn-remaining">20M</div>
+          <small>100M burned forever • Monthly drops only (1 / 2 / 3 by tier)</small>
+        </div>
+        <div class="divider"></div>
+        <div class="bar gold" aria-hidden="true"><span style="width:100%"></span></div>
+        <ul class="list">
+          <li>Stake <strong>LVBTN</strong> → earn <strong>SYNCM</strong>.</li>
+          <li>Unlock premium perks: multipliers, raffles, redemptions, rides, events.</li>
+          <li>Value trust: supported by BTC + Gold reserves & public ledgers.</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="pillrow">
+          <span class="pill">Monthly scarcity</span>
+          <span class="pill">Premium access</span>
+          <span class="pill">Earned (not bought)</span>
+        </div>
+      </article>
+
+      <!-- SYNCM -->
+      <article class="card reveal" aria-labelledby="syncm-title">
+        <span class="tag syncm">SYNCM • Utility & Global</span>
+        <h2 id="syncm-title" class="h2"><span class="num" data-counter="6000000000">6,000,000,000</span> minted for utility.</h2>
+        <div class="kpi">
+          <div class="num" id="syncm-world">3B</div>
+          <small>3B reserved for worldwide deployment • 3B for VCPF/MeshSync ecosystem</small>
+        </div>
+        <div class="divider"></div>
+        <div class="bar" aria-hidden="true"><span style="width:50%"></span></div>
+        <ul class="list">
+          <li>Earned hourly: <strong>5 / 10 / 15 / 20 / 25 SYNCM</strong> by tier.</li>
+          <li>Fuel for farming, staking, multipliers, and NGO use worldwide.</li>
+          <li>Donatable to local causes—impact you can point to.</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="pillrow">
+          <span class="pill">Hourly rewards</span>
+          <span class="pill">Global allocation (3B)</span>
+          <span class="pill">Real-world utility</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Why they keep coming back -->
+    <section class="card reveal">
+      <h2 class="h2">Why people keep coming back</h2>
+      <div class="why">
+        <div class="point"><strong>Monthly anticipation.</strong> LVBTN drops create a natural “come back” moment.</div>
+        <div class="point"><strong>Daily momentum.</strong> SYNCM rewards every hour served—progress you can feel.</div>
+        <div class="point"><strong>Hard backing.</strong> BTC • SOL • Gold reserves + public ledgers build trust.</div>
+        <div class="point"><strong>Real perks.</strong> Raffles, multipliers, redemptions, rides, and more.</div>
+      </div>
+    </section>
+
+    <!-- Trust -->
+    <section class="grid">
+      <article class="card reveal">
+        <h2 class="h2">Backing & Transparency</h2>
+        <ul class="list">
+          <li><strong>30%</strong> of incoming funds flow to reserves (BTC • SOL • Gold).</li>
+          <li>Public ledgers for <strong>burns</strong>, <strong>reserves</strong>, and <strong>distributions</strong>.</li>
+          <li><strong>Proof of Impact</strong> links rewards to verifiable service activity.</li>
+        </ul>
+      </article>
+      <article class="card reveal">
+        <h2 class="h2">Simple Rules</h2>
+        <ul class="list">
+          <li>LVBTN is <strong>earned</strong> through service (monthly 1/2/3 by tier).</li>
+          <li>SYNCM is <strong>earned hourly</strong> by tier (5–25/hr).</li>
+          <li>Stake LVBTN → <strong>earn</strong> SYNCM; stake/farm SYNCM → <strong>grow</strong> impact.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- FAQ -->
+    <section class="card reveal" aria-label="FAQ">
+      <h2 class="h2">Quick FAQ</h2>
+      <details>
+        <summary>Can I buy LVBTN?</summary>
+        <p>No—LVBTN is designed to be <em>earned</em> through verified impact and monthly drops.</p>
+      </details>
+      <details>
+        <summary>Who gets the 3B SYNCM “worldwide” allocation?</summary>
+        <p>Volunteers, NGOs, schools, and relief partners across regions where Proof of Impact is deployed.</p>
+      </details>
+      <details>
+        <summary>Where do I start?</summary>
+        <p>Complete KYC on <a href="http:///signup.html" target="_blank" rel="noopener">/signup.html</a>, then log your first session on <a href="http:///login.html" target="_blank" rel="noopener">/login.html</a>.</p>
+      </details>
+    </section>
+
+    <p class="stamp">“Transparency is our virtue.”</p>
+    <p class="footnote">© Volunteer Coin Project Foundation — Proof of Impact</p>
   </div>
 
-  <div class="card">
-    <h2>SYNCM — SyncMesh Token</h2>
-    <p>SYNCM powers volunteer rewards and incentives. It’s SOL-backed and designed for broad access.</p>
-    <div class="pill"><strong>Initial Mint:</strong> <span class="mono">6,000,000,000</span></div>
-    <div class="pill"><strong>Internal Valuation:</strong> <span class="mono">$0.25</span></div>
-    <div class="pill"><strong>Network:</strong> Solana</div>
-    <div class="pill"><strong>Distribution:</strong> Weekly</div>
+<script>
+  // Minimal progressive “umph”: count-up + reveal on scroll; safe for reduced motion.
+  (function(){
+    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    <h3>Hourly Rewards</h3>
-    <ul>
-      <li>Tier 1: <span class="mono">5 SYNCM / hour</span></li>
-      <li>Tier 2: <span class="mono">10 SYNCM / hour</span></li>
-      <li>Tier 3: <span class="mono">15 SYNCM / hour</span></li>
-    </ul>
-    <p class="note">LVBTN may be used for Multipliers that may apply based on Tier, loyalty streaks, and community milestones.</p>
-  </div>
+    // Reveal
+    const els = document.querySelectorAll('.reveal');
+    if(!prefersReduce && 'IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('on'); io.unobserve(e.target); }});
+      }, {threshold:.1});
+      els.forEach(el=>io.observe(el));
+    }else{
+      els.forEach(el=>el.classList.add('on'));
+    }
 
-  <footer>
-    <p class="note">Last updated: August 20, 2025</p>
-  </footer>
+    // Simple count-up
+    function countUp(el, to, dur=1100){
+      if(prefersReduce){ el.textContent = to.toLocaleString(); return; }
+      const start = performance.now();
+      const from = 0;
+      function step(t){
+        const p = Math.min(1, (t-start)/dur);
+        const val = Math.floor(from + (to-from)*p);
+        el.textContent = val.toLocaleString();
+        if(p<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    document.querySelectorAll('[data-counter]').forEach(el=>{
+      const to = Number(el.getAttribute('data-counter'))||0;
+      // start when visible
+      const startCount = ()=>countUp(el, to, 1200);
+      if('IntersectionObserver' in window && !prefersReduce){
+        const io2 = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{ if(e.isIntersecting){ startCount(); io2.unobserve(e.target); }});
+        }, {threshold:.3});
+        io2.observe(el);
+      }else{ startCount(); }
+    });
+  })();
+</script>
 </body>
 </html>
 
