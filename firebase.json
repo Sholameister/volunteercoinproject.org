@@ -5,9 +5,7 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ]
-  }
-}
+    ],
 "headers": [
   {
     "source": "**",
@@ -19,3 +17,4 @@
     ]
   }
 ]
+  }
