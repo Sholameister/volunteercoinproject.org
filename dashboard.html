@@ -9,13 +9,7 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-DF0HYPGY7M');
-  </script>
-  <!-- Debug token (from Firebase Console → Manage debug tokens) -->
-<script>
-  window.FIREBASE_APPCHECK_DEBUG_TOKEN = "C749BD1E-D37F-4214-9243-D774917F28CF";
-</script>
 
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Volunteer Dashboard</title>
@@ -65,7 +59,14 @@
   <div id="usdTotalValue">Total USD Value: Loading...</div>
   <div id="sessionList">Total Hours Volunteered: Loading...</div>
 <button onclick="window.location.href='./index.html'">Go to Home</button>
-  <script type="module" src="/js/firebaseConfig.js"></script>
-  <script type="module" src="/js/dashboardLogic.js"></script>
+    
+ </script>
+  <!-- Debug token (from Firebase Console → Manage debug tokens) -->
+<script>
+  window.FIREBASE_APPCHECK_DEBUG_TOKEN = "C749BD1E-D37F-4214-9243-D774917F28CF";
+</script>
+  
+  <script type="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./dashboardLogic.js"></script>
 </body>
 </html>
