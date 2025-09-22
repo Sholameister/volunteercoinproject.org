@@ -1,4 +1,4 @@
-// loginLogic.js — Firebase v9 COMPAT (matches your firebaseConfig.js compat exports)
+// loginLogic.js — Firebase v9 COMPAT (matches firebaseConfig.js compat exports)
 import { db, storage } from './firebaseConfig.js';
 import { handleConnect } from './connectWallet.js';
 
@@ -21,17 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = (id) => document.getElementById(id);
 
   // ---- DOM ----
-  const connectBtn = $('connectWalletBtn');
-  const walletDisp = $('walletAddress') || $('walletDisplay');
-  const kycStatus = $('kycStatus');
-  const tierDisp = $('tierInfo');
-  const priceDisp = $('lvbtnPrice');
+  const connectBtn   = $('connectWalletBtn');
+  const walletDisp   = $('walletAddress') || $('walletDisplay');
+  const kycStatus    = $('kycStatus');
+  const tierDisp     = $('tierInfo');
+  const priceDisp    = $('lvbtnPrice');
   const walletStatus = $('walletStatus');
 
-  const beforeInput = $('beforePhoto');
-  const afterInput = $('afterPhoto');
-  const startBtn = $('startVolunteeringBtn'); // kept (hidden) for fallback
-  const stopBtn  = $('stopVolunteeringBtn');  // kept (hidden) for fallback
+  const beforeInput  = $('beforePhoto');
+  const afterInput   = $('afterPhoto');
+  const startBtn     = $('startVolunteeringBtn'); // kept (hidden) for fallback
+  const stopBtn      = $('stopVolunteeringBtn');  // kept (hidden) for fallback
 
   const summaryBox   = $('summaryBox');
   const sessionTimes = $('sessionTimes');
@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const walletSummary= $('walletSummary');
   const afterPhotosBox = $('afterPhotosBox');
 
+  // Hard guard on required controls
   if (!connectBtn || !beforeInput || !afterInput || !startBtn || !stopBtn) {
     console.error('Missing required DOM elements on this page.');
     return;
@@ -56,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Helpers ----
   const paintWallet = (addr) => {
     const short = addr ? `${addr.slice(0,4)}…${addr.slice(-4)}` : '';
-    if (walletDisp) walletDisp.textContent = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
-    if (walletStatus) walletStatus.textContent = addr ? '✅ Wallet Connected' : 'Wallet not connected';
+    if (walletDisp)    walletDisp.textContent   = addr ? `Wallet: ${short}` : 'Wallet: Not Connected';
+    if (walletStatus)  walletStatus.textContent = addr ? '✅ Wallet Connected' : 'Wallet not connected';
   };
 
   const setGating = ({ canStart, canStop, beforeEnabled, afterEnabled }) => {
@@ -69,19 +70,27 @@ document.addEventListener('DOMContentLoaded', () => {
     afterInput.style.opacity = afterEnabled ? '1' : '0.6';
   };
 
+  async function ensureAuth() {
+    // guarantee an auth session (anon ok) + fresh token for rules
+    if (!firebase.auth().currentUser) {
+      await firebase.auth().signInAnonymously().catch((e)=>console.error('Anon auth failed', e));
+    }
+    try {
+      await firebase.auth().currentUser.getIdToken(true);
+    } catch {}
+  }
+
   async function fetchKycTierAndStatus(addr) {
     try {
       // Preferred: verifiedKYC/{wallet}
       let snap = await db.collection('verifiedKYC').doc(addr).get();
       if (!snap.exists) snap = await db.collection('verifiedKYC').doc(addr.toLowerCase()).get();
-
       if (snap.exists) {
         const d = snap.data() || {};
         const approved = String(d.status || '').toLowerCase() === 'approved';
         const tier = Number(d.tier ?? (approved ? 2 : 1)) || 1;
         return { tier, approved };
       }
-
       // Fallback: users/{wallet}
       const userSnap = await db.collection('users').doc(addr).get();
       if (userSnap.exists) {
@@ -106,21 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!navigator.geolocation) return null;
     return new Promise((resolve) => {
       let done = false;
-      const timer = setTimeout(() => {
-        if (!done) resolve(null);
-      }, ms);
-
+      const timer = setTimeout(() => { if (!done) resolve(null); }, ms);
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          done = true;
-          clearTimeout(timer);
-          resolve(pos);
-        },
-        () => {
-          done = true;
-          clearTimeout(timer);
-          resolve(null);
-        },
+        (pos) => { done = true; clearTimeout(timer); resolve(pos); },
+        ()     => { done = true; clearTimeout(timer); resolve(null); },
         { enableHighAccuracy: true, timeout: ms - 1000, maximumAge: 0 }
       );
     });
@@ -133,45 +131,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Initial UI ----
   if (priceDisp) priceDisp.textContent = 'SYNCM: $0.25 (fixed for now)';
   paintWallet(null);
-  if (tierDisp) tierDisp.textContent = 'Tier: ';
+  if (tierDisp)  tierDisp.textContent  = 'Tier: ';
   if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
   setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
 
-  // ---- Wallet Connect (single binder) ----
-  connectBtn.addEventListener('click', async () => {
+  // ---- Wallet Connect (single binder; no duplicate listeners) ----
+  // Replace any prior handlers to avoid double-binding if DOMContentLoaded fires twice in SPA-ish flows
+  connectBtn.replaceWith(connectBtn.cloneNode(true));
+  const freshBtn = $('connectWalletBtn');
+
+  freshBtn.addEventListener('click', async () => {
     const resp = await handleConnect(); // Phantom/Solflare connect
     const addr = resp?.publicKey?.toString?.()
               || window.appWallet?.publicKey
               || window.solana?.publicKey?.toString?.()
               || null;
     if (addr) await onWalletConnected(addr);
-  });
+  }, { passive: true });
 
   async function onWalletConnected(addr) {
     walletAddress = addr;
     paintWallet(addr);
 
     // Ensure Firebase Auth exists (compat) for Storage rules (anonymous ok)
-    try {
-      await firebase.auth().signInAnonymously();
-    } catch (e) {
-      console.error('Anon auth failed', e);
-    }
+    await ensureAuth();
 
     const { tier, approved } = await fetchKycTierAndStatus(addr);
     tierLevel = tier;
-
-    if (tierDisp) tierDisp.textContent = `Tier: ${tierLevel}`;
+    if (tierDisp)  tierDisp.textContent  = `Tier: ${tierLevel}`;
     if (kycStatus) kycStatus.textContent = approved ? 'KYC: ✅ Approved' : 'KYC: ⏳ Pending';
 
     // Gating:
     // Tier 1: allow “practice” — BEFORE enabled immediately (earnings queued by backend)
     // Tier 2+: require wallet (already connected) to enable BEFORE input
-    if (tierLevel < 2) {
-      setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
-    } else {
-      setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
-    }
+    setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
   }
 
   // Provider events from connectWallet.js
@@ -179,10 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const addr = e.detail?.publicKey;
     if (addr) await onWalletConnected(addr);
   });
+
   document.addEventListener('wallet:disconnected', () => {
     walletAddress = null;
     paintWallet(null);
-    if (tierDisp) tierDisp.textContent = 'Tier: ';
+    if (tierDisp)  tierDisp.textContent  = 'Tier: ';
     if (kycStatus) kycStatus.textContent = 'KYC: Check After Connecting Wallet';
     setGating({ canStart:false, canStop:false, beforeEnabled:false, afterEnabled:false });
   });
@@ -190,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================
   // 🚀 AUTO-START / AUTO-STOP
   // =========================
+
   // BEFORE photo upload → auto START
   beforeInput.addEventListener('change', async () => {
     const file = beforeInput.files && beforeInput.files[0];
@@ -222,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!file) return alert('Please upload your BEFORE photo.');
     await startFlow(file);
   }, { passive:false }));
+
   stopBtn.addEventListener('click', async () => {
     const file = afterInput?.files?.[0];
     if (!file) return alert('Please upload your AFTER photo.');
@@ -231,13 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- START FLOW (auto on BEFORE) ----
   async function startFlow(file){
     try {
-      if (!walletAddress) {
-        alert('Please connect your wallet first.');
-        return;
-      }
+      if (!walletAddress) { alert('Please connect your wallet first.'); return; }
 
       startBtn.disabled = true;
       startBtn.textContent = 'Starting…';
+
+      // Ensure auth for Storage rules
+      await ensureAuth();
 
       const pos = await getGeolocationWithTimeout(8000);
       if (pos) {
@@ -245,10 +241,18 @@ document.addEventListener('DOMContentLoaded', () => {
         position.longitude = pos.coords.longitude;
       }
 
-      const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_'); 
+      const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_');
       const bRef = storage.ref(`beforePhotos/${safeAddr}_${Date.now()}.jpg`);
-      await bRef.put(file);
-      startPhotoUrl = await bRef.getDownloadURL();
+
+      // Include metadata so rules can check contentType
+      await bRef.put(file, { contentType: file.type || 'image/jpeg' });
+
+      // If your Storage rules allow read for authed users, this will work; otherwise it's ok to skip
+      try {
+        startPhotoUrl = await bRef.getDownloadURL();
+      } catch {
+        startPhotoUrl = null; // rules may block reads; that's fine
+      }
 
       sessionStart = new Date();
       beforeInput.value = '';
@@ -276,19 +280,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- STOP FLOW (auto on AFTER) ----
   async function stopFlow(file){
     try {
-      if (!sessionStart) {
-        alert('No active session found.');
-        return;
-      }
+      if (!sessionStart) { alert('No active session found.'); return; }
 
       stopBtn.disabled = true;
 
-      const end = new Date();
+      // Ensure auth for Storage rules
+      await ensureAuth();
 
+      const end = new Date();
       const safeAddr = walletAddress.replace(/[^a-zA-Z0-9]/g, '_');
       const aRef = storage.ref(`afterPhotos/${safeAddr}_${Date.now()}.jpg`);
-      await aRef.put(file);
-      const afterPhotoUrl = await aRef.getDownloadURL();
+
+      await aRef.put(file, { contentType: file.type || 'image/jpeg' });
+
+      let afterPhotoUrl = null;
+      try {
+        afterPhotoUrl = await aRef.getDownloadURL();
+      } catch {
+        afterPhotoUrl = null; // allowed to be null if reads are blocked
+      }
 
       const durationHours = Math.max((end - sessionStart) / 3_600_000, 0.01);
       const hourly = getHourlySyncm(tierLevel);
@@ -311,13 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (summaryBox) summaryBox.style.display = 'block';
-      if (sessionTimes) sessionTimes.textContent = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
-      if (tokensEarned) tokensEarned.textContent = `✅ SYNCM Earned: ${tokens}`;
-      if (totalLVBTN) totalLVBTN.textContent = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
-      if (usdValue) usdValue.textContent = `💰 USD Value (est): $${usd}`;
+      if (sessionTimes)  sessionTimes.textContent  = `🕒 Start: ${sessionStart.toLocaleString()} | End: ${end.toLocaleString()}`;
+      if (tokensEarned)  tokensEarned.textContent  = `✅ SYNCM Earned: ${tokens}`;
+      if (totalLVBTN)    totalLVBTN.textContent    = `📊 Hourly rate (tier ${tierLevel}): ${hourly} SYNCM/hr`;
+      if (usdValue)      usdValue.textContent      = `💰 USD Value (est): $${usd}`;
       if (walletSummary) walletSummary.textContent = `📌 Wallet: ${walletAddress}`;
 
-      if (afterPhotosBox) {
+      if (afterPhotosBox && afterPhotoUrl) {
         const img = document.createElement('img');
         img.src = afterPhotoUrl;
         img.alt = 'After Photo';
@@ -341,8 +351,8 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStart = null;
       startPhotoUrl = null;
       position = { latitude:null, longitude:null };
-      setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
 
+      setGating({ canStart:false, canStop:false, beforeEnabled:true, afterEnabled:false });
       toast('Session recorded — thank you for serving!');
     } catch (e) {
       console.error('Stop volunteering failed', e);
