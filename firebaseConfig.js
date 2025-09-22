@@ -1,4 +1,4 @@
-// firebaseConfig.js — corrected init ORDER and bucket value
+// firebaseConfig.js — full corrected version with App Check (compat)
 
 // 1) Load compat SDKs
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js';
@@ -7,7 +7,7 @@ import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js';
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// 2) Firebase project config
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
@@ -18,16 +18,18 @@ const firebaseConfig = {
   measurementId: "G-81JX007JP5"
 };
 
-// 3) Initialize the app FIRST
+// 3) Initialize Firebase app (only once)
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// 4) THEN activate App Check (reCAPTCHA v3 site key here)
+// 4) Activate App Check with reCAPTCHA v3 site key
+// If a debug token is set in window.FIREBASE_APPCHECK_DEBUG_TOKEN,
+// Firebase will automatically use it for Verified requests.
 const appCheck = firebase.appCheck();
 appCheck.activate('6LflFNArAAAAACERAJI4nDTJtsKgsfjWN8DTKNVe', true);
 
-// 5) Ensure an auth session exists (anonymous is fine)
+// 5) Ensure an auth session exists (anonymous is fine for most cases)
 firebase.auth().onAuthStateChanged(async (u) => {
   try {
     if (!u) await firebase.auth().signInAnonymously();
@@ -36,7 +38,7 @@ firebase.auth().onAuthStateChanged(async (u) => {
   }
 });
 
-// 6) Exports for your modules
+// 6) Exports for use in your modules
 export const app = firebase.app();
 export const db = firebase.firestore();
 export const storage = firebase.storage();
