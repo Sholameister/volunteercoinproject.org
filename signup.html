@@ -126,7 +126,7 @@
 
       const data = snap.data() || {};
       const tier = Number(data.kycTier || 1);
-      kycStatusEl.textContent = tier >= 2 ? 'KYC: ✅ Verified' : 'KYC: ⏳ Pending';
+      kycStatusEl.textContent = tier >= 2 ? 'KYC: ✅ Verified';
 
       if (tier >= 3) { tierInfoEl.className = 'tier-badge tier-3'; tierInfoEl.textContent = 'Tier: 3'; }
       else if (tier >= 2) { tierInfoEl.className = 'tier-badge tier-2'; tierInfoEl.textContent = 'Tier: 2'; }
