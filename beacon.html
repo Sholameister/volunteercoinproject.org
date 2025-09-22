@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MeshSync • Beacon Logger</title>
+<meta name="description" content="Log beacon IDs, placements, and incentives for MeshSync Bluetooth mesh.">
+<style>
+  :root{--bg:#0b0e14;--card:#121723;--ink:#eaf2ff;--muted:#a9b8e8;--line:#23304a;--acc:#7df3c6;--gold:#ffd166}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,Segoe UI,Roboto,Arial}
+  .wrap{max-width:1100px;margin:auto;padding:20px}
+  h1{margin:8px 0 4px} .sub{color:var(--muted)}
+  .grid{display:grid;gap:16px;grid-template-columns:1fr} @media(min-width:960px){.grid{grid-template-columns:420px 1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #0006;padding:16px}
+  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 6px}
+  input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#0f1624;color:var(--ink)}
+  textarea{min-height:72px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{appearance:none;border:0;border-radius:10px;padding:12px 14px;background:linear-gradient(180deg,#7df3c6,#57d9ac);color:#062a1f;font-weight:800;cursor:pointer}
+  .btn.outline{background:#121723;color:var(--ink);border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;font-size:14px}
+  th{color:var(--muted);font-weight:600}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted)}
+  .ok{color:#0ad5a7}
+  .warn{color:#ffd166}
+  .err{color:#ff7aa2}
+  .cta{display:flex;gap:8px;flex-wrap:wrap}
+  .mini{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header style="margin-bottom:12px">
+    <h1>MeshSync • Beacon Logger</h1>
+    <div class="sub">Record beacon units, placements, host incentives. “From backyard → neighborhood → city.”</div>
+  </header>
+
+  <div class="grid">
+    <!-- Left: Forms -->
+    <section class="card">
+      <h2 style="margin-top:0">1) Register Beacon</h2>
+      <div class="row">
+        <div>
+          <label>Beacon ID (e.g., MS-202509-001)</label>
+          <input id="beaconId" placeholder="MS-202509-001" required>
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="beaconStatus">
+            <option value="in-stock">in-stock</option>
+            <option value="staged">staged</option>
+            <option value="installed">installed</option>
+            <option value="offline">offline</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Make</label>
+          <input id="make" placeholder="e.g., MeshSync Beacon v1">
+        </div>
+        <div>
+          <label>Model</label>
+          <input id="model" placeholder="e.g., MSB-100">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>MAC / Serial</label>
+          <input id="mac" placeholder="AA:BB:CC:DD:EE:FF or serial">
+        </div>
+        <div>
+          <label>Notes</label>
+          <input id="beaconNotes" placeholder="box, power, antenna, etc.">
+        </div>
+      </div>
+      <div class="cta" style="margin-top:10px">
+        <button class="btn" id="saveBeaconBtn">Save Beacon</button>
+        <button class="btn outline" id="genIdBtn">Generate ID</button>
+      </div>
+      <div class="mini" id="bStatus"></div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">2) Log Placement</h2>
+      <div class="row">
+        <div>
+          <label>Beacon ID</label>
+          <input id="p_beaconId" placeholder="MS-202509-001" required>
+        </div>
+        <div>
+          <label>Placed Status</label>
+          <select id="p_status">
+            <option value="installed">installed</option>
+            <option value="staged">staged</option>
+            <option value="offline">offline</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Host Name</label>
+          <input id="hostName" placeholder="Jane Smith">
+        </div>
+        <div>
+          <label>Host Wallet (optional)</label>
+          <input id="hostWallet" placeholder="Phantom address">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Incentive Type</label>
+          <select id="incentiveType">
+            <option value="SYNCM">SYNCM</option>
+            <option value="LVBTN">LVBTN</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Incentive Rate</label>
+          <input id="incentiveRate" placeholder="e.g., 100 SYNCM / month">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Latitude</label>
+          <input id="lat" placeholder="35.747..." inputmode="decimal">
+        </div>
+        <div>
+          <label>Longitude</label>
+          <input id="lng" placeholder="-95.369..." inputmode="decimal">
+        </div>
+      </div>
+      <label>Address</label>
+      <input id="address" placeholder="123 Main St, Muskogee, OK">
+      <label>Proof Photo</label>
+      <input id="proofPhoto" type="file" accept="image/*" capture="environment">
+      <label>Notes</label>
+      <textarea id="notes" placeholder="Mount height, power source, neighbors, obstacles..."></textarea>
+      <div class="cta" style="margin-top:10px">
+        <button class="btn" id="savePlacementBtn">Save Placement</button>
+      </div>
+      <div class="mini" id="pStatus"></div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">Recent Placements</h2>
+    <div class="cta">
+      <button class="btn outline" id="refreshBtn">Refresh</button>
+      <button class="btn outline" id="exportCsvBtn">Export CSV</button>
+    </div>
+    <table id="placementsTable">
+      <thead>
+        <tr>
+          <th>BeaconID</th><th>Host</th><th>Incentive</th>
+          <th>Status</th><th>Lat</th><th>Lng</th><th>Photo</th><th>Date</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="mini">Tip: click “Export CSV” weekly for backups & donor updates.</div>
+  </section>
+</div>
+
+<!-- Firebase config/module (reuse your file) -->
+<script type="module" src="./firebaseConfig.js"></script>
+<script type="module" src="./beacons.js"></script>
+</body>
+</html>
