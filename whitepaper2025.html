@@ -1,124 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-DF0HYPGY7M');
-  </script>
-  
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VCPF Whitepaper – Proof of Impact™</title>
-  <style>
-    body {
-      background: #fdf2f8;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 30px;
-      max-width: 900px;
-      margin: auto;
-      color: #333;
-      line-height: 1.6;
-    }
-    h1, h2, h3 {
-      color: #e60073;
-    }
-    section {
-      margin-bottom: 40px;
-    }
-    ul {
-      padding-left: 20px;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Volunteer Coin Project Foundation — Whitepaper 2025</title>
+<meta name="description" content="VCPF Whitepaper 2025: Proof-of-Impact, LVBTN & SYNCM tokenomics, MeshSync beacons, reserves, governance, KYC tiers, roadmap." />
+<style>
+  :root{
+    --bg:#0b0e14;--panel:#121723;--ink:#eaf2ff;--muted:#b9c6ff;--line:#24324e;
+    --accent:#7df3c6;--gold:#ffd166;--rose:#ff8ab0;--ok:#0ad5a7;--warn:#ffb703;
+    --radius:14px;--shadow:0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;line-height:1.6}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{max-width:1100px;margin:auto;padding:28px 20px 60px}
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .brand{font-weight:900;font-size:clamp(20px,3vw,28px)}
+  .tag{display:inline-block;border:1px solid var(--line);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:13px}
+  .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;background:linear-gradient(180deg,#7df3c6,#57d9ac);color:#062a1f;font-weight:800;box-shadow:var(--shadow)}
+  .btn.alt{background:#151d2e;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .hero{margin:16px 0 24px;padding:20px;border:1px solid var(--line);border-radius:var(--radius);background:
+    radial-gradient(600px 220px at 85% -10%,#1a2233 0%,transparent 60%),
+    radial-gradient(500px 200px at 10% 100%,#11192a 0%,transparent 60%),var(--panel)}
+  .h1{font-size:clamp(28px,4.6vw,48px);margin:.3em 0 .2em}
+  .sub{color:var(--muted)}
+  .slogan{color:var(--accent);font-weight:700}
+  .grid{display:grid;gap:16px}
+  @media(min-width:960px){.grid{grid-template-columns:280px 1fr}}
+  nav.toc{position:sticky;top:14px;align-self:start;border:1px solid var(--line);background:#0e1525;border-radius:12px;padding:12px}
+  nav.toc h3{margin:0 0 10px;font-size:14px;color:var(--muted)}
+  nav.toc a{display:block;padding:8px 10px;border-radius:8px;color:var(--muted)}
+  nav.toc a.active{background:#162036;color:var(--ink)}
+  section.card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:18px}
+  h2{margin:.2em 0 .4em;font-size:22px}
+  h3{margin:16px 0 6px}
+  .kpi{display:flex;gap:14px;flex-wrap:wrap}
+  .kpi .box{background:#0f1728;border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:150px}
+  .kpi .n{font-weight:900;font-size:22px}
+  .table{width:100%;border-collapse:collapse}
+  .table th,.table td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:12px;color:var(--muted);margin-right:6px}
+  .callout{border-left:4px solid var(--accent);background:#0f182b;padding:10px 12px;border-radius:10px}
+  .warn{border-left-color:var(--warn)}
+  footer{margin-top:24px;color:var(--muted);text-align:center}
+  .hr{height:1px;background:var(--line);margin:16px 0}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Volunteer Coin Project Foundation (VCPF)</div>
+      <span class="tag">501(c)(3) approved • “Transparency is our virtue.”</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn" href="http:///signup.html" target="_blank" rel="noopener">Signup & KYC</a>
+      <a class="btn alt" href="http:///login.html" target="_blank" rel="noopener">Volunteer Logger</a>
+    </div>
+  </header>
 
-  <h1>Volunteer Coin Project Foundation (VCPF)</h1>
-  <h2>Whitepaper – Updated August 2025</h2>
+  <div class="hero">
+    <div class="tag">Whitepaper • 2025 Edition</div>
+    <h1 class="h1">Proof-of-Impact</h1>
+    <p class="sub">A transparent system that turns verifiable service into tokenized rewards—paired with a disaster-resilient mesh network.</p>
+    <p class="slogan">Your Time. Your Impact. Your Reward.</p>
+  </div>
 
-  <section>
-    <h2>💖 Mission Statement</h2>
-    <p>The Volunteer Coin Project Foundation (VCPF) is a 501(c)(3) nonprofit using blockchain to reward real acts of kindness and verified volunteerism through Proof of Impact™ — a revolutionary token distribution model that honors human service.</p>
-  </section>
+  <div class="grid">
+    <!-- TOC -->
+    <nav class="toc" id="toc">
+      <h3>Contents</h3>
+      <a href="#exec">1. Executive Summary</a>
+      <a href="#mission">2. Mission & Principles</a>
+      <a href="#tokens">3. Tokens & Utilities</a>
+      <a href="#tokenomics">4. Tokenomics & Distribution</a>
+      <a href="#proof">5. Proof-of-Impact Workflow</a>
+      <a href="#tiers">6. KYC Tiers & Rewards</a>
+      <a href="#reserves">7. Reserves & Transparency</a>
+      <a href="#meshsync">8. MeshSync Beacons</a>
+      <a href="#roadmap">9. 2025 Roadmap</a>
+      <a href="#governance">10. Governance</a>
+      <a href="#risk">11. Risks & Disclaimers</a>
+      <a href="#contact">12. Contact</a>
+    </nav>
 
-  <section>
-    <h2>🔑 Core Values</h2>
-    <ul>
-      <li>Proof-of-Impact.</li>
-      <li>Transparency is our virtue.</li>
-      <li>Your Time. Your Impact. Your Reward.</li>
-      <li>Crypto for Good – Built on Trust, Backed by Action.</li>
-    </ul>
-  </section>
+    <!-- BODY -->
+    <main class="content">
+      <section id="exec" class="card">
+        <h2>1. Executive Summary</h2>
+        <p>Volunteer Coin Project Foundation (VCPF) operates a closed, structured rewards model—<strong>Proof-of-Impact</strong>—that verifies volunteer activity and delivers transparent on-chain rewards. Two tokens power the system:</p>
+        <ul>
+          <li><strong>LVBTN</strong> — a scarce, premium token earned monthly; used for staking, multipliers, raffles, and premium redemptions.</li>
+          <li><strong>SYNCM</strong> — the global utility token earned hourly for service; fuels redemptions, farming, and NGO programs.</li>
+        </ul>
+        <div class="kpi">
+          <div class="box"><div class="n">20,000,000</div><div>LVBTN total supply</div></div>
+          <div class="box"><div class="n">6,000,000,000</div><div>SYNCM minted (3B worldwide)</div></div>
+          <div class="box"><div class="n">30%</div><div>of funds → BTC/SOL/Gold reserves</div></div>
+        </div>
+      </section>
 
-  <section>
-    <h2>🌍 Proof of Impact™</h2>
-    <p>Proof of Impact™ is our consensus and value model where people earn tokens by serving others. Every hour logged is verified through wallet connection, geolocation, timestamp, photo uploads, and tiered identity (KYC). Sessions are recorded in Firebase and tokens are distributed nightly at 23:59 CST.</p>
-  </section>
+      <section id="mission" class="card">
+        <h2>2. Mission & Principles</h2>
+        <p>VCPF exists to accelerate local service and global resilience by aligning incentives with measurable good. Our principles:</p>
+        <p class="pill">Service-first</p><p class="pill">Transparency</p><p class="pill">Safety & Compliance</p><p class="pill">Faith-grounded purpose</p>
+        <div class="hr"></div>
+        <div class="callout">“A real-world tokenization of Love & Caring.”</div>
+      </section>
 
-  <section>
-    <h2>🪙 Token Ecosystem</h2>
-    <h3>LVBTN (LoveButton Token)</h3>
-    <ul>
-      <li>Total Supply: 120,000,000</li>
-      <li>Burned: 100M+</li>
-      <li>Locked: 15,000,000</li>
-      <li>Circulating: <500 tokens outside founder’s hands</li>
-      <li>Floor Price: $10</li>
-    </ul>
-    <h3>SYNCM (MeshSync Coin)</h3>
-    <ul>
-      <li>Total Supply: 2,000,000,000</li>
-      <li>Locked: 1,750,000,000 (500M to VCPF, 500M to MeshSync)</li>
-      <li>Emergency Reserve: 150M</li>
-      <li>Children’s Vault (10-year lock): 25M</li>
-      <li>Founder Wallet (unlocked): 15M</li>
-      <li>Unlocked Circulating: 60M max</li>
-      <li>Floor Price: $0.25</li>
-    </ul>
-  </section>
+      <section id="tokens" class="card">
+        <h2>3. Tokens & Utilities</h2>
+        <h3>LVBTN — LoveButton Token</h3>
+        <ul>
+          <li><strong>Nature:</strong> scarce/premium; earned through impact, not freely sold.</li>
+          <li><strong>Utility:</strong> stake to earn SYNCM, access multipliers, raffles, premium redemptions, and special events.</li>
+          <li><strong>Cadence:</strong> monthly drops by tier (1/2/3 LVBTN).</li>
+        </ul>
+        <h3>SYNCM — SyncMesh Token</h3>
+        <ul>
+          <li><strong>Nature:</strong> abundant utility; rewards volunteers hourly and powers NGO programs.</li>
+          <li><strong>Utility:</strong> redemptions, farming, multipliers, donations to causes.</li>
+          <li><strong>Cadence:</strong> earned hourly at tiered rates.</li>
+        </ul>
+      </section>
 
-  <section>
-    <h2>📜 501(c)(3) Nonprofit Status</h2>
-    <p>VCPF is officially recognized by the IRS as a tax-exempt public charity. This means all donations (crypto or cash) are tax-deductible, and all token distributions tied to service are legally compliant under our nonprofit mission.</p>
-  </section>
+      <section id="tokenomics" class="card">
+        <h2>4. Tokenomics & Distribution</h2>
+        <table class="table">
+          <thead><tr><th>Token</th><th>Supply</th><th>Distribution Highlights</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>LVBTN</strong></td>
+              <td>20,000,000 total</td>
+              <td>
+                Monthly drops only (1/2/3 per approved tier). Premium access via staking & multipliers.
+                Designed to be <em>earned</em> by service; scarcity sustains long-term value and engagement.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>SYNCM</strong></td>
+              <td>6,000,000,000 minted</td>
+              <td>
+                <strong>3B reserved for worldwide use</strong> (volunteers/NGOs/disaster relief). Remaining 3B for VCPF + MeshSync ecosystem (farming, incentives, infrastructure).
+                Hourly reward engine for Proof-of-Impact.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>Earning Mechanics</h3>
+        <ul>
+          <li>LVBTN: monthly 1 / 2 / 3 per Tier 1 / 2 / 3 (post-verification).</li>
+          <li>SYNCM: 5 / 10 / 15 / 20 / 25 per hour based on tier & active session logs.</li>
+        </ul>
+      </section>
 
-  <section>
-    <h2>📶 Volunteer Tiers</h2>
-    <ul>
-      <li>Tier 1 – Anonymous: Can earn SYNCM only</li>
-      <li>Tier 2 – KYC Verified: Unlocks LVBTN rewards, drawings, bonuses</li>
-      <li>Tier 3 – KYC + Service + References: 1.5× bonus rate, trusted access, and unlocks for emergency response roles</li>
-    </ul>
-  </section>
+      <section id="proof" class="card">
+        <h2>5. Proof-of-Impact Workflow</h2>
+        <ol>
+          <li><strong>KYC & Wallet</strong> → user verifies via Blockpass and connects a wallet.</li>
+          <li><strong>Start Session</strong> → before-photo, timestamp, geolocation.</li>
+          <li><strong>Stop Session</strong> → after-photo, timestamp, LVBTN/SYNCM calculation.</li>
+          <li><strong>Verification</strong> → admin or automated checks approve logs.</li>
+          <li><strong>Distribution</strong> → SYNCM hourly; LVBTN monthly (1st of month by tier).</li>
+        </ol>
+        <div class="callout">All logs stored in Firestore; photos in Firebase Storage; summaries visible in the volunteer dashboard.</div>
+      </section>
 
-  <section>
-    <h2>🔥 Burn Schedule</h2>
-    <p>LVBTN follows a biennial burn schedule to remove excess supply and maintain scarcity. Over 100 million have been burned to date. All burns are recorded on-chain and mirrored on GitHub.</p>
-  </section>
+      <section id="tiers" class="card">
+        <h2>6. KYC Tiers & Rewards</h2>
+        <table class="table">
+          <thead><tr><th>Tier</th><th>Requirements</th><th>Hourly SYNCM</th><th>Monthly LVBTN</th><th>Access</th></tr></thead>
+        <tbody>
+          <tr><td>Tier 1</td><td>Signup + basic checks</td><td>5</td><td>1</td><td>Games, basic redemptions</td></tr>
+          <tr><td>Tier 2</td><td>KYC + wallet</td><td>10–15</td><td>2</td><td>Volunteer dashboard, token earnings</td></tr>
+          <tr><td>Tier 3</td><td>KYC + service hours + references</td><td>20–25</td><td>3</td><td>Advanced roles, sensitive access, multipliers</td></tr>
+        </tbody>
+        </table>
+      </section>
 
-  <section>
-    <h2>🔒 BTC + Gold Backing</h2>
-    <ul>
-      <li>30% of all funds raised are converted to BTC/gold to support token value</li>
-      <li>Staking + interest farming mechanisms will auto-convert to BTC backing (not reburn)</li>
-      <li>All reserves are auditable by board or public ledger</li>
-    </ul>
-  </section>
+      <section id="reserves" class="card">
+        <h2>7. Reserves, Ledgers & Transparency</h2>
+        <ul>
+          <li><strong>30%</strong> of all incoming funds are allocated to reserves (BTC, SOL, and Gold) to support long-term stability.</li>
+          <li>Public pages list: burned tokens, reserve balances, and monthly distributions.</li>
+          <li>Donor and volunteer summaries published on a recurring schedule.</li>
+        </ul>
+        <div class="callout">Backed by hard assets + transparent reporting to reinforce trust in a closed, structured reward system.</div>
+      </section>
 
-  <section>
-    <h2>🧠 Sustainability Model</h2>
-    <p>We minimize market dependency by tying rewards to verifiable work, not speculation. Volunteers are encouraged to redeem tokens through VCPF’s network instead of dumping on external markets. A strategic treasury and slow liquidity model ensure value stability.</p>
-  </section>
+      <section id="meshsync" class="card">
+        <h2>8. MeshSync Beacons (Resilience Layer)</h2>
+        <p>MeshSync Corp builds a Bluetooth-mesh, offline-capable network to keep communications and Proof-of-Impact synchronization alive during outages.</p>
+        <ul>
+          <li>EMP-aware hardware, solar-friendly power, neighborhood-first deployment.</li>
+          <li>Beacon registry (IDs, locations, hosts, incentives) with proof photos.</li>
+          <li>Planned features: offline message relays, location map, heartbeat health.</li>
+        </ul>
+        <div class="callout">From backyard prototype → neighborhood → city: the first disaster-resilient foundation powered by its own mesh.</div>
+      </section>
 
-  <section>
-    <h2>🚀 Conclusion</h2>
-    <p>The Volunteer Coin Project Foundation is redefining what crypto was meant to be: a tool for service, transparency, and impact. With verified volunteer sessions, hard token floors, and a registered nonprofit structure, we’re ready to scale global good through real rewards.</p>
-  </section>
+      <section id="roadmap" class="card">
+        <h2>9. 2025 Roadmap (High Level)</h2>
+        <ul>
+          <li><strong>Q4 2025:</strong> Beacon pilot (home/neighborhood), public reserves page, monthly LVBTN drop automation.</li>
+          <li><strong>Q1 2026:</strong> Map dashboard, basic Bluetooth messaging, NGO partner onboarding (SYNCM worldwide tranche).</li>
+          <li><strong>Q2 2026:</strong> Host incentive automation, beacon heartbeat analytics, expanded city pilot (Muskogee → Tulsa).</li>
+        </ul>
+      </section>
 
+      <section id="governance" class="card">
+        <h2>10. Governance</h2>
+        <ul>
+          <li>VCPF Board oversight for treasury, reserves, distributions, and KYC policy.</li>
+          <li>Operational transparency: monthly reports; audited ledgers as feasible.</li>
+          <li>Conflict-of-interest and safeguarding policies for volunteer programs.</li>
+        </ul>
+      </section>
+
+      <section id="risk" class="card">
+        <h2>11. Risks & Disclaimers</h2>
+        <div class="callout warn">
+          Tokens are issued as rewards for verifiable service in a closed, structured system. They are not marketed as securities or investment products. No promises of profit. Market, regulatory, technical, and operational risks apply.
+        </div>
+        <ul>
+          <li><strong>Regulatory:</strong> compliance requirements may evolve; KYC/AML enforced.</li>
+          <li><strong>Operational:</strong> downtime, fraud attempts, or beacon failures may impact rewards.</li>
+          <li><strong>Market:</strong> external valuations (if any) can be volatile and outside VCPF control.</li>
+          <li><strong>Custody:</strong> users are responsible for wallet security and backups.</li>
+        </ul>
+      </section>
+
+      <section id="contact" class="card">
+        <h2>12. Contact</h2>
+        <p>Website: <a href="https://volunteercoinproject.org" target="_blank" rel="noopener">volunteercoinproject.org</a> • <a href="http:///tokenomics.html" target="_blank" rel="noopener">Tokenomics</a> • <a href="http:///signup.html" target="_blank" rel="noopener">Signup</a> • <a href="http:///login.html" target="_blank" rel="noopener">Logger</a></p>
+        <p class="sub">“Transparency is our virtue.” — LoveButton Token &amp; SyncMesh Token • 501(c)(3) VCPF</p>
+        <p><em>And remember… Jesus loves you.</em></p>
+      </section>
+    </main>
+  </div>
+
+  <footer>© 2025 Volunteer Coin Project Foundation — All rights reserved.</footer>
+</div>
+
+<script>
+  // Simple TOC highlighter
+  const links = [...document.querySelectorAll('#toc a')];
+  const secs  = links.map(a => document.querySelector(a.getAttribute('href')));
+  const io = new IntersectionObserver((ents)=>{
+    ents.forEach(e=>{
+      if(e.isIntersecting){
+        const id = '#'+e.target.id;
+        links.forEach(l=>l.classList.toggle('active', l.getAttribute('href')===id));
+      }
+    });
+  },{rootMargin:'-40% 0px -55% 0px',threshold:0});
+  secs.forEach(s=>s && io.observe(s));
+</script>
 </body>
 </html>
