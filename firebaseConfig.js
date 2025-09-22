@@ -8,7 +8,7 @@ firebase.initializeApp({ /* ... */ storageBucket: "lovebutton-heaven.appspot.com
 
 const appCheck = firebase.appCheck();
 // self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // (optional while testing)
-appCheck.activate('6LflFNArAAAAACERAJI4nDTJtsKgsfjWN8DTKNVe', true); // auto-refresh
+appCheck.activate('AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY', true); // auto-refresh
 
 firebase.auth().onAuthStateChanged(async (u) => {
   if (!u) await firebase.auth().signInAnonymously().catch(console.error);
