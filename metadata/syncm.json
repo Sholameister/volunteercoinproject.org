@@ -20,7 +20,7 @@
     "category": "image",
     "creators": [
       {
-        "address": "79rQdXmJr1CVHY8zrhG5T5SLoX7jp6HTjwro2AiQUdsa",
+        "address": "DkLig8zpEwKcXF1XmoZrdHfHykKwofNBtjGR1c7v3nfA",
         "share": 100
       }
     ]
@@ -31,5 +31,5 @@
       "facebook": "https://www.facebook.com/share/1ByBdXjLaW/?mibextid=wwXIfr",
      "linkedin": "https://www.linkedin.com/company/volunteercoinprojectfoundation",
   "organization": "https://volunteercoinproject.org",
-  "description": "Volunteercoinproject.org is the official steward of SYNCM until MeshSync transitions into active control."
+  "steward": "Volunteercoinproject.org is the official steward of SYNCM until MeshSync transitions into active control."
   }
