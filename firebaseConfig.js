@@ -7,16 +7,15 @@ import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js';
 
-// 2) CONFIG VALUES  ← copy these from Firebase Console exactly
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",      // ← verify in Console
+  apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
   projectId: "lovebutton-heaven",
-  // IMPORTANT: Storage bucket must be <project-id>.appspot.com
-  storageBucket: "lovebutton-heaven.appspot.com",
+  storageBucket: "lovebutton-heaven.firebasestorage.app",
   messagingSenderId: "1079456151721",
-  appId: "1:1079456151721:web:578b2a1c345d8aea8c11b8",
-  measurementId: "G-81JX007JP5"
+  appId: "1:1079456151721:web:15d2aa1171d977da8c11b8",
+  measurementId: "G-0261HYV08P"
 };
 
 // 3) Initialize Firebase once
