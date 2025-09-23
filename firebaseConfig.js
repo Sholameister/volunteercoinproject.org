@@ -7,6 +7,7 @@ import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js';
 import 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js';
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCLLrOx4jWJ1PN8xFFxNhIryx3NshADKVY",
   authDomain: "lovebutton-heaven.firebaseapp.com",
