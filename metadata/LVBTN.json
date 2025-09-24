@@ -1,35 +1,35 @@
 {
-  "name": "LoveButton Token",
-  "symbol": "LVBTN",
-  "description": "LVBTN is the premium reward token of the Volunteer Coin Project Foundation. It represents transparency, service, and lasting impact—empowering volunteers to earn, redeem, and give back through our Proof-of-Impact ecosystem.",
-  "image": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
-  "external_url": "https://volunteercoinproject.org",
+  "name": "DEPRECATED",
+  "symbol": "DEPRECATED",
+  "description": "DO NOT BUY",
+  "image": "DEPRECATED",
+  "external_url": "DO NOT BUY",
   "seller_fee_basis_points": 0,
   "attributes": [
-    { "trait_type": "Category", "value": "Utility Token" },
-    { "trait_type": "Ecosystem", "value": "Volunteer Coin Project Foundation" },
-    { "trait_type": "Blockchain", "value": "Solana" }
+    { "trait_type": "Category", "value": "0" },
+    { "trait_type": "Ecosystem", "value": "0" },
+    { "trait_type": "Blockchain", "value": "0" }
   ],
   "properties": {
-    "category": "image",
+    "category": "0",
     "files": [
       {
-        "uri": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
-        "type": "image/png"
+        "uri": "0",
+        "type": "0"
       }
     ],
     "creators": [
       {
-        "address": "Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s",
+        "address": "DEPRECATED",
         "share": 100
       }
     ]
   },
   "extensions": {
-    "website": "https://volunteercoinproject.org",
-    "twitter": "https://x.com/your_handle_here",
-    "telegram": "https://t.me/sholameister",
-    "facebook": "https://www.facebook.com/share/1ByBdXjLaW/?mibextid=wwXIfr",
-    "linkedin": "https://www.linkedin.com/company/volunteercoinprojectfoundation"
+    "website": "DEPRECATED",
+    "twitter": "0",
+    "telegram": "0",
+    "facebook": "0",
+    "linkedin": "0"
   }
 }
