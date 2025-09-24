@@ -16,7 +16,7 @@
       "tags": ["nc", "vcpf"],
       "extensions": {
         "website": "h",
-        "secondary_site": "https://meshsync.co",
+        "secondary_site": "co",
         "description": "Backbone "
       }
     },
