@@ -1,12 +1,37 @@
 {
   "name": "LoveButton-Genesis",
-  "symbol": "LVBTN",
-  "description": "Official LoveButton-Genesis. Fixed supply 22,222,222. Allocations: 15M VCPF Treasury, 5M Children’s Legacy, 2,222,222 Founder.",
+  "symbol": "LVBTN-G",
+  "description": "The Genesis edition of LoveButton Token — bringing Heaven to Earth through acts of love, service, and impact. Earn by Serving, Grow by Giving.",
   "image": "https://volunteercoinproject.org/assets/lvbtn-genesis.png",
   "external_url": "https://volunteercoinproject.org/genesis",
+  "mint": "GY6dgaCsUe33Sew2ZXgehZXT1sPNdaeS1UYur6YprPjW",
+  "attributes": [
+    {
+      "trait_type": "Project",
+      "value": "Volunteer Coin Project Foundation"
+    },
+    {
+      "trait_type": "Edition",
+      "value": "Genesis"
+    },
+    {
+      "trait_type": "Virtue",
+      "value": "Transparency is our virtue"
+    }
+  ],
   "properties": {
+    "files": [
+      {
+        "uri": "https://volunteercoinproject.org/assets/lvbtn-genesis.png",
+        "type": "image/png"
+      }
+    ],
     "category": "token",
-    "cap": "22222222",
-    "notice": "Mint authority will be revoked after distribution. This is the sole recognized LVBTN token by VCPF."
+    "creators": [
+      {
+        "address": "5z4Q4mjxJ5W3wMGVxXQbPX79a89XJr5BVEfXA7djqFSF",
+        "share": 100
+      }
+    ]
   }
 }
