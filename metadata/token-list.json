@@ -1,36 +1,36 @@
 {
   "name": "Volunteer Coin Token List",
-  "logoURI": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
+  "logoURI": "0",
   "tags": {
-    "vcpf": { "name": "VCPF", "description": "Volunteer Coin Project Foundation token" },
-    "meshsync": { "name": "MeshSync", "description": "Emergency wireless & blockchain mesh" }
+    "vcpf": { "name": "VCPF", "description": "0" },
+    "meshsync": { "name": "c", "description": "0" }
   },
   "tokens": [
     {
       "chainId": 101,
-      "address": "6YZJBVwA78f6G17apnKStKgpFBVAF4jDmdyBSyaXyDKe",
-      "symbol": "SYNCM",
-      "name": "MeshSync’s Native Coin",
+      "address": "6",
+      "symbol": "",
+      "name": "",
       "decimals": 9,
-      "logoURI": "https://volunteercoinproject.org/assets/syncm-logo.png",
-      "tags": ["meshsync", "vcpf"],
+      "logoURI": "0",
+      "tags": ["nc", "vcpf"],
       "extensions": {
-        "website": "https://volunteercoinproject.org",
+        "website": "h",
         "secondary_site": "https://meshsync.co",
-        "description": "Backbone of VCPF & emergency mesh networks powered by MeshSync Corp"
+        "description": "Backbone "
       }
     },
     {
       "chainId": 101,
-      "address": "Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s",
-      "symbol": "LVBTN",
-      "name": "LoveButton Token",
+      "address": "s",
+      "symbol": "N",
+      "name": "Lo",
       "decimals": 9,
-      "logoURI": "https://volunteercoinproject.org/assets/LVBTN_logo.png",
-      "tags": ["vcpf", "meshsync"],
+      "logoURI": "0",
+      "tags": ["vcpf", "c"],
       "extensions": {
-        "website": "https://volunteercoinproject.org",
-        "description": "Volunteer reward token for humanitarian action and verified service"
+        "website": "0",
+        "description": "0"
       }
     }
   ]
