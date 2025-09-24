@@ -1,0 +1,100 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>LoveButton Genesis — Official</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The official page for LoveButton Genesis (LVBTN) by the Volunteer Coin Project Foundation. Fixed supply 22,222,222.">
+  <meta property="og:title" content="LoveButton Genesis — Official">
+  <meta property="og:description" content="Official LVBTN Genesis mint & verification. Fixed supply 22,222,222.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://volunteercoinproject.org/images/proof-of-impact-gold.png">
+  <style>
+    :root{--bg:#0d0d0f;--card:#151517;--text:#f6e9c9;--muted:#c9b27d;--accent:#d9b972;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;}
+    .wrap{max-width:1000px;margin:0 auto;padding:24px;}
+    .hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+    .hero img{width:200px;aspect-ratio:1/1;object-fit:cover;border-radius:12px;box-shadow:0 0 40px rgba(217,185,114,.25)}
+    .hero h1{font-size:40px;margin:0}
+    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);font-weight:600;margin-bottom:8px;}
+    .card{background:var(--card);border:1px solid #222;box-shadow:0 10px 40px rgba(0,0,0,.35);border-radius:16px;padding:20px;margin:18px 0;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    code,kbd{background:#1d1d21;border:1px solid #2a2a2f;padding:2px 6px;border-radius:6px;color:#ffe6a7}
+    .mint{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, Monaco, monospace;word-break:break-all}
+    .btn{background:linear-gradient(180deg,#f7d58a,#d9b972);color:#201a0e;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+    a{color:#f7d58a}
+    .small{opacity:.8;font-size:.95rem}
+    footer{opacity:.7;font-size:.9rem;margin:24px 0}
+    ul{margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <img src="https://volunteercoinproject.org/images/proof-of-impact-gold.png" alt="Proof of Impact poster">
+      <div>
+        <span class="badge">Official LVBTN</span>
+        <h1>LoveButton Genesis</h1>
+        <p class="small">“Bringing Heaven to Earth” — a clean, fixed‑supply token aligned with Proof‑of‑Impact.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>✅ Official Mint Address</h2>
+      <p class="mint" id="mint">GY6dgaCsUe33Sew2ZXgehZXT1sPNdaeS1UYur6YprPjW</p>
+      <button class="btn" onclick="copyMint()">Copy mint</button>
+      <p class="small">Add this mint in Phantom: <em>Settings → Manage Tokens → Add custom token → paste the mint.</em></p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Supply</h3>
+        <ul>
+          <li>Total: <strong>22,222,222 LVBTN</strong></li>
+          <li>Treasury (VCPF): <strong>15,000,000</strong></li>
+          <li>Children’s Legacy: <strong>5,000,000</strong></li>
+          <li>Founder Allocation: <strong>2,222,222</strong></li>
+        </ul>
+        <p class="small">Mint authority will be revoked; freeze authority optional; metadata controlled by VCPF or locked immutable.</p>
+      </div>
+      <div class="card">
+        <h3>Verify You’re Looking at the Real Token</h3>
+        <ol>
+          <li>Check the mint above matches your wallet/explorer.</li>
+          <li>Confirm the page domain: <strong>volunteercoinproject.org</strong>.</li>
+          <li>We also publish a DNS TXT record: <code>lvbtn-genesis-mint=GY6dgaCsUe33Sew2ZXgehZXT1sPNdaeS1UYur6YprPjW</code></li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Swap From Legacy</h3>
+        <p>If you hold any earlier LVBTN mints, we honor a <strong>1:1 swap</strong> to Genesis.</p>
+        <ul>
+          <li>Send legacy LVBTN to the official swap wallet announced on our socials/site.</li>
+          <li>Provide your return address for Genesis.</li>
+          <li>We return LVBTN‑Genesis 1:1.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>About</h3>
+      <p>LoveButton Genesis powers the Volunteer Coin Project Foundation’s <strong>Proof‑of‑Impact</strong> system: earn by serving, grow by giving. It co‑exists alongside <strong>SYNCM</strong> and other ecosystem tools. This is the only official LVBTN token going forward.</p>
+    </div>
+
+    <footer>
+      © Volunteer Coin Project Foundation • contact: <a href="mailto:support@volunteercoinproject.org">support@volunteercoinproject.org</a>
+    </footer>
+  </div>
+
+<script>
+function copyMint(){
+  const el = document.getElementById('mint').textContent.trim();
+  navigator.clipboard.writeText(el).then(()=>{
+    alert('Mint copied to clipboard');
+  });
+}
+</script>
+</body>
+</html>
