@@ -1,10 +1,10 @@
-# LVBTN – LoveButton
+# LVBTN – Genesis
 
 **Symbol:** `LVBTN`  
- **Mint Address:** `Hgi2xp2XYiwaNDkuLLsAED3Wjyjidz1nxj7UGqfnTB8s`  
+ **Mint Address:** `GY6dgaCsUe33SewZ2XgehZXT1sPNdaeS1UYur6YprPjW`  
   **Network:** Solana
 
-LVBTN is a utility token built for transparency, protection, and community action. It supports nonprofit initiatives and volunteer-backed blockchain incentives under the Volunteer Coin Project Foundation.
+LVBTN-Genesis is a utility token built for transparency, protection, and community action. It supports nonprofit initiatives and volunteer-backed blockchain incentives under the Volunteer Coin Project Foundation.
 
 - Total Supply: 120,000,000
 - Decimals: 9
