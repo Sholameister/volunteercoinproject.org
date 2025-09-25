@@ -3,7 +3,7 @@
   "symbol": "LVBTN-G",
   "description": "The Genesis edition of LoveButton Token — bringing Heaven to Earth through acts of love, service, and impact. Earn by Serving, Grow by Giving.",
   "image": "https://volunteercoinproject.org/assets/lvbtn-genesis.png",
-  "external_url": "https://volunteercoinproject.org/genesis",
+  "external_url": "https://volunteercoinproject.org/lvbtn-genesis.html",
   "mint": "GY6dgaCsUe33Sew2ZXgehZXT1sPNdaeS1UYur6YprPjW",
   "attributes": [
     {
@@ -35,3 +35,4 @@
     ]
   }
 }
+
