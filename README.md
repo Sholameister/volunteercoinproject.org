@@ -9,6 +9,6 @@ LVBTN-Genesis is a utility token built for transparency, protection, and communi
 - Total Supply: 22,222,222
 - Decimals: 9
 - Status: Minted and locked
-- Distribution: [LVBTN Distribution](https://solscan.io)
+- Distribution: [LVBTN Distribution](https://solscan.io/GY6dgaCsUe33SewZ2XgehZXT1sPNdaeS1UYur6YprPjW)
 
 Visit: [https://volunteercoinproject.org](https://volunteercoinproject.org)
