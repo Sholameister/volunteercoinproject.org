@@ -13,10 +13,10 @@
 
   const dock = document.createElement('div'); dock.className = 'lb-dock';
   dock.innerHTML = `
-    <a href="http://./signup.html" rel="noopener" target="_blank" rel="noopener">KYC & Signup</a>
-    <a href="http://./login.html"  rel="noopener" target="_blank" rel="noopener">Login</a>
-    <a href="http://./dashboard.html" rel="noopener" target="_blank" rel="noopener">Dashboard</a>
-    <a href="http://./index.html"  rel="noopener" target="_blank" rel="noopener">Home</a>
+    <a href="./signup.html" rel="noopener" target="_blank" rel="noopener">KYC & Signup</a>
+    <a href="./login.html"  rel="noopener" target="_blank" rel="noopener">Login</a>
+    <a href="./dashboard.html" rel="noopener" target="_blank" rel="noopener">Dashboard</a>
+    <a href="./index.html"  rel="noopener" target="_blank" rel="noopener">Home</a>
   `;
   document.addEventListener('DOMContentLoaded', () => document.body.appendChild(dock));
 })();
