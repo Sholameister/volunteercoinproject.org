@@ -1,75 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<!-- Google Analytics -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-DF0HYPGY7M');
+  </script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Volunteer Dashboard</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fdf2f8;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      color: #e60073;
-    }
-    #sessionList {
-      margin-top: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .sessionCard {
-      background: #fff;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-    .sessionCard img {
-      max-width: 100%;
-      margin-top: 10px;
-      border-radius: 6px;
-    }
-    #totalTokens {
-      font-size: 20px;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #e60073;
-    }
+    body { font-family: Arial, sans-serif; background-color: #fdf2f8; padding: 20px; text-align: center; }
+    h1 { color: #e60073; }
+    #sessionList { margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .sessionCard { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 0 8px rgba(0,0,0,0.1); text-align: left; }
+    .sessionCard img { max-width: 100%; margin-top: 10px; border-radius: 6px; }
+    #totalTokens { font-size: 20px; margin-top: 15px; font-weight: bold; color: #e60073; }
+    .nav-button{display:inline-block;margin:8px;padding:10px 14px;border-radius:6px;background:#f3f4f6;text-decoration:none;color:#111827;font-size:14px}
   </style>
 </head>
 <body>
   <h1>📋 My Volunteer Dashboard</h1>
-  <p id="walletDisplay">Wallet: Not connected</p>
 
-<button id="connectDashboardWalletBtn">Connect Wallet</button>
+  <p id="walletDisplay">Wallet: Not connected</p>
+  <button id="connectDashboardWalletBtn">Connect Wallet</button>
+
   <div id="totalTokens">Total LVBTN Earned: Loading...</div>
   <div id="usdTotalValue">Total USD Value: Loading...</div>
   <div id="sessionList">Total Hours Volunteered: Loading...</div>
-<button onclick="window.location.href='./index.html'">Go to Home</button>
-    
- </script>
+
+  <a href="http://./index.html"  class="nav-button" rel="noopener" target="_blank" rel="noopener">Go to Home</a>
+  <a href="http://./signup.html" class="nav-button" rel="noopener" target="_blank" rel="noopener">KYC & Signup</a>
+  <a href="http://./login.html"  class="nav-button" rel="noopener" target="_blank" rel="noopener">Go to Login</a>
+
   <!-- Debug token (from Firebase Console → Manage debug tokens) -->
-<script>
-  window.FIREBASE_APPCHECK_DEBUG_TOKEN = "C749BD1E-D37F-4214-9243-D774917F28CF";
-</script>
-  
+  <script>window.FIREBASE_APPCHECK_DEBUG_TOKEN = "C749BD1E-D37F-4214-9243-D774917F28CF";</script>
+
+  <!-- Shared libs / modules -->
+  <script src="https://unpkg.com/@solana/web3.js@1.95.3/lib/index.iife.min.js"></script>
   <script type="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./connectWallet.js"></script>
   <script type="module" src="./dashboardLogic.js"></script>
-  <a href="./signup.html" class="nav-button" target="_blank" rel="noopener">KYC & Signup</a>
-   <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
-  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
 </body>
 </html>
