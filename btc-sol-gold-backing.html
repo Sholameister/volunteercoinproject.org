@@ -142,7 +142,52 @@
   new Chart(document.getElementById('goldChart'), config(goldPct, 'Gold Backing', '#ffd700'));
 })();
 </script>
-  
+  <script type="module">
+  import { RESERVES } from './backingConfig.js';
+
+  const $ = (id) => document.getElementById(id);
+
+  async function price() {
+    const qs = 'bitcoin,solana,gold';
+    const r  = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${qs}&vs_currencies=usd`, {cache:'no-store'});
+    const j  = await r.json();
+    return {
+      btc: j?.bitcoin?.usd ?? 0,
+      sol: j?.solana?.usd  ?? 0,
+      gold: j?.gold?.usd   ?? 0    // if gold not available on your plan, set manually
+    };
+  }
+
+  function fmt(n, d=2){ return Number(n).toLocaleString(undefined,{maximumFractionDigits:d}); }
+
+  async function render() {
+    const p = await price();
+
+    // --- BTC ---
+    const btcUsd = RESERVES.BTC_HELD * p.btc;
+    $('btcPrice').textContent = `$${fmt(p.btc,0)}`;
+    $('btcHeld').textContent  = `${fmt(RESERVES.BTC_HELD,8)} BTC`;
+    $('btcUsd').textContent   = `$${fmt(btcUsd,2)}`;
+    $('btcTarget').textContent= `$${fmt(RESERVES.BTC_TARGET_USD,0)}`;
+
+    // --- SOL ---
+    const solUsd = RESERVES.SOL_HELD * p.sol;
+    $('solPrice').textContent = `$${fmt(p.sol,2)}`;
+    $('solHeld').textContent  = `${fmt(RESERVES.SOL_HELD,2)} SOL`;
+    $('solUsd').textContent   = `$${fmt(solUsd,2)}`;
+    $('solTarget').textContent= `$${fmt(RESERVES.SOL_TARGET_USD,0)}`;
+
+    // --- GOLD (optional) ---
+    const goldUsd = RESERVES.GOLD_OZ * p.gold;
+    $('goldPrice')?.textContent = p.gold ? `$${fmt(p.gold,0)}/oz` : '—';
+    $('goldHeld')?.textContent  = `${fmt(RESERVES.GOLD_OZ,2)} oz`;
+    $('goldUsd')?.textContent   = `$${fmt(goldUsd,2)}`;
+    $('goldTarget')?.textContent= `$${fmt(RESERVES.GOLD_TARGET_USD,0)}`;
+  }
+
+  render();
+  setInterval(render, 60000);
+</script>
 </body>
   <a href="./signup.html" class="nav-button" target="_blank" rel="noopener">KYC & Signup</a>
    <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
