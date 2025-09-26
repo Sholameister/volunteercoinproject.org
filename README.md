@@ -6,7 +6,7 @@
 
 LVBTN-Genesis is a utility token built for transparency, protection, and community action. It supports nonprofit initiatives and volunteer-backed blockchain incentives under the Volunteer Coin Project Foundation.
 
-- Total Supply: 120,000,000
+- Total Supply: 22,222,222
 - Decimals: 9
 - Status: Minted and locked
 - Distribution: [LVBTN Distribution](https://solscan.io)
