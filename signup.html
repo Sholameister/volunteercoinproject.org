@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Analytics -->
+  <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-DF0HYPGY7M', { send_page_view: true });
   </script>
 
   <meta charset="UTF-8" />
@@ -27,7 +28,6 @@
 
     .nav-button { display:inline-block; margin:8px; padding:10px 14px; border-radius:6px; background:#f3f4f6; text-decoration:none; color:#111827; font-size:14px; }
 
-    /* Optional wallet info box (install only; NOT required) */
     #walletSuggest { margin:18px auto; padding:14px; max-width:520px; background:#fff; border:1px solid #eee; border-radius:10px; }
     .wallet-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
     .wallet-buttons a { border-radius:6px; padding:12px 16px; font-weight:700; }
@@ -45,7 +45,10 @@
     To unlock volunteer rewards, complete the KYC below. You can link a wallet later inside the volunteer logger.
   </p>
 
-  
+  <!-- Live KYC/Tier readout (these IDs were missing before) -->
+  <div id="kycStatus">KYC: —</div>
+  <div id="tierInfo" class="tier-badge tier-1">Tier: 1</div>
+
   <!-- Blockpass -->
   <div id="kycBlock" style="margin-top:12px;">
     <a id="startKycLink"
@@ -55,90 +58,121 @@
     </a>
   </div>
 
-  <!-- Optional: suggest wallets for later (not required at signup) -->
+  <!-- Wallet suggestions (optional) -->
   <div id="walletSuggest">
-    <div style="font-weight:700; margin-bottom:8px;">You will need Solana wallet before Volunteering.</div>
+    <div style="font-weight:700; margin-bottom:8px;">You will need a Solana wallet before volunteering.</div>
     <div style="font-size:14px; color:#444; margin-bottom:10px;">
       Install a wallet now so you’re ready to receive rewards after KYC.
     </div>
     <div class="wallet-buttons">
-      <a class="btn btn-phantom" href="https://phantom.app/download" target="_blank" rel="noopener">Get Phantom</a>
-      <a class="btn btn-solflare" href="https://solflare.com/download" target="_blank" rel="noopener">Get Solflare</a>
+      <a id="ctaPhantom" class="btn btn-phantom" href="https://phantom.app/download" target="_blank" rel="noopener">Get Phantom</a>
+      <a id="ctaSolflare" class="btn btn-solflare" href="https://solflare.com/download" target="_blank" rel="noopener">Get Solflare</a>
       <a id="copyUrlBtn" class="btn btn-outline" href="javascript:void(0)">Copy this page URL</a>
     </div>
     <div style="font-size:12px; color:#666; margin-top:8px;">
-      Tip: On iPhone, you can open our site inside your wallet app’s browser when you’re ready to log volunteer hours.
+      Tip: On iPhone, open our site inside your wallet app’s browser when you’re ready to log volunteer hours.
     </div>
   </div>
 
   <!-- Rewards blurb -->
   <ul>
     <li>💗 SYNCM Rewards (example):</li>
-    <li>• Tier 1 – 5 SYNCM/hr (basic signup)</li>
-    <li>• Tier 2 – 10 SYNCM/hr (KYC + driver)</li>
-    <li>• Tier 3 – 15 SYNCM/hr (KYC + 2 refs + 25+ hours)</li>
-    <li>* Tier 4 - 20 SYNCM/hr (requirements coming soon!)</li>
-    <li>* Tier 5 - 25 SYNCM/hr (requirements coming soon!)</li>
+    <li>• Tier 1 – 5 SYNCM/hr (Mesh Signup)</li>
+    <li>• Tier 2 – 10 SYNCM/hr (Beacon holder)</li>
+    <li>• Tier 3 – 15 SYNCM/hr (KYC approved)</li>
+    <li>* Tier 4 – 20 SYNCM/hr (2 references + 25+ volunteer hours)</li>
+    <li>* Tier 5 – 25 SYNCM/hr (CPR/BLS certification)</li>
   </ul>
 
-  <!-- Debug token (from Firebase Console → Manage debug tokens) -->
-<script>
-  window.FIREBASE_APPCHECK_DEBUG_TOKEN = "C749BD1E-D37F-4214-9243-D774917F28CF";
-</script>
-  <!-- Modules (no wallet scripts on signup) -->
+  <!-- Firebase App Check debug (leave if you use it) -->
+  <script>
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = "C749BD1E-D37F-4214-9243-D774917F28CF";
+  </script>
+
+  <!-- 🔧 Your compat project modules -->
   <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./kycUtils.js"></script>
-  
-<a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
+
+  <!-- Simple nav -->
+  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
   <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
   <a href="./501c3-approved.html" class="nav-button" target="_blank" rel="noopener">501(c)(3) Approval</a>
-  <!-- Copy URL helper -->
+
+  <!-- Copy URL helper + GA events + compat-only KYC state hook -->
   <script>
-    (function(){
-      document.addEventListener('DOMContentLoaded', () => {
-        const copyBtn = document.getElementById('copyUrlBtn');
-        copyBtn?.addEventListener('click', () => {
-          const url = window.location.href;
-          navigator.clipboard?.writeText(url).then(()=>{
-            copyBtn.textContent='Copied ✓';
-            setTimeout(()=> copyBtn.textContent='Copy this page URL', 1500);
-          });
+    // GA helper
+    function sendGA(name, params){ try{ window.gtag && gtag('event', name, params||{});}catch{} }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // fire view event for funneling
+      sendGA('view_signup');
+
+      const copyBtn = document.getElementById('copyUrlBtn');
+      copyBtn?.addEventListener('click', () => {
+        const url = window.location.href;
+        navigator.clipboard?.writeText(url).then(()=>{
+          copyBtn.textContent='Copied ✓';
+          setTimeout(()=> copyBtn.textContent='Copy this page URL', 1500);
         });
       });
-    })();
-  </script>
- 
-  <!-- Optional: simple KYC state hook (remove if kycUtils already handles it) -->
-  <script type="module">
-    import { db } from './firebaseConfig.js';
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-    const auth = getAuth();
-    const kycStatusEl = document.getElementById('kycStatus');
-    const tierInfoEl = document.getElementById('tierInfo');
+      // GA on KYC start
+      const startBtn = document.getElementById('startKycBtn');
+      startBtn?.addEventListener('click', () => {
+        sendGA('kyc_start');
+      });
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) { kycStatusEl.textContent = 'KYC: Sign in first (email/password)'; return; }
-      const ref = doc(db, "users", user.uid);
-      const snap = await getDoc(ref);
+      // GA on wallet CTAs
+      document.getElementById('ctaPhantom')?.addEventListener('click', ()=> sendGA('wallet_cta_click', {brand:'Phantom'}));
+      document.getElementById('ctaSolflare')?.addEventListener('click', ()=> sendGA('wallet_cta_click', {brand:'Solflare'}));
+    });
 
-      if (!snap.exists()) {
-        await setDoc(ref, { kycTier: 1, walletAddress: null, updatedAt: serverTimestamp() }, { merge: true });
-        tierInfoEl.className = 'tier-badge tier-1';
-        tierInfoEl.textContent = 'Tier: 1';
-        kycStatusEl.textContent = 'KYC: ⏳ Pending';
-        return;
+    // ---- Optional KYC state hook (compat-only to match your project) ----
+    (function(){
+      const kycStatusEl = document.getElementById('kycStatus');
+      const tierInfoEl  = document.getElementById('tierInfo');
+
+      // Use compat globals from firebaseConfig.js
+      function setTier(t){
+        if (t >= 3){ tierInfoEl.className='tier-badge tier-3'; tierInfoEl.textContent='Tier: 3'; }
+        else if (t >= 2){ tierInfoEl.className='tier-badge tier-2'; tierInfoEl.textContent='Tier: 2'; }
+        else { tierInfoEl.className='tier-badge tier-1'; tierInfoEl.textContent='Tier: 1'; }
       }
 
-      const data = snap.data() || {};
-      const tier = Number(data.kycTier || 1);
-      kycStatusEl.textContent = tier >= 2 ? 'KYC: ✅ Verified';
+      // Wait until compat SDK is loaded
+      const waitForFirebase = setInterval(() => {
+        if (window.firebase && firebase.auth && firebase.firestore) {
+          clearInterval(waitForFirebase);
 
-      if (tier >= 3) { tierInfoEl.className = 'tier-badge tier-3'; tierInfoEl.textContent = 'Tier: 3'; }
-      else if (tier >= 2) { tierInfoEl.className = 'tier-badge tier-2'; tierInfoEl.textContent = 'Tier: 2'; }
-      else { tierInfoEl.className = 'tier-badge tier-1'; tierInfoEl.textContent = 'Tier: 1'; }
-    });
+          firebase.auth().onAuthStateChanged(async (user)=>{
+            if (!user) {
+              kycStatusEl.textContent = 'KYC: Sign in first (email/password)';
+              setTier(1);
+              return;
+            }
+
+            try{
+              const ref = firebase.firestore().collection('users').doc(user.uid);
+              const snap = await ref.get();
+              if (!snap.exists){
+                await ref.set({ kycTier:1, walletAddress:null, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
+                kycStatusEl.textContent = 'KYC: ⏳ Pending';
+                setTier(1);
+                return;
+              }
+              const data = snap.data() || {};
+              const tier = Number(data.kycTier || 1);
+              kycStatusEl.textContent = (tier >= 2) ? 'KYC: ✅ Verified' : 'KYC: ⏳ Pending';
+              setTier(tier);
+              if (tier >= 2) sendGA('kyc_verified', { tier });
+            }catch(e){
+              console.error(e);
+              kycStatusEl.textContent = 'KYC: (error loading status)';
+            }
+          });
+        }
+      }, 100);
+    })();
   </script>
 </body>
 </html>
