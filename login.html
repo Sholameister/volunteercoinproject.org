@@ -7,8 +7,17 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    
     gtag('config', 'G-DF0HYPGY7M');
-  </script>
+    send_page_view: true
+  });
+
+  // Optional: mark volunteering_complete as conversion
+  gtag('event', 'conversion', {
+    'send_to': 'G-DF0HYPGY7M',
+    'event_name': 'volunteering_complete'
+  });
+</script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
