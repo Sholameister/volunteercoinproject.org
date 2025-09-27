@@ -1,195 +1,302 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>LVBTN & SYNCM Backing Progress</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backing Progress — BTC • SOL • Gold</title>
+
+  <!-- GA4 (sitewide) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-DF0HYPGY7M"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date()); gtag('config', 'G-DF0HYPGY7M');
+    gtag('js', new Date());
+    gtag('config', 'G-DF0HYPGY7M', { send_page_view: true });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    .wrap { max-width: 960px; margin: 30px auto; padding: 0 16px; }
-    h1 { text-align:center; margin-bottom: 24px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
-    .card { border:1px solid #eee; border-radius:12px; padding:18px; }
-    .chart-container { width:100%; max-width:320px; margin: 0 auto; }
-    .row { display:flex; justify-content:space-between; margin-top:10px; font-size:14px; }
-    .mini { color:#666; font-size:12px; margin-top:6px; }
-    code { background:#f6f8fa; padding:2px 4px; border-radius:4px; }
+    :root{
+      --bg:#0d0f13; --card:#151922; --muted:#8a93a6; --text:#e8eefc;
+      --accent:#9b87f5; --ok:#2ecc71; --warn:#f39c12; --danger:#e74c3c;
+      --ring:#26324a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1b2030 0%, #0d0f13 55%, #0d0f13 100%);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:38px auto;padding:0 18px}
+    h1{
+      font-size: clamp(22px, 3.2vw, 36px);
+      text-align:center; margin:0 0 18px; letter-spacing:.3px
+    }
+    .subtitle{ text-align:center; color:var(--muted); margin-bottom:26px; }
+
+    .summary{
+      display:grid; gap:14px; grid-template-columns:repeat(3,1fr);
+      margin: 10px 0 22px;
+    }
+    .pill{
+      background:linear-gradient(180deg,#1a2030,#121620);
+      border:1px solid #1f2a3f; border-radius:12px; padding:12px 14px;
+      display:flex; align-items:center; gap:10px; color:#cfd7ea;
+    }
+    .pill b{ color:#fff; }
+
+    .grid{
+      display:grid; gap:18px;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+    @media (max-width:980px){ .grid{grid-template-columns:1fr;}.summary{grid-template-columns:1fr;} }
+
+    .card{
+      background:linear-gradient(180deg,#161b26,#0f141e);
+      border:1px solid #212b44; border-radius:16px; padding:18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .card h2{
+      display:flex; justify-content:space-between; align-items:center;
+      margin:0 0 12px; font-size:20px; letter-spacing:.2px;
+    }
+    .ticker{ color:#aeb7cc; font-weight:600; font-size:14px; }
+    .kv{ display:grid; grid-template-columns:1fr auto; gap:8px 10px; margin:10px 0 8px; }
+    .kv div{ color:#aeb7cc; }
+    .kv b{ color:#fff; }
+
+    .bar{
+      position:relative; height:10px; border-radius:8px; background:#1b2436; overflow:hidden; margin:12px 0 4px;
+      outline:1px solid #1f2a3f;
+    }
+    .bar > span{
+      position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,#5d6df6,#9b87f5);
+    }
+    .fine{ color:var(--muted); font-size:12.5px; }
+    .row{ display:flex; gap:10px; align-items:center; justify-content:space-between; }
+
+    .toolbar{
+      display:flex; justify-content:space-between; align-items:center;
+      margin: 12px 0 22px;
+    }
+    .btn{
+      background:linear-gradient(180deg,#2a3350,#1f2740);
+      color:#eaf0ff; font-weight:600; border:1px solid #2d395b;
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+    }
+    .btn:hover{ filter:brightness(1.06) }
+    dialog{
+      border:1px solid #2a3555; border-radius:14px; background:#111624; color:#e7edff; width:min(520px,92%);
+      padding:16px;
+    }
+    dialog::backdrop{ background:rgba(0,0,0,.55) }
+    .cfg{ display:grid; gap:12px; }
+    .cfg label{ display:grid; gap:6px; font-size:14px; color:#cbd4ea; }
+    .cfg input{
+      padding:10px 12px; border-radius:10px; border:1px solid #243154; background:#0f1420; color:#fff;
+    }
+    .right{ text-align:right }
+    a.minlink{ color:#a7b3d9; text-decoration:none; border-bottom:1px dotted #3a4a77 }
+    a.minlink:hover{ color:#cfe1ff }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Backing Progress — BTC • SOL • Gold</h1>
+  <div class="wrap">
+    <h1>Backing Progress — BTC • SOL • Gold</h1>
+    <div class="subtitle">Live prices + editable reserves. Targets are $50,000 each.</div>
 
-  <!-- Update these holdings & targets -->
-  <script>
-    // ======= EDIT THESE =======
-    const holdings = {
-      btc: 0.00181,        // your current BTC amount
-      sol: 0.75002,        // your current SOL amount
-      goldOz: 0.00      // your current GOLD (troy ounces)
-    };
-    const targets = {
-      btcUsdTarget: 50000,   // target USD value you want in BTC
-      solUsdTarget: 50000,   // target USD value you want in SOL
-      goldUsdTarget: 50000   // target USD value you want in Gold
-    };
-    // ==========================
-  </script>
-
-  <div class="grid">
-    <div class="card">
-      <h3>Bitcoin Backing</h3>
-      <div class="chart-container"><canvas id="btcChart"></canvas></div>
-      <div class="row"><span>BTC Price</span><span id="btcPrice">$–</span></div>
-      <div class="row"><span>BTC Held</span><span id="btcHeld">– BTC</span></div>
-      <div class="row"><span>USD Value</span><span id="btcValue">$–</span></div>
-      <div class="row"><span>Target</span><span id="btcTarget">$–</span></div>
-      <div class="mini">Data from CoinGecko</div>
+    <div class="toolbar">
+      <div class="fine">Last updated: <span id="lastUpdated">—</span></div>
+      <button class="btn" id="editBtn">Edit Holdings</button>
     </div>
 
-    <div class="card">
-      <h3>Solana Backing</h3>
-      <div class="chart-container"><canvas id="solChart"></canvas></div>
-      <div class="row"><span>SOL Price</span><span id="solPrice">$–</span></div>
-      <div class="row"><span>SOL Held</span><span id="solHeld">– SOL</span></div>
-      <div class="row"><span>USD Value</span><span id="solValue">$–</span></div>
-      <div class="row"><span>Target</span><span id="solTarget">$–</span></div>
-      <div class="mini">Data from CoinGecko</div>
+    <!-- high-level summary -->
+    <div class="summary">
+      <div class="pill">💰 <div>Total Reserves</div><b id="sumUsd">$0</b></div>
+      <div class="pill">🎯 <div>Overall Target</div><b>$150,000</b></div>
+      <div class="pill">📈 <div>Progress</div><b id="sumPct">0%</b></div>
     </div>
 
-    <div class="card">
-      <h3>Gold Backing</h3>
-      <div class="chart-container"><canvas id="goldChart"></canvas></div>
-      <div class="row"><span>Gold (oz) Price*</span><span id="goldPrice">$–</span></div>
-      <div class="row"><span>Ounces Held</span><span id="goldHeld">– oz</span></div>
-      <div class="row"><span>USD Value</span><span id="goldValue">$–</span></div>
-      <div class="row"><span>Target</span><span id="goldTarget">$–</span></div>
-      <div class="mini">*Using PAXG USD price as a proxy for spot gold.</div>
+    <!-- cards -->
+    <div class="grid">
+      <!-- BTC -->
+      <div class="card" id="btcCard">
+        <h2><span>Bitcoin Backing</span> <span class="ticker">BTC</span></h2>
+        <div class="kv">
+          <div>BTC Price</div><b id="btcPrice">$—</b>
+          <div>BTC Held</div><b id="btcHeld">0 BTC</b>
+          <div>USD Value</div><b id="btcUsd">$—</b>
+          <div>Target</div><b>$50,000</b>
+        </div>
+        <div class="bar"><span id="btcBar"></span></div>
+        <div class="fine">Data from CoinGecko • <a class="minlink" href="#" id="resetHoldings">reset holdings</a></div>
+      </div>
+
+      <!-- SOL -->
+      <div class="card" id="solCard">
+        <h2><span>Solana Backing</span> <span class="ticker">SOL</span></h2>
+        <div class="kv">
+          <div>SOL Price</div><b id="solPrice">$—</b>
+          <div>SOL Held</div><b id="solHeld">0 SOL</b>
+          <div>USD Value</div><b id="solUsd">$—</b>
+          <div>Target</div><b>$50,000</b>
+        </div>
+        <div class="bar"><span id="solBar"></span></div>
+        <div class="fine">Data from CoinGecko</div>
+      </div>
+
+      <!-- Gold -->
+      <div class="card" id="goldCard">
+        <h2><span>Gold Backing</span> <span class="ticker">GOLD</span></h2>
+        <div class="kv">
+          <div>Gold (oz) Price*</div><b id="goldPrice">$—</b>
+          <div>Ounces Held</div><b id="goldOz">0 oz</b>
+          <div>USD Value</div><b id="goldUsd">$—</b>
+          <div>Target</div><b>$50,000</b>
+        </div>
+        <div class="bar"><span id="goldBar"></span></div>
+        <div class="fine">*Using PAXG USD price as a proxy for spot gold.</div>
+      </div>
     </div>
+
+    <p class="fine right" style="margin-top:22px;">Need a ledger view later? I can add a table of transactions + links to Phantom/Jupiter.</p>
   </div>
-</div>
 
-<script>
-(async function(){
-  // Fetch BTC, SOL, and PAXG (gold proxy) prices
-  const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,solana,pax-gold&vs_currencies=usd';
-  let prices = { bitcoin:{usd:0}, solana:{usd:0}, ['pax-gold']:{usd:0} };
-  try {
-    const resp = await fetch(url);
-    prices = await resp.json();
-  } catch (e) { console.error('Price fetch failed', e); }
+  <!-- Edit dialog -->
+  <dialog id="editDialog">
+    <form method="dialog" class="cfg">
+      <h3 style="margin:4px 0 6px">Update Holdings</h3>
+      <label>BTC Held
+        <input id="i_btc" type="number" min="0" step="0.00000001" />
+      </label>
+      <label>SOL Held
+        <input id="i_sol" type="number" min="0" step="0.00000001" />
+      </label>
+      <label>Gold (oz) Held
+        <input id="i_gold" type="number" min="0" step="0.0001" />
+      </label>
+      <div class="right" style="margin-top:6px">
+        <button class="btn" value="cancel" style="background:#26304a">Cancel</button>
+        <button class="btn" id="saveHoldings" value="default">Save</button>
+      </div>
+    </form>
+  </dialog>
 
-  const btcPrice = prices.bitcoin?.usd ?? 0;
-  const solPrice = prices.solana?.usd ?? 0;
-  const goldPrice = prices['pax-gold']?.usd ?? 0; // ~ per ounce
+  <script>
+    // ---- Config / storage ----
+    const TARGET_EACH = 50000;
+    const LS_KEY = 'vcpf_reserve_holdings_v1';
 
-  // Compute USD values
-  const btcUsd = holdings.btc * btcPrice;
-  const solUsd = holdings.sol * solPrice;
-  const goldUsd = holdings.goldOz * goldPrice;
-
-  // Percent toward targets (cap at 100)
-  const pct = (v, t) => Math.max(0, Math.min(100, t ? (v / t) * 100 : 0));
-
-  const btcPct = pct(btcUsd, targets.btcUsdTarget);
-  const solPct = pct(solUsd, targets.solUsdTarget);
-  const goldPct = pct(goldUsd, targets.goldUsdTarget);
-
-  // Update text
-  const fmt = n => n.toLocaleString(undefined,{maximumFractionDigits:2});
-  document.getElementById('btcPrice').textContent = `$${fmt(btcPrice)}`;
-  document.getElementById('btcHeld').textContent  = `${fmt(holdings.btc)} BTC`;
-  document.getElementById('btcValue').textContent = `$${fmt(btcUsd)}`;
-  document.getElementById('btcTarget').textContent= `$${fmt(targets.btcUsdTarget)}`;
-
-  document.getElementById('solPrice').textContent = `$${fmt(solPrice)}`;
-  document.getElementById('solHeld').textContent  = `${fmt(holdings.sol)} SOL`;
-  document.getElementById('solValue').textContent = `$${fmt(solUsd)}`;
-  document.getElementById('solTarget').textContent= `$${fmt(targets.solUsdTarget)}`;
-
-  document.getElementById('goldPrice').textContent= `$${fmt(goldPrice)}`;
-  document.getElementById('goldHeld').textContent = `${fmt(holdings.goldOz)} oz`;
-  document.getElementById('goldValue').textContent= `$${fmt(goldUsd)}`;
-  document.getElementById('goldTarget').textContent= `$${fmt(targets.goldUsdTarget)}`;
-
-  // Chart config helper
-  const config = (percent, label, color) => ({
-    type: 'doughnut',
-    data: {
-      labels: [label, 'Remaining'],
-      datasets: [{
-        data: [percent, 100 - percent],
-        backgroundColor: [color, '#eeeeee'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      cutout: '70%',
-      plugins: { tooltip:{enabled:true}, legend:{display:true} },
-      animation: { duration: 600 }
-    }
-  });
-
-  // Draw charts
-  new Chart(document.getElementById('btcChart'),  config(btcPct,  'BTC Backing',  '#f7931a'));
-  new Chart(document.getElementById('solChart'),  config(solPct,  'SOL Backing',  '#00d18f'));
-  new Chart(document.getElementById('goldChart'), config(goldPct, 'Gold Backing', '#ffd700'));
-})();
-</script>
-  <script type="module">
-  import { RESERVES } from './backingConfig.js';
-
-  const $ = (id) => document.getElementById(id);
-
-  async function price() {
-    const qs = 'bitcoin,solana,gold';
-    const r  = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${qs}&vs_currencies=usd`, {cache:'no-store'});
-    const j  = await r.json();
-    return {
-      btc: j?.bitcoin?.usd ?? 0,
-      sol: j?.solana?.usd  ?? 0,
-      gold: j?.gold?.usd   ?? 0    // if gold not available on your plan, set manually
+    // default holdings (editable). You can change these defaults.
+    const DEFAULT_HOLDINGS = {
+      btc: 0.00094,     // you mentioned ~0.00094 BTC earlier
+      sol: 0.75,        // example — adjust as needed
+      gold_oz: 0
     };
-  }
 
-  function fmt(n, d=2){ return Number(n).toLocaleString(undefined,{maximumFractionDigits:d}); }
+    function readHoldings(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) return {...DEFAULT_HOLDINGS};
+        const obj = JSON.parse(raw);
+        return {...DEFAULT_HOLDINGS, ...obj};
+      }catch{ return {...DEFAULT_HOLDINGS}; }
+    }
+    function writeHoldings(h){ localStorage.setItem(LS_KEY, JSON.stringify(h)); }
 
-  async function render() {
-    const p = await price();
+    // ---- DOM refs ----
+    const $ = (id) => document.getElementById(id);
+    const el = {
+      btcPrice: $('btcPrice'), btcHeld: $('btcHeld'), btcUsd: $('btcUsd'), btcBar: $('btcBar'),
+      solPrice: $('solPrice'), solHeld: $('solHeld'), solUsd: $('solUsd'), solBar: $('solBar'),
+      goldPrice: $('goldPrice'), goldOz: $('goldOz'), goldUsd: $('goldUsd'), goldBar: $('goldBar'),
+      sumUsd: $('sumUsd'), sumPct: $('sumPct'), lastUpdated: $('lastUpdated'),
+      editBtn: $('editBtn'), dlg: $('editDialog'),
+      i_btc: $('i_btc'), i_sol: $('i_sol'), i_gold: $('i_gold'),
+      reset: $('resetHoldings')
+    };
 
-    // --- BTC ---
-    const btcUsd = RESERVES.BTC_HELD * p.btc;
-    $('btcPrice').textContent = `$${fmt(p.btc,0)}`;
-    $('btcHeld').textContent  = `${fmt(RESERVES.BTC_HELD,8)} BTC`;
-    $('btcUsd').textContent   = `$${fmt(btcUsd,2)}`;
-    $('btcTarget').textContent= `$${fmt(RESERVES.BTC_TARGET_USD,0)}`;
+    // ---- Data fetch (CoinGecko + PAXG) ----
+    async function fetchPrices(){
+      const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,solana,pax-gold&vs_currencies=usd';
+      const r = await fetch(url, { cache: 'no-store' });
+      if (!r.ok) throw new Error('Price fetch failed');
+      const j = await r.json();
+      return {
+        btc: j?.bitcoin?.usd ?? 0,
+        sol: j?.solana?.usd ?? 0,
+        gold: j?.['pax-gold']?.usd ?? 0   // ~1 oz
+      };
+    }
 
-    // --- SOL ---
-    const solUsd = RESERVES.SOL_HELD * p.sol;
-    $('solPrice').textContent = `$${fmt(p.sol,2)}`;
-    $('solHeld').textContent  = `${fmt(RESERVES.SOL_HELD,2)} SOL`;
-    $('solUsd').textContent   = `$${fmt(solUsd,2)}`;
-    $('solTarget').textContent= `$${fmt(RESERVES.SOL_TARGET_USD,0)}`;
+    function fmtUSD(n){ return n.toLocaleString(undefined, {style:'currency', currency:'USD', maximumFractionDigits:2}); }
+    function clampPct(p){ return Math.max(0, Math.min(100, p)); }
 
-    // --- GOLD (optional) ---
-    const goldUsd = RESERVES.GOLD_OZ * p.gold;
-    $('goldPrice')?.textContent = p.gold ? `$${fmt(p.gold,0)}/oz` : '—';
-    $('goldHeld')?.textContent  = `${fmt(RESERVES.GOLD_OZ,2)} oz`;
-    $('goldUsd')?.textContent   = `$${fmt(goldUsd,2)}`;
-    $('goldTarget')?.textContent= `$${fmt(RESERVES.GOLD_TARGET_USD,0)}`;
-  }
+    async function render(){
+      try{
+        const H = readHoldings();
+        const P = await fetchPrices();
 
-  render();
-  setInterval(render, 60000);
-</script>
+        // BTC
+        const btcUsd = H.btc * P.btc;
+        el.btcPrice.textContent = fmtUSD(P.btc);
+        el.btcHeld.textContent  = `${H.btc} BTC`;
+        el.btcUsd.textContent   = fmtUSD(btcUsd);
+        el.btcBar.style.width   = clampPct((btcUsd/TARGET_EACH)*100) + '%';
+
+        // SOL
+        const solUsd = H.sol * P.sol;
+        el.solPrice.textContent = fmtUSD(P.sol);
+        el.solHeld.textContent  = `${H.sol} SOL`;
+        el.solUsd.textContent   = fmtUSD(solUsd);
+        el.solBar.style.width   = clampPct((solUsd/TARGET_EACH)*100) + '%';
+
+        // GOLD (PAXG ≈ 1 oz)
+        const goldUsd = H.gold_oz * P.gold;
+        el.goldPrice.textContent = fmtUSD(P.gold);
+        el.goldOz.textContent    = `${H.gold_oz} oz`;
+        el.goldUsd.textContent   = fmtUSD(goldUsd);
+        el.goldBar.style.width   = clampPct((goldUsd/TARGET_EACH)*100) + '%';
+
+        // summary
+        const sum = btcUsd + solUsd + goldUsd;
+        el.sumUsd.textContent = fmtUSD(sum);
+        el.sumPct.textContent = clampPct((sum/(TARGET_EACH*3))*100).toFixed(1) + '%';
+        el.lastUpdated.textContent = new Date().toLocaleString();
+
+      }catch(err){
+        console.error(err);
+        el.lastUpdated.textContent = 'Error fetching prices';
+      }
+    }
+
+    // ---- UI wiring ----
+    el.editBtn.addEventListener('click', () => {
+      const H = readHoldings();
+      el.i_btc.value = H.btc;
+      el.i_sol.value = H.sol;
+      el.i_gold.value = H.gold_oz;
+      el.dlg.showModal();
+    });
+    $('saveHoldings').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const H = {
+        btc: Number(el.i_btc.value || 0),
+        sol: Number(el.i_sol.value || 0),
+        gold_oz: Number(el.i_gold.value || 0)
+      };
+      writeHoldings(H);
+      el.dlg.close();
+      render();
+    });
+    el.reset.addEventListener('click', (e)=>{
+      e.preventDefault();
+      localStorage.removeItem(LS_KEY);
+      render();
+    });
+
+    // initial render + refresh every 2 min
+    render();
+    setInterval(render, 120000);
+  </script>
 </body>
-  <a href="./signup.html" class="nav-button" target="_blank" rel="noopener">KYC & Signup</a>
-   <a href="./index.html" class="nav-button" target="_blank" rel="noopener">Go to Home</a>
-  <a href="./login.html" class="nav-button" target="_blank" rel="noopener">Go to Login</a>
 </html>
